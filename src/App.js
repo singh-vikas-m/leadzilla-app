@@ -2,12 +2,8 @@ import React, { useState } from "react";
 import "./App.css";
 import { Layout, Menu, Card } from "antd";
 import {
-  DesktopOutlined,
   PieChartOutlined,
-  FileOutlined,
   TeamOutlined,
-  UserOutlined,
-  SettingOutlined,
   FireOutlined,
   ApiOutlined,
   CreditCardOutlined,
