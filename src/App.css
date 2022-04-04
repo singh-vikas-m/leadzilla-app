@@ -1,0 +1,48 @@
+.site-layout {
+  background-color: #f5f9fc;
+}
+
+.antd-layout-header {
+  background: #fff;
+  border-bottom: 1px solid #e2e2e2;
+  display: flex;
+}
+
+.antd-layout-header .credits {
+  margin-left: auto;
+  margin-right: 40px;
+  display: flex;
+}
+
+.antd-layout-header .credits h1 {
+  font-size: 17px;
+  color: black;
+  margin-top: 0px;
+  margin-right: 5px;
+}
+
+.antd-layout-header .credits p {
+  font-size: 14px;
+  color: black;
+  margin-top: 0px;
+}
+
+.antd-menu-item {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.sidenav-logo {
+  /* height: 45px; */
+  width: 90%;
+  margin-left: 5px;
+  margin-top: 15px;
+  margin-bottom: 30px;
+}
+
+.antd-card {
+  border-radius: 5px;
+  background-color: #fff;
+  border: 1px solid #e2e2e2;
+  box-shadow: 0px 0px 10px 5px rgba(200, 200, 200, 0.2);
+}
