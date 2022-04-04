@@ -13,3 +13,17 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+.ant-menu-item-selected {
+  background-color: #6f4cef !important;
+}
+
+.site-layout {
+  background-color: #f5f9fc;
+}
+
+.antd-layout-header {
+  background: #fff;
+  border-bottom: 1px solid #e2e2e2;
+  display: flex;
+}

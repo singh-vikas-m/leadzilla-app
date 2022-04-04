@@ -35,6 +35,7 @@ function App() {
   const sidenavIconStyle = {
     fontSize: "25px",
     fontWeight: "700",
+    marginLeft: "-5px",
   };
 
   return (
@@ -44,7 +45,7 @@ function App() {
           collapsible
           collapsed={collapsed}
           onCollapse={onCollapse}
-          width={250}
+          width={240}
           style={{
             boxShadow: "rgba(0, 0, 0, 0.5) 0px 5px 15px",
           }}
