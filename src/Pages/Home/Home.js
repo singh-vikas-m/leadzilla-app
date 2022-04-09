@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Topnav from "../../Components/Topnav/Topnav";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../firebase-config";
 import { useNavigate } from "react-router-dom";
@@ -21,6 +22,7 @@ export default function Home() {
 
   return user ? (
     <div className="Home">
+      <Topnav />
       <h1>Home Page</h1>
     </div>
   ) : (
