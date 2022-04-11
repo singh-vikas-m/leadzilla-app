@@ -10,6 +10,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from "firebase/auth";
+import { Button, notification, Space } from "antd";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -45,7 +46,8 @@ function Login() {
       })
       .catch((error) => {
         console.log(error.message);
-        setErrorMessage(`${error.message}`);
+        console.log(error.code);
+        setErrorMessage(`${error.code.replace("auth/", "")}`);
       });
   };
 
@@ -63,8 +65,19 @@ function Login() {
       })
       .catch((error) => {
         console.log(error.message);
-        setErrorMessage(`${error.message}`);
+        console.log(error.code);
+        setErrorMessage(`${error.code.replace("auth/", "")}`);
       });
+  };
+
+  //openNotificationWithIcon('warning')
+
+  const openNotificationWithIcon = (type) => {
+    notification[type]({
+      message: "Notification Title",
+      description:
+        "This is the content of the notification. This is the content of the notification. This is the content of the notification.",
+    });
   };
 
   return (
