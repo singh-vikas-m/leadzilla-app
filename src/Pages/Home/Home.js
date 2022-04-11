@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "./Home.css";
 import Topnav from "../../Components/Topnav/Topnav";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../firebase-config";
@@ -37,11 +38,12 @@ export default function Home() {
   return user ? (
     <div className="Home">
       <Topnav />
-      <h1>Home Page</h1>
-
-      <Button style={{ marginTop: "100px" }} danger onClick={LogOut}>
-        Log out
-      </Button>
+      <div className="content">
+        <h1>Home Page</h1>
+        <Button style={{ marginTop: "100px" }} danger onClick={LogOut}>
+          Log out
+        </Button>
+      </div>
     </div>
   ) : (
     <Spin size="large" />
