@@ -140,6 +140,7 @@ export default function Search() {
               columns={columns}
               rowSelection={{ ...rowSelection, checkStrictly }}
               dataSource={data}
+              pag
             />
           </div>
         </div>
