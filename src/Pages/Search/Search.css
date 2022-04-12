@@ -35,6 +35,12 @@
   padding: 30px;
 }
 
+.Search .search-cards-container .search-filter-card .filter-heading {
+  font-size: 14px;
+  margin: 0px 0px 10px 10px;
+  font-weight: 500;
+}
+
 .Search .search-cards-container .search-result-card {
   background-color: #fff;
   border: 1px solid #e2e2e2;

@@ -5,13 +5,13 @@ import leadzillaIcon from "../../Assets/leadzilla-logo.png";
 export default function Topnav() {
   return (
     <div className="Topnav">
-      <img
+      {/* <img
         className="leadzilla-logo"
         src={leadzillaIcon}
         alt="leadzilla-logo"
-      />
+      /> */}
 
-      {/* <div className="leadzilla-logo">
+      <div className="leadzilla-logo">
         <svg
           style={{ display: "none" }}
           className="leadzilla-logo"
@@ -138,7 +138,7 @@ export default function Topnav() {
             stroke="#6F4CEF"
           />
         </svg>
-      </div> */}
+      </div>
 
       {/* <h1>Leadzilla</h1> */}
     </div>
