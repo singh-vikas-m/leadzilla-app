@@ -10,16 +10,22 @@ import axios from "axios";
 
 export default function Search() {
   const [user, setUser] = useState(null);
-  const [checkStrictly, setCheckStrictly] = useState(false);
   const [selectedDepartment, setSelectedDepartment] = useState([]);
   const [selectedLevel, setSelectedLevel] = useState([]);
   const [selectedIndustry, setSelectedIndustry] = useState([]);
   const [selectedCompanySize, setSelectedCompanySize] = useState([]);
   const [selectedCompanyRevenue, setSelectedCompanyRevenue] = useState([]);
   const [selectedName, setSelectedName] = useState([]);
+  const [selectedDomain, setSelectedDomain] = useState([]);
+  const [selectedCompany, setSelectedCompany] = useState([]);
+
+  const [loading, setLoading] = useState(false);
+  const [searchResult, setSearchResult] = useState([]);
 
   let navigate = useNavigate();
   const { Option } = Select;
+
+  const serverURL = "http://localhost:6060";
 
   onAuthStateChanged(auth, (user) => {
     if (user) {
@@ -34,19 +40,31 @@ export default function Search() {
   const columns = [
     {
       title: "Name",
-      dataIndex: "name",
-      key: "name",
+      dataIndex: "firstName",
+      key: "firstName",
+      render: (text, record, index) => (
+        <Space size="middle">
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            {" "}
+            <h4>{record.firstName + " " + record.lastName}</h4>
+            <p>{record.title}</p>
+            <a href={"" + record.linkedInId} target="_blank">
+              LinkedIn
+            </a>
+          </div>
+        </Space>
+      ),
     },
     {
       title: "Company",
-      dataIndex: "company",
-      key: "company",
-      width: "12%",
+      dataIndex: "companyName",
+      key: "companyName",
+      width: "25%",
     },
     {
       title: "Contact",
       dataIndex: "contact",
-      width: "30%",
+      width: "20%",
       key: "contact",
     },
     {
@@ -63,33 +81,6 @@ export default function Search() {
           </Button>
         </Space>
       ),
-    },
-  ];
-
-  const data = [
-    {
-      key: 1,
-      name: "Vikas Singh",
-      company: "Leadzilla",
-      contact: "",
-    },
-    {
-      key: 2,
-      name: "Saurav Gupta",
-      company: "Leadzilla",
-      address: "",
-    },
-    {
-      key: 3,
-      name: "Mark Spector",
-      company: "Marvel",
-      contact: "",
-    },
-    {
-      key: 4,
-      name: "Walt Disney",
-      company: "Disney",
-      address: "",
     },
   ];
 
@@ -195,47 +186,90 @@ export default function Search() {
     selectedLevel,
     selectedIndustry,
     selectedCompanySize,
-    selectedCompanyRevenue
+    selectedCompanyRevenue,
+    selectedName,
+    selectedDomain
   ) => {
-    var data = JSON.stringify({
-      email: "sam@sendzilla.io",
-      apiKey: "601987e7e9ec744810232dd2",
-      name: [],
+    let data = {
+      name: selectedName,
       firstName: [],
       lastName: [],
       title: [],
-      dept: [],
-      level: [],
-      companyName: [],
-      nameDomain: [],
-      numberOfEmployees: [],
-      revenue: [],
-      industryName: ["Education"],
+      dept: selectedDepartment,
+      level: selectedLevel,
+      companyName: selectedCompany,
+      nameDomain: selectedDomain,
+      numberOfEmployees: selectedCompanySize,
+      revenue: selectedCompanyRevenue,
+      industryName: selectedIndustry,
       city: [],
       country: [],
       state: [],
       zipCode: [],
-    });
+    };
 
     try {
+      setLoading(true);
       await axios
-        .post("https://www.adapt.io/api/filter/contacts", data, {
+        .post(`${serverURL}/contacts`, JSON.stringify(data), {
           headers: {
             "Content-Type": "application/json",
             Accept: "application/json",
           },
         })
         .then((response) => {
-          const adaptEmailAPIData = response.data;
-          console.log(response);
+          console.log(response.data.result);
+          setSearchResult(response.data.result);
         })
         .catch((error) => {
           console.log(error);
         });
+      setLoading(false);
     } catch (err) {
       console.log(err);
     }
   };
+
+  //fetch email
+  // const fetchSearchResult = async (
+  //   selectedDepartment,
+  //   selectedLevel,
+  //   selectedIndustry,
+  //   selectedCompanySize,
+  //   selectedCompanyRevenue
+  // ) => {
+  //   try {
+  //     const response = await fetch(`${serverURL}/contacts`, {
+  //       method: "POST",
+  //       headers: {
+  //         Accept: "application/json",
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         name: [],
+  //         firstName: [],
+  //         lastName: [],
+  //         title: [],
+  //         dept: [],
+  //         level: [],
+  //         companyName: [],
+  //         nameDomain: [],
+  //         numberOfEmployees: [],
+  //         revenue: [],
+  //         industryName: ["Education"],
+  //         city: [],
+  //         country: [],
+  //         state: [],
+  //         zipCode: [],
+  //       }),
+  //     });
+
+  //     let searchResult = await response.json();
+  //     console.log(searchResult);
+  //   } catch (error) {
+  //     console.log(error.message);
+  //   }
+  // };
 
   // respond to changes on filter values
   useEffect(() => {
@@ -244,7 +278,10 @@ export default function Search() {
       selectedLevel.length > 0 ||
       selectedIndustry.length > 0 ||
       selectedCompanySize.length > 0 ||
-      selectedCompanyRevenue.length > 0
+      selectedCompanyRevenue.length > 0 ||
+      selectedName.length > 0 ||
+      selectedDomain.length > 0 ||
+      selectedCompany.length > 0
     ) {
       fetchSearchResult();
       console.log(selectedDepartment);
@@ -252,6 +289,9 @@ export default function Search() {
       console.log(selectedIndustry);
       console.log(selectedCompanySize);
       console.log(selectedCompanyRevenue);
+      console.log(selectedName);
+      console.log(selectedDomain);
+      console.log(selectedCompany);
     }
   }, [
     selectedDepartment,
@@ -259,6 +299,9 @@ export default function Search() {
     selectedIndustry,
     selectedCompanySize,
     selectedCompanyRevenue,
+    selectedName,
+    selectedDomain,
+    selectedCompany,
   ]);
 
   // handle changes on filter selectors
@@ -282,8 +325,16 @@ export default function Search() {
     setSelectedCompanyRevenue([value]);
   }
 
-  function handleChange(value) {
+  function handleNameChange(value) {
     setSelectedName([value]);
+  }
+
+  function handleDomainChange(value) {
+    setSelectedDomain([value]);
+  }
+
+  function handleCompanyChange(value) {
+    setSelectedCompany([value]);
   }
 
   return user ? (
@@ -351,7 +402,23 @@ export default function Search() {
               mode="tags"
               allowClear
               placeholder="Full name"
-              onChange={handleChange}
+              onChange={handleNameChange}
+              style={{ width: "80%", margin: "10px" }}
+            />
+
+            <Select
+              mode="tags"
+              allowClear
+              placeholder="Company Website"
+              onChange={handleDomainChange}
+              style={{ width: "80%", margin: "10px" }}
+            />
+
+            <Select
+              mode="tags"
+              allowClear
+              placeholder="Company Name"
+              onChange={handleCompanyChange}
               style={{ width: "80%", margin: "10px" }}
             />
           </div>
@@ -361,9 +428,12 @@ export default function Search() {
             <Table
               size="large"
               columns={columns}
-              rowSelection={{ ...rowSelection, checkStrictly }}
-              dataSource={data}
-              pag
+              loading={loading}
+              rowKey="id"
+              rowSelection={{ ...rowSelection }}
+              dataSource={searchResult}
+              pagination={{ pageSize: 50 }}
+              scroll={{ y: "max-content" }}
             />
           </div>
         </div>
