@@ -1,4 +1,6 @@
 .Topnav {
+  position: fixed;
+  z-index: 99999;
   display: flex;
   justify-content: flex-start;
   align-items: center;
@@ -13,4 +15,45 @@
 .Topnav .leadzilla-logo {
   height: 60px;
   margin: 0px 10px 0px 20px;
+}
+
+.Topnav .account-info {
+  margin: 0px 0px 0px auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.Topnav .account-info .profile-pic {
+  cursor: pointer;
+  margin: 0px 20px 0px 20px;
+}
+
+.Topnav .account-info .profile-pic img {
+  height: 45px;
+  border-radius: 50px;
+}
+
+.Topnav .account-info .credits {
+  margin: 0px 20px 0px 0px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-end;
+}
+
+.Topnav .account-info .credits h1 {
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 0px;
+  margin-top: 5px;
+  color: #fff;
+}
+
+.Topnav .account-info .credits p {
+  margin-top: 0px;
+  margin-bottom: 10px;
+  font-size: 15px;
+  color: #fff;
+  font-weight: 500;
 }

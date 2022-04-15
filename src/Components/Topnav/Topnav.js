@@ -1,8 +1,66 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "./Topnav.css";
 import leadzillaIcon from "../../Assets/leadzilla-logo.png";
+import { signOut } from "firebase/auth";
+import { db, auth } from "../../firebase-config";
+import { useNavigate } from "react-router-dom";
+import { doc, onSnapshot, updateDoc } from "firebase/firestore";
+import { Avatar } from "antd";
+import { UserOutlined } from "@ant-design/icons";
+import { Popover, Button } from "antd";
 
 export default function Topnav() {
+  const [userName, setUserName] = useState("");
+  const [userEmail, setUserEmail] = useState("");
+  const [userPhoto, setUserPhoto] = useState("");
+  const [creditCount, setCreditCount] = useState(0);
+
+  let navigate = useNavigate();
+  const loggedInUser = auth.currentUser;
+
+  const accountPopupContent = (
+    <div>
+      <p>{userName}</p>
+      <p>{userEmail}</p>
+      <Button
+        danger
+        ghost
+        onClick={() => {
+          LogOut();
+        }}
+      >
+        Log Out
+      </Button>
+    </div>
+  );
+
+  const LogOut = () => {
+    signOut(auth)
+      .then(() => {
+        // Sign-out successful.
+        navigate("/login");
+      })
+      .catch((error) => {
+        // An error happened.
+        console.log(error);
+      });
+  };
+
+  useEffect(() => {
+    if (loggedInUser !== null) {
+      setUserName(loggedInUser.displayName);
+      setUserEmail(loggedInUser.email);
+      setUserPhoto(loggedInUser.photoURL);
+
+      const uid = loggedInUser.uid;
+      onSnapshot(doc(db, "users", `${uid}`), (doc) => {
+        // console.log("Current data: ", doc.data());
+        setCreditCount(doc.data().credits);
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <div className="Topnav">
       {/* <img
@@ -138,6 +196,32 @@ export default function Topnav() {
             stroke="#6F4CEF"
           />
         </svg>
+      </div>
+
+      <div className="account-info">
+        <div className="credits">
+          <h1>{creditCount}</h1>
+          {creditCount !== null ? <p>credits</p> : ""}
+        </div>
+
+        <div className="profile-pic">
+          <Popover
+            placement="bottomRight"
+            content={accountPopupContent}
+            title="Account"
+            trigger="hover"
+          >
+            {userPhoto ? (
+              <img
+                src={userPhoto}
+                className="user-profile-photo"
+                alt="logged-in-user-pic"
+              />
+            ) : (
+              <Avatar size={64} icon={<UserOutlined />} />
+            )}
+          </Popover>
+        </div>
       </div>
 
       {/* <h1>Leadzilla</h1> */}

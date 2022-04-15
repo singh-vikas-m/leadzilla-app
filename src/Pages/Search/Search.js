@@ -16,9 +16,16 @@ export default function Search() {
   const [selectedCompanySize, setSelectedCompanySize] = useState([]);
   const [selectedCompanyRevenue, setSelectedCompanyRevenue] = useState([]);
   const [selectedName, setSelectedName] = useState([]);
+  const [selectedFirstName, setSelectedFirstName] = useState([]);
+  const [selectedLastName, setSelectedLastName] = useState([]);
+  const [selectedTitle, setSelectedTitle] = useState([]);
+  const [selectedCity, setSelectedCity] = useState([]);
+  const [selectedCountry, setSelectedCountry] = useState([]);
+  const [selectedState, setSelectedState] = useState([]);
+  const [selectedZipCode, setSelectedZipCode] = useState([]);
+
   const [selectedDomain, setSelectedDomain] = useState([]);
   const [selectedCompany, setSelectedCompany] = useState([]);
-
   const [loading, setLoading] = useState(false);
   const [searchResult, setSearchResult] = useState([]);
 
@@ -45,10 +52,13 @@ export default function Search() {
       render: (text, record, index) => (
         <Space size="middle">
           <div style={{ display: "flex", flexDirection: "column" }}>
-            {" "}
             <h4>{record.firstName + " " + record.lastName}</h4>
             <p>{record.title}</p>
-            <a href={"" + record.linkedInId} target="_blank">
+            <a
+              href={"http://" + record.linkedInId}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
               LinkedIn
             </a>
           </div>
@@ -59,13 +69,53 @@ export default function Search() {
       title: "Company",
       dataIndex: "companyName",
       key: "companyName",
-      width: "25%",
+      render: (text, record, index) => (
+        <Space size="middle">
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <h4>{record.companyName}</h4>
+            <a
+              href={"http://" + record.primaryDomain}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              {record.primaryDomain}
+            </a>
+          </div>
+        </Space>
+      ),
     },
     {
       title: "Contact",
       dataIndex: "contact",
-      width: "20%",
       key: "contact",
+      render: (text, record, index) => (
+        <Space size="middle">
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <h4>{record.emailAddress || "*****@" + record.primaryDomain}</h4>
+            {record.phoneDirect && record.phoneDirect !== "" ? (
+              <p>Direct Dial {record.phoneDirect}</p>
+            ) : (
+              ""
+            )}
+            {record.phoneCompany && record.phoneCompany !== "" ? (
+              <p>Company Line {record.phoneCompany}</p>
+            ) : (
+              ""
+            )}
+            {record.phoneMobile && record.phoneMobile !== "" ? (
+              <p> Mobile Number {record.phoneMobile}</p>
+            ) : (
+              ""
+            )}
+
+            {record.phoneNumber && record.phoneNumber !== "" ? (
+              <p> Other Number {record.phoneNumber}</p>
+            ) : (
+              ""
+            )}
+          </div>
+        </Space>
+      ),
     },
     {
       title: "Action",
@@ -75,9 +125,10 @@ export default function Search() {
           <Button
             onClick={(e) => {
               console.log("user name is :", record.name);
+              purchaseContact(index, record.id);
             }}
           >
-            View contact
+            View
           </Button>
         </Space>
       ),
@@ -188,13 +239,17 @@ export default function Search() {
     selectedCompanySize,
     selectedCompanyRevenue,
     selectedName,
+    selectedFirstName,
+    selectedLastName,
+    selectedTitle,
+
     selectedDomain
   ) => {
-    let data = {
+    var data = {
       name: selectedName,
-      firstName: [],
-      lastName: [],
-      title: [],
+      firstName: selectedFirstName,
+      lastName: selectedLastName,
+      title: selectedTitle,
       dept: selectedDepartment,
       level: selectedLevel,
       companyName: selectedCompany,
@@ -220,6 +275,67 @@ export default function Search() {
         .then((response) => {
           console.log(response.data.result);
           setSearchResult(response.data.result);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      setLoading(false);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const purchaseContact = async (tabeleElementId, contactId) => {
+    try {
+      setLoading(true);
+      await axios
+        .get(`${serverURL}/purchase?contactId=${contactId}`, {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        })
+        .then((response) => {
+          console.log(response.data);
+
+          // save purchased(found) email/phone data
+          if (response.data.emailAddress) {
+            searchResult[tabeleElementId]["emailAddress"] =
+              response.data.emailAddress;
+          } else {
+            searchResult[tabeleElementId]["emailAddress"] = "";
+          }
+
+          if (response.data.phoneDirect) {
+            searchResult[tabeleElementId]["phoneDirect"] =
+              response.data.phoneDirect;
+          } else {
+            searchResult[tabeleElementId]["phoneDirect"] = "";
+          }
+
+          if (response.data.phoneCompany) {
+            searchResult[tabeleElementId]["phoneCompany"] =
+              response.data.phoneCompany;
+          } else {
+            searchResult[tabeleElementId]["phoneCompany"] = "";
+          }
+
+          if (response.data.phoneMobile) {
+            searchResult[tabeleElementId]["phoneMobile"] =
+              response.data.phoneMobile;
+          } else {
+            searchResult[tabeleElementId]["phoneMobile"] = "";
+          }
+
+          if (response.data.phoneNumber) {
+            searchResult[tabeleElementId]["phoneNumber"] =
+              response.data.phoneNumber;
+          } else {
+            searchResult[tabeleElementId]["phoneNumber"] = "";
+          }
+
+          console.log(searchResult[tabeleElementId]);
+          console.log(searchResult);
         })
         .catch((error) => {
           console.log(error);
@@ -280,19 +396,38 @@ export default function Search() {
       selectedCompanySize.length > 0 ||
       selectedCompanyRevenue.length > 0 ||
       selectedName.length > 0 ||
+      selectedFirstName.length > 0 ||
+      selectedLastName.length > 0 ||
+      selectedTitle.length > 0 ||
       selectedDomain.length > 0 ||
       selectedCompany.length > 0
     ) {
-      fetchSearchResult();
-      console.log(selectedDepartment);
-      console.log(selectedLevel);
-      console.log(selectedIndustry);
-      console.log(selectedCompanySize);
-      console.log(selectedCompanyRevenue);
-      console.log(selectedName);
-      console.log(selectedDomain);
-      console.log(selectedCompany);
+      fetchSearchResult(
+        selectedDepartment,
+        selectedLevel,
+        selectedIndustry,
+        selectedCompanySize,
+        selectedCompanyRevenue,
+        selectedName,
+        selectedFirstName,
+        selectedLastName,
+        selectedTitle,
+        selectedDomain,
+        selectedCompany
+      );
+      // console.log(selectedDepartment);
+      // console.log(selectedLevel);
+      // console.log(selectedIndustry);
+      // console.log(selectedCompanySize);
+      // console.log(selectedCompanyRevenue);
+      // console.log(selectedName);
+      // console.log(selectedFirstName);
+      // console.log(selectedLastName);
+      // console.log(selectedTitle);
+      // console.log(selectedDomain);
+      // console.log(selectedCompany);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     selectedDepartment,
     selectedLevel,
@@ -300,41 +435,46 @@ export default function Search() {
     selectedCompanySize,
     selectedCompanyRevenue,
     selectedName,
+    selectedFirstName,
+    selectedLastName,
+    selectedTitle,
     selectedDomain,
     selectedCompany,
   ]);
 
   // handle changes on filter selectors
   function handleDepartmentChange(value) {
-    setSelectedDepartment([value]);
+    setSelectedDepartment(value);
   }
-
   function handleLevelChange(value) {
-    setSelectedLevel([value]);
+    setSelectedLevel(value);
   }
-
   function handleIndustryChange(value) {
-    setSelectedIndustry([value]);
+    setSelectedIndustry(value);
   }
-
   function handleCompanySizeChange(value) {
-    setSelectedCompanySize([value]);
+    setSelectedCompanySize(value);
   }
-
   function handleCompanyRevenueChange(value) {
-    setSelectedCompanyRevenue([value]);
+    setSelectedCompanyRevenue(value);
   }
-
-  function handleNameChange(value) {
-    setSelectedName([value]);
-  }
-
   function handleDomainChange(value) {
-    setSelectedDomain([value]);
+    setSelectedDomain(value);
   }
-
   function handleCompanyChange(value) {
-    setSelectedCompany([value]);
+    setSelectedCompany(value);
+  }
+  function handleNameChange(value) {
+    setSelectedName(value);
+  }
+  function handleFirstNameChange(value) {
+    setSelectedFirstName(value);
+  }
+  function handleLastNameChange(value) {
+    setSelectedLastName(value);
+  }
+  function handleTitleChange(value) {
+    setSelectedTitle(value);
   }
 
   return user ? (
@@ -346,6 +486,21 @@ export default function Search() {
           <div className="search-filter-card">
             <h1 className="filter-heading">COMPANY</h1>
             <Select
+              mode="tags"
+              allowClear
+              placeholder="Company Website"
+              onChange={handleDomainChange}
+              style={{ width: "80%", margin: "10px" }}
+            />
+
+            <Select
+              mode="tags"
+              allowClear
+              placeholder="Company Name"
+              onChange={handleCompanyChange}
+              style={{ width: "80%", margin: "10px" }}
+            />
+            <Select
               mode="multiple"
               allowClear
               style={{ width: "80%", margin: "0px 0px 10px 10px" }}
@@ -353,16 +508,6 @@ export default function Search() {
               onChange={handleDepartmentChange}
             >
               {departmentOptions}
-            </Select>
-
-            <Select
-              mode="multiple"
-              allowClear
-              style={{ width: "80%", margin: "10px" }}
-              placeholder="Level"
-              onChange={handleLevelChange}
-            >
-              {levelOptions}
             </Select>
 
             <Select
@@ -401,6 +546,24 @@ export default function Search() {
             <Select
               mode="tags"
               allowClear
+              placeholder="Title"
+              onChange={handleTitleChange}
+              style={{ width: "80%", margin: "10px" }}
+            />
+
+            <Select
+              mode="multiple"
+              allowClear
+              style={{ width: "80%", margin: "10px" }}
+              placeholder="Level"
+              onChange={handleLevelChange}
+            >
+              {levelOptions}
+            </Select>
+
+            <Select
+              mode="tags"
+              allowClear
               placeholder="Full name"
               onChange={handleNameChange}
               style={{ width: "80%", margin: "10px" }}
@@ -409,16 +572,16 @@ export default function Search() {
             <Select
               mode="tags"
               allowClear
-              placeholder="Company Website"
-              onChange={handleDomainChange}
+              placeholder="First name"
+              onChange={handleFirstNameChange}
               style={{ width: "80%", margin: "10px" }}
             />
 
             <Select
               mode="tags"
               allowClear
-              placeholder="Company Name"
-              onChange={handleCompanyChange}
+              placeholder="Last name"
+              onChange={handleLastNameChange}
               style={{ width: "80%", margin: "10px" }}
             />
           </div>
@@ -431,7 +594,7 @@ export default function Search() {
               loading={loading}
               rowKey="id"
               rowSelection={{ ...rowSelection }}
-              dataSource={searchResult}
+              dataSource={[...searchResult]}
               pagination={{ pageSize: 50 }}
               scroll={{ y: "max-content" }}
             />

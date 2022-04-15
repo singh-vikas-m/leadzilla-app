@@ -21,7 +21,7 @@ function Login() {
   // redirect on main page when login state change
   auth.onAuthStateChanged((user) => {
     if (user) {
-      navigate("/home");
+      navigate("/");
     }
   });
 
