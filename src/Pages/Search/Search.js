@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import "./Search.css";
 import Topnav from "../../Components/Topnav/Topnav";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../../firebase-config";
+import { db, auth } from "../../firebase-config";
+import { doc, onSnapshot, updateDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { Spin } from "antd";
 import { Button, Table, Select, Space } from "antd";
@@ -28,6 +29,8 @@ export default function Search() {
   const [selectedCompany, setSelectedCompany] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchResult, setSearchResult] = useState([]);
+  const [creditCount, setCreditCount] = useState(0);
+  const [firebaseAuthUUID, setFirebaseAuthUUID] = useState("");
 
   let navigate = useNavigate();
   const { Option } = Select;
@@ -38,6 +41,10 @@ export default function Search() {
     if (user) {
       console.log("user logged in");
       setUser(user);
+      setFirebaseAuthUUID(user.uid);
+      onSnapshot(doc(db, "users", `${user.uid}`), (doc) => {
+        setCreditCount(doc.data().credits);
+      });
     } else {
       console.log("user not logged in");
       navigate("/login");
@@ -296,8 +303,23 @@ export default function Search() {
           },
         })
         .then((response) => {
-          console.log(response.data);
+          //console.log(response.data);
 
+          //update credits
+          if (
+            response.data.emailAddress !== "none" &&
+            response.data.emailAddress !== null &&
+            response.data.emailAddress !== undefined
+          ) {
+            // if logged in, decrement credits from db
+            if (firebaseAuthUUID) {
+              const userDataRef = doc(db, "users", `${firebaseAuthUUID}`);
+              updateDoc(userDataRef, {
+                credits: creditCount - 1,
+              });
+              setCreditCount(creditCount - 1);
+            }
+          }
           // save purchased(found) email/phone data
           if (response.data.emailAddress) {
             searchResult[tabeleElementId]["emailAddress"] =
@@ -333,9 +355,6 @@ export default function Search() {
           } else {
             searchResult[tabeleElementId]["phoneNumber"] = "";
           }
-
-          console.log(searchResult[tabeleElementId]);
-          console.log(searchResult);
         })
         .catch((error) => {
           console.log(error);
