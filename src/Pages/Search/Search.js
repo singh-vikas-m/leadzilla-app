@@ -35,7 +35,8 @@ export default function Search() {
   let navigate = useNavigate();
   const { Option } = Select;
 
-  const serverURL = "http://localhost:6060";
+  //const serverURL = "http://localhost:6060";
+  const serverURL = "https://leadzilla.herokuapp.com";
 
   onAuthStateChanged(auth, (user) => {
     if (user) {
