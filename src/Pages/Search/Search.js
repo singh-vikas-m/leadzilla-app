@@ -244,14 +244,15 @@ export default function Search() {
     selectedDepartment,
     selectedLevel,
     selectedIndustry,
+    selectedCompany,
     selectedCompanySize,
     selectedCompanyRevenue,
     selectedName,
     selectedFirstName,
     selectedLastName,
     selectedTitle,
-
-    selectedDomain
+    selectedDomain,
+    selectedCountry
   ) => {
     var data = {
       name: selectedName,
@@ -266,7 +267,7 @@ export default function Search() {
       revenue: selectedCompanyRevenue,
       industryName: selectedIndustry,
       city: [],
-      country: [],
+      country: selectedCountry,
       state: [],
       zipCode: [],
     };
@@ -420,12 +421,14 @@ export default function Search() {
       selectedLastName.length > 0 ||
       selectedTitle.length > 0 ||
       selectedDomain.length > 0 ||
-      selectedCompany.length > 0
+      selectedCompany.length > 0 ||
+      selectedCountry.length > 0
     ) {
       fetchSearchResult(
         selectedDepartment,
         selectedLevel,
         selectedIndustry,
+        selectedCompany,
         selectedCompanySize,
         selectedCompanyRevenue,
         selectedName,
@@ -433,7 +436,7 @@ export default function Search() {
         selectedLastName,
         selectedTitle,
         selectedDomain,
-        selectedCompany
+        selectedCountry
       );
       // console.log(selectedDepartment);
       // console.log(selectedLevel);
@@ -460,6 +463,7 @@ export default function Search() {
     selectedTitle,
     selectedDomain,
     selectedCompany,
+    selectedCountry,
   ]);
 
   // handle changes on filter selectors
@@ -497,6 +501,10 @@ export default function Search() {
     setSelectedTitle(value);
   }
 
+  function handleCountryChange(value) {
+    setSelectedCountry(value);
+  }
+
   return user ? (
     <div className="Search">
       <Topnav />
@@ -506,6 +514,7 @@ export default function Search() {
           <div className="search-filter-card">
             <h1 className="filter-heading">COMPANY</h1>
             <Select
+              bordered={true}
               mode="tags"
               allowClear
               placeholder="Company Website"
@@ -602,6 +611,13 @@ export default function Search() {
               allowClear
               placeholder="Last name"
               onChange={handleLastNameChange}
+              style={{ width: "80%", margin: "10px" }}
+            />
+            <Select
+              mode="tags"
+              allowClear
+              placeholder="Country"
+              onChange={handleCountryChange}
               style={{ width: "80%", margin: "10px" }}
             />
           </div>
