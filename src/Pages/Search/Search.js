@@ -519,7 +519,7 @@ export default function Search() {
               allowClear
               placeholder="Company Website"
               onChange={handleDomainChange}
-              style={{ width: "80%", margin: "10px" }}
+              style={{ width: "90%", margin: "10px" }}
             />
 
             <Select
@@ -527,12 +527,12 @@ export default function Search() {
               allowClear
               placeholder="Company Name"
               onChange={handleCompanyChange}
-              style={{ width: "80%", margin: "10px" }}
+              style={{ width: "90%", margin: "10px" }}
             />
             <Select
               mode="multiple"
               allowClear
-              style={{ width: "80%", margin: "0px 0px 10px 10px" }}
+              style={{ width: "90%", margin: "10px" }}
               placeholder="Department"
               onChange={handleDepartmentChange}
             >
@@ -542,7 +542,7 @@ export default function Search() {
             <Select
               mode="multiple"
               allowClear
-              style={{ width: "80%", margin: "10px" }}
+              style={{ width: "90%", margin: "10px" }}
               placeholder="Industry"
               onChange={handleIndustryChange}
             >
@@ -552,7 +552,7 @@ export default function Search() {
             <Select
               mode="multiple"
               allowClear
-              style={{ width: "80%", margin: "10px" }}
+              style={{ width: "90%", margin: "10px" }}
               placeholder="Company Size"
               onChange={handleCompanySizeChange}
             >
@@ -562,7 +562,7 @@ export default function Search() {
             <Select
               mode="multiple"
               allowClear
-              style={{ width: "80%", margin: "10px" }}
+              style={{ width: "90%", margin: "10px" }}
               placeholder="Company Revenue"
               onChange={handleCompanyRevenueChange}
             >
@@ -577,13 +577,13 @@ export default function Search() {
               allowClear
               placeholder="Title"
               onChange={handleTitleChange}
-              style={{ width: "80%", margin: "10px" }}
+              style={{ width: "90%", margin: "10px" }}
             />
 
             <Select
               mode="multiple"
               allowClear
-              style={{ width: "80%", margin: "10px" }}
+              style={{ width: "90%", margin: "10px" }}
               placeholder="Level"
               onChange={handleLevelChange}
             >
@@ -595,7 +595,7 @@ export default function Search() {
               allowClear
               placeholder="Full name"
               onChange={handleNameChange}
-              style={{ width: "80%", margin: "10px" }}
+              style={{ width: "90%", margin: "10px" }}
             />
 
             <Select
@@ -603,7 +603,7 @@ export default function Search() {
               allowClear
               placeholder="First name"
               onChange={handleFirstNameChange}
-              style={{ width: "80%", margin: "10px" }}
+              style={{ width: "90%", margin: "10px" }}
             />
 
             <Select
@@ -611,14 +611,14 @@ export default function Search() {
               allowClear
               placeholder="Last name"
               onChange={handleLastNameChange}
-              style={{ width: "80%", margin: "10px" }}
+              style={{ width: "90%", margin: "10px" }}
             />
             <Select
               mode="tags"
               allowClear
               placeholder="Country"
               onChange={handleCountryChange}
-              style={{ width: "80%", margin: "10px" }}
+              style={{ width: "90%", margin: "10px" }}
             />
           </div>
 
