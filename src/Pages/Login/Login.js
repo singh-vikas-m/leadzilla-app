@@ -10,6 +10,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from "firebase/auth";
+import LeadzillaLogo from "../../Assets/leadzilla-full-logo.png";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -71,6 +72,8 @@ function Login() {
 
   return (
     <div className="Login">
+      <img src={LeadzillaLogo} alt="" style={{ margin: "0 0 20px 0" }} />
+
       <div className="card">
         <input
           type="email"
