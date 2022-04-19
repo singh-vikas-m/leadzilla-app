@@ -52,3 +52,10 @@
   border-radius: 5px;
   padding: 30px;
 }
+
+.Search .search-cards-container .search-result-card-controls {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin: 5px 0px 20px 0px;
+}

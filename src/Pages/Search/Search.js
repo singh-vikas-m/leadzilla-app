@@ -10,7 +10,7 @@ import { Button, Table, Select, Space } from "antd";
 import axios from "axios";
 
 export default function Search() {
-  const [user, setUser] = useState(null);
+  //filter selector values
   const [selectedDepartment, setSelectedDepartment] = useState([]);
   const [selectedLevel, setSelectedLevel] = useState([]);
   const [selectedIndustry, setSelectedIndustry] = useState([]);
@@ -24,12 +24,22 @@ export default function Search() {
   const [selectedCountry, setSelectedCountry] = useState([]);
   const [selectedState, setSelectedState] = useState([]);
   const [selectedZipCode, setSelectedZipCode] = useState([]);
-
   const [selectedDomain, setSelectedDomain] = useState([]);
   const [selectedCompany, setSelectedCompany] = useState([]);
-  const [loading, setLoading] = useState(false);
+
+  //filter setting states
+  const [titleExactMatch, setTitleExactMatch] = useState(false);
+  const [cursorMark, setCursorMark] = useState("");
+
+  //misc states
+  const [loggedInUser, setLoggedInUser] = useState(false);
   const [searchResult, setSearchResult] = useState([]);
+  const [selectedUserData, setSelectedUserData] = useState([]);
+
+  const [loading, setLoading] = useState(false);
   const [creditCount, setCreditCount] = useState(0);
+  const [creditsFromDB, setCreditsFromDB] = useState("");
+
   const [firebaseAuthUUID, setFirebaseAuthUUID] = useState("");
 
   let navigate = useNavigate();
@@ -38,13 +48,23 @@ export default function Search() {
   //const serverURL = "http://localhost:6060";
   const serverURL = "https://leadzilla.herokuapp.com";
 
+  var currentCredit = 0;
+
   onAuthStateChanged(auth, (user) => {
     if (user) {
-      console.log("user logged in");
-      setUser(user);
+      //console.log("user logged in");
+      setLoggedInUser(user);
       setFirebaseAuthUUID(user.uid);
       onSnapshot(doc(db, "users", `${user.uid}`), (doc) => {
-        setCreditCount(doc.data().credits);
+        // console.log("Current data: ", doc.data());
+        setCreditsFromDB(doc.data().credits);
+
+        if (currentCredit === 0) {
+          //console.log("credit loaded");
+          currentCredit = doc.data().credits;
+        } else {
+          //console.log("credit exists");
+        }
       });
     } else {
       console.log("user not logged in");
@@ -132,7 +152,6 @@ export default function Search() {
         <Space size="middle">
           <Button
             onClick={(e) => {
-              console.log("user name is :", record.name);
               purchaseContact(index, record.id);
             }}
           >
@@ -143,21 +162,24 @@ export default function Search() {
     },
   ];
 
+  //User data row selection logic
   // rowSelection objects indicates the need for row selection
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
-      console.log(
-        `selectedRowKeys: ${selectedRowKeys}`,
-        "selectedRows: ",
-        selectedRows
-      );
+      // console.log(
+      //   `selectedRowKeys: ${selectedRowKeys}`,
+      //   "selectedRows: ",
+      //   selectedRows
+      // );
+      // save selected user data rows
+      setSelectedUserData(selectedRows);
     },
-    onSelect: (record, selected, selectedRows) => {
-      console.log(record, selected, selectedRows);
-    },
-    onSelectAll: (selected, selectedRows, changeRows) => {
-      console.log(selected, selectedRows, changeRows);
-    },
+    // onSelect: (record, selected, selectedRows) => {
+    //   console.log(record, selected, selectedRows);
+    // },
+    // onSelectAll: (selected, selectedRows, changeRows) => {
+    //   console.log(selected, selectedRows, changeRows);
+    // },
   };
 
   const departmentOptions = [
@@ -252,7 +274,8 @@ export default function Search() {
     selectedLastName,
     selectedTitle,
     selectedDomain,
-    selectedCountry
+    selectedCountry,
+    titleExactMatch
   ) => {
     var data = {
       name: selectedName,
@@ -270,6 +293,11 @@ export default function Search() {
       country: selectedCountry,
       state: [],
       zipCode: [],
+      dontDisplayDeadContacts: false,
+      dontDisplayOwnedContacts: false,
+      limit: 25,
+      cursorMark: cursorMark || "",
+      titleExactMatch: titleExactMatch,
     };
 
     try {
@@ -283,7 +311,9 @@ export default function Search() {
         })
         .then((response) => {
           console.log(response.data.result);
+
           setSearchResult(response.data.result);
+          setCursorMark(response.data.cursorMark);
         })
         .catch((error) => {
           console.log(error);
@@ -294,7 +324,12 @@ export default function Search() {
     }
   };
 
-  const purchaseContact = async (tabeleElementId, contactId) => {
+  /**
+   * Purchase contact details for given contact. refer adapt.io purchase contact APIs
+   * @param {index of element in data array} tableElementId
+   * @param {adapt.io contact id used for purchasing that contact} contactId
+   */
+  const purchaseContact = async (tableElementId, contactId) => {
     try {
       setLoading(true);
       await axios
@@ -305,8 +340,6 @@ export default function Search() {
           },
         })
         .then((response) => {
-          //console.log(response.data);
-
           //update credits
           if (
             response.data.emailAddress !== "none" &&
@@ -314,49 +347,57 @@ export default function Search() {
             response.data.emailAddress !== undefined
           ) {
             // if logged in, decrement credits from db
+
             if (firebaseAuthUUID) {
               const userDataRef = doc(db, "users", `${firebaseAuthUUID}`);
               updateDoc(userDataRef, {
-                credits: creditCount - 1,
+                credits: `${currentCredit - 1}`,
               });
-              setCreditCount(creditCount - 1);
             }
+            currentCredit = `${currentCredit - 1}`;
+            console.log("current credit: ", currentCredit);
           }
+
           // save purchased(found) email/phone data
+          let searchResultCopy = [...searchResult];
+
           if (response.data.emailAddress) {
-            searchResult[tabeleElementId]["emailAddress"] =
+            searchResultCopy[tableElementId]["emailAddress"] =
               response.data.emailAddress;
           } else {
-            searchResult[tabeleElementId]["emailAddress"] = "";
+            searchResultCopy[tableElementId]["emailAddress"] = "";
           }
 
           if (response.data.phoneDirect) {
-            searchResult[tabeleElementId]["phoneDirect"] =
+            searchResultCopy[tableElementId]["phoneDirect"] =
               response.data.phoneDirect;
           } else {
-            searchResult[tabeleElementId]["phoneDirect"] = "";
+            searchResultCopy[tableElementId]["phoneDirect"] = "";
           }
 
           if (response.data.phoneCompany) {
-            searchResult[tabeleElementId]["phoneCompany"] =
+            searchResultCopy[tableElementId]["phoneCompany"] =
               response.data.phoneCompany;
           } else {
-            searchResult[tabeleElementId]["phoneCompany"] = "";
+            searchResultCopy[tableElementId]["phoneCompany"] = "";
           }
 
           if (response.data.phoneMobile) {
-            searchResult[tabeleElementId]["phoneMobile"] =
+            searchResultCopy[tableElementId]["phoneMobile"] =
               response.data.phoneMobile;
           } else {
-            searchResult[tabeleElementId]["phoneMobile"] = "";
+            searchResultCopy[tableElementId]["phoneMobile"] = "";
           }
 
           if (response.data.phoneNumber) {
-            searchResult[tabeleElementId]["phoneNumber"] =
+            searchResultCopy[tableElementId]["phoneNumber"] =
               response.data.phoneNumber;
           } else {
-            searchResult[tabeleElementId]["phoneNumber"] = "";
+            searchResultCopy[tableElementId]["phoneNumber"] = "";
           }
+
+          //update changes in search result
+          setSearchResult(searchResultCopy);
         })
         .catch((error) => {
           console.log(error);
@@ -366,47 +407,6 @@ export default function Search() {
       console.log(err);
     }
   };
-
-  //fetch email
-  // const fetchSearchResult = async (
-  //   selectedDepartment,
-  //   selectedLevel,
-  //   selectedIndustry,
-  //   selectedCompanySize,
-  //   selectedCompanyRevenue
-  // ) => {
-  //   try {
-  //     const response = await fetch(`${serverURL}/contacts`, {
-  //       method: "POST",
-  //       headers: {
-  //         Accept: "application/json",
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({
-  //         name: [],
-  //         firstName: [],
-  //         lastName: [],
-  //         title: [],
-  //         dept: [],
-  //         level: [],
-  //         companyName: [],
-  //         nameDomain: [],
-  //         numberOfEmployees: [],
-  //         revenue: [],
-  //         industryName: ["Education"],
-  //         city: [],
-  //         country: [],
-  //         state: [],
-  //         zipCode: [],
-  //       }),
-  //     });
-
-  //     let searchResult = await response.json();
-  //     console.log(searchResult);
-  //   } catch (error) {
-  //     console.log(error.message);
-  //   }
-  // };
 
   // respond to changes on filter values
   useEffect(() => {
@@ -436,7 +436,9 @@ export default function Search() {
         selectedLastName,
         selectedTitle,
         selectedDomain,
-        selectedCountry
+        selectedCountry,
+        titleExactMatch,
+        cursorMark
       );
       // console.log(selectedDepartment);
       // console.log(selectedLevel);
@@ -464,6 +466,7 @@ export default function Search() {
     selectedDomain,
     selectedCompany,
     selectedCountry,
+    titleExactMatch,
   ]);
 
   // handle changes on filter selectors
@@ -505,7 +508,40 @@ export default function Search() {
     setSelectedCountry(value);
   }
 
-  return user ? (
+  const fetchNextPage = () => {
+    fetchSearchResult(
+      selectedDepartment,
+      selectedLevel,
+      selectedIndustry,
+      selectedCompany,
+      selectedCompanySize,
+      selectedCompanyRevenue,
+      selectedName,
+      selectedFirstName,
+      selectedLastName,
+      selectedTitle,
+      selectedDomain,
+      selectedCountry,
+      titleExactMatch,
+      cursorMark
+    );
+  };
+
+  const viewAllSelectedContacts = (selectedUserData) => {
+    // selectedUserData.forEach((userData) => {
+    //   let indexOfThisElementInSearchResult = searchResult.indexOf(userData);
+    //   purchaseContact(indexOfThisElementInSearchResult, userData.id);
+    // });
+
+    for (let i = 0; i < selectedUserData.length; i++) {
+      let indexOfThisElementInSearchResult = searchResult.indexOf(
+        selectedUserData[i]
+      );
+      purchaseContact(indexOfThisElementInSearchResult, selectedUserData[i].id);
+    }
+  };
+
+  return loggedInUser ? (
     <div className="Search">
       <Topnav />
       <div className="content">
@@ -624,6 +660,24 @@ export default function Search() {
 
           {/** Search result card */}
           <div className="search-result-card">
+            <div className="search-result-card-controls">
+              <Button
+                style={{ margin: "0px 10px" }}
+                onClick={() => {
+                  viewAllSelectedContacts(selectedUserData);
+                }}
+              >
+                View Selected
+              </Button>
+              <Button
+                onClick={() => {
+                  fetchNextPage();
+                }}
+              >
+                Next
+              </Button>
+            </div>
+
             <Table
               size="large"
               columns={columns}
