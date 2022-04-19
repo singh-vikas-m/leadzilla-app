@@ -101,6 +101,14 @@ export default function Search() {
         <Space size="middle">
           <div style={{ display: "flex", flexDirection: "column" }}>
             <h4>{record.companyName}</h4>
+            <img
+              style={{ maxWidth: "30px" }}
+              src={
+                "https://www." + record.primaryDomain + "/favicon.ico" ||
+                "https://" + record.primaryDomain + "/favicon.ico"
+              }
+              alt=""
+            />
             <a
               href={"http://" + record.primaryDomain}
               rel="noopener noreferrer"
