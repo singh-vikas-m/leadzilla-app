@@ -101,13 +101,42 @@ export default function Search() {
           <div style={{ display: "flex", flexDirection: "column" }}>
             <h4>{record.firstName + " " + record.lastName}</h4>
             <p>{record.title}</p>
-            <a
-              href={"http://" + record.linkedInId}
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              LinkedIn
-            </a>
+
+            {record.linkedInId ? (
+              <a
+                href={"http://" + record.linkedInId}
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                LinkedIn
+              </a>
+            ) : (
+              ""
+            )}
+
+            {record.facebookId ? (
+              <a
+                href={"http://" + record.facebookId}
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                Facebook
+              </a>
+            ) : (
+              ""
+            )}
+
+            {record.twitterId ? (
+              <a
+                href={"http://" + record.twitterId}
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                Twitter
+              </a>
+            ) : (
+              ""
+            )}
           </div>
         </Space>
       ),
@@ -119,16 +148,6 @@ export default function Search() {
       render: (text, record, index) => (
         <Space size="middle">
           <div style={{ display: "flex", flexDirection: "column" }}>
-            <h4>{record.companyName}</h4>
-            {/* <img
-              style={{ maxWidth: "30px" }}
-              src={
-                "https://www." + record.primaryDomain + "/favicon.ico" ||
-                "https://" + record.primaryDomain + "/favicon.ico"
-              }
-              alt=""
-            /> */}
-
             {/**
              * Use clearbit api to fetch company logos using domain name
              */}
@@ -139,6 +158,15 @@ export default function Search() {
               }
               alt=""
             />
+            <h4>{record.companyName}</h4>
+            {/* <img
+              style={{ maxWidth: "30px" }}
+              src={
+                "https://www." + record.primaryDomain + "/favicon.ico" ||
+                "https://" + record.primaryDomain + "/favicon.ico"
+              }
+              alt=""
+            /> */}
 
             <a
               href={"http://" + record.primaryDomain}
@@ -733,7 +761,7 @@ export default function Search() {
                 Export CSV
               </Button>
               <Button
-                style={{ margin: "0px 10px" }}
+                style={{ margin: "0px 20px" }}
                 onClick={() => {
                   viewAllSelectedContacts(selectedUserData);
                 }}
