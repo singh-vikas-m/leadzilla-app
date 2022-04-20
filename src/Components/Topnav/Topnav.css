@@ -26,12 +26,13 @@
 
 .Topnav .account-info .profile-pic {
   cursor: pointer;
-  margin: 0px 20px 0px 20px;
+  margin: 0px 20px 0px 10px;
 }
 
 .Topnav .account-info .profile-pic img {
   height: 45px;
   border-radius: 50px;
+  /* border: 2px solid #b19cff; */
 }
 
 .Topnav .account-info .credits {

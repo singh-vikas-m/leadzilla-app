@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { Spin } from "antd";
 import { Button, Table, Select, Space } from "antd";
 import axios from "axios";
+import { CSVLink } from "react-csv";
 
 export default function Search() {
   //filter selector values
@@ -30,6 +31,7 @@ export default function Search() {
   //filter setting states
   const [titleExactMatch, setTitleExactMatch] = useState(false);
   const [cursorMark, setCursorMark] = useState("");
+  const [totalContactsAvailable, setTotalContactsAvailable] = useState("");
 
   //misc states
   const [loggedInUser, setLoggedInUser] = useState(false);
@@ -72,6 +74,23 @@ export default function Search() {
     }
   });
 
+  const [CSVHeaders] = useState([
+    { label: "fullName", key: "fullName" },
+    { label: "firstName", key: "firstName" },
+    { label: "lastName", key: "lastName" },
+    { label: "companyName", key: "companyName" },
+    // { label: "verificationStatus", key: "emailStatus" },
+    { label: "jobTitle", key: "title" },
+    { label: "emailId", key: "emailAddress" },
+    { label: "phoneNumber", key: "phoneNumber" },
+    { label: "phoneDirect", key: "phoneDirect" },
+    { label: "phoneCompany", key: "phoneCompany" },
+    { label: "phoneMobile", key: "phoneMobile" },
+    { label: "uniqueLinkedinId", key: "linkedInId" },
+    { label: "twitterId", key: "twitterId" },
+    { label: "facebookId", key: "facebookId" },
+  ]);
+
   const columns = [
     {
       title: "Name",
@@ -101,14 +120,26 @@ export default function Search() {
         <Space size="middle">
           <div style={{ display: "flex", flexDirection: "column" }}>
             <h4>{record.companyName}</h4>
-            <img
+            {/* <img
               style={{ maxWidth: "30px" }}
               src={
                 "https://www." + record.primaryDomain + "/favicon.ico" ||
                 "https://" + record.primaryDomain + "/favicon.ico"
               }
               alt=""
+            /> */}
+
+            {/**
+             * Use clearbit api to fetch company logos using domain name
+             */}
+            <img
+              style={{ maxWidth: "40px" }}
+              src={
+                "https://logo.clearbit.com/" + record.primaryDomain + "?size=40"
+              }
+              alt=""
             />
+
             <a
               href={"http://" + record.primaryDomain}
               rel="noopener noreferrer"
@@ -129,23 +160,23 @@ export default function Search() {
           <div style={{ display: "flex", flexDirection: "column" }}>
             <h4>{record.emailAddress || "*****@" + record.primaryDomain}</h4>
             {record.phoneDirect && record.phoneDirect !== "" ? (
-              <p>Direct Dial {record.phoneDirect}</p>
+              <p>Direct {record.phoneDirect}</p>
             ) : (
               ""
             )}
             {record.phoneCompany && record.phoneCompany !== "" ? (
-              <p>Company Line {record.phoneCompany}</p>
+              <p>Company {record.phoneCompany}</p>
             ) : (
               ""
             )}
             {record.phoneMobile && record.phoneMobile !== "" ? (
-              <p> Mobile Number {record.phoneMobile}</p>
+              <p> Mobile {record.phoneMobile}</p>
             ) : (
               ""
             )}
 
             {record.phoneNumber && record.phoneNumber !== "" ? (
-              <p> Other Number {record.phoneNumber}</p>
+              <p> Other {record.phoneNumber}</p>
             ) : (
               ""
             )}
@@ -318,10 +349,18 @@ export default function Search() {
           },
         })
         .then((response) => {
-          console.log(response.data.result);
+          let searchResultData = response.data.result;
 
-          setSearchResult(response.data.result);
+          // add extra data points that are needed in exported data (eg: fullName)
+          searchResultData.forEach((data, index) => {
+            data["fullName"] = data.firstName + " " + data.lastName;
+          });
+
+          console.log("search result : ", searchResultData);
+          setSearchResult(searchResultData);
+          setSelectedUserData([]);
           setCursorMark(response.data.cursorMark);
+          setTotalContactsAvailable(response.data.hits);
         })
         .catch((error) => {
           console.log(error);
@@ -549,6 +588,10 @@ export default function Search() {
     }
   };
 
+  const exportData = (selectedUserData) => {
+    console.log("exporting :", selectedUserData);
+  };
+
   return loggedInUser ? (
     <div className="Search">
       <Topnav />
@@ -669,6 +712,26 @@ export default function Search() {
           {/** Search result card */}
           <div className="search-result-card">
             <div className="search-result-card-controls">
+              <p style={{ display: "none" }}>
+                {totalContactsAvailable} contacts
+              </p>
+              <CSVLink
+                data={selectedUserData}
+                headers={CSVHeaders}
+                filename={"leadzilla-console-export.csv"}
+                className="export-csv-button"
+                target="_blank"
+              >
+                Export CSV
+              </CSVLink>
+              <Button
+                style={{ display: "none", margin: "0px 10px" }}
+                onClick={() => {
+                  exportData(selectedUserData);
+                }}
+              >
+                Export CSV
+              </Button>
               <Button
                 style={{ margin: "0px 10px" }}
                 onClick={() => {

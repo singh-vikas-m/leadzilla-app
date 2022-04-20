@@ -51,6 +51,7 @@ export default function Topnav() {
       setUserName(loggedInUser.displayName);
       setUserEmail(loggedInUser.email);
       setUserPhoto(loggedInUser.photoURL);
+      console.log(loggedInUser.photoURL);
 
       const uid = loggedInUser.uid;
       onSnapshot(doc(db, "users", `${uid}`), (doc) => {
@@ -212,11 +213,7 @@ export default function Topnav() {
             trigger="hover"
           >
             {userPhoto ? (
-              <img
-                src={userPhoto}
-                className="user-profile-photo"
-                alt="logged-in-user-pic"
-              />
+              <img src={userPhoto} className="user-profile-photo" alt="user" />
             ) : (
               <Avatar size={64} icon={<UserOutlined />} />
             )}
