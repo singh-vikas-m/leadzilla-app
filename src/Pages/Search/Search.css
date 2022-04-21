@@ -59,3 +59,184 @@
   align-items: center;
   margin: 5px 0px 20px 0px;
 }
+
+.Search .contact-name {
+  margin-bottom: 5px;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: left;
+  color: #151417;
+}
+
+.Search .contact-role {
+  margin-bottom: 5px;
+  font-size: 12px;
+  line-height: 13px;
+  font-weight: 500;
+  text-align: left;
+  color: #151417;
+}
+
+.Search .contact-department {
+  margin: 0px;
+  font-size: 12px;
+  line-height: 13px;
+  font-weight: 500;
+  text-align: left;
+  color: #151417;
+}
+
+.Search .contact-container {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.Search .contact-email {
+  margin-bottom: 5px;
+  font-size: 12px;
+  line-height: 13px;
+  line-height: 14px;
+  font-weight: 500;
+  text-align: left;
+  color: #151417;
+}
+
+.Search .contact-container .contact-type {
+  margin: 5px 5px 0px 0px;
+  font-size: 12px;
+  line-height: 14px;
+  font-weight: 500;
+  text-align: left;
+  color: #8b8b8b;
+  background-color: #f6f6f6;
+  padding: 5px;
+  border-radius: 4px;
+  width: 70px;
+}
+
+.Search .contact-container .contact-data {
+  margin: 5px 5px 0px 5px;
+  font-size: 12px;
+  line-height: 14px;
+  font-weight: 500;
+  text-align: left;
+  color: #8b8b8b;
+  width: 130px;
+}
+
+.Search .company-name {
+  margin-bottom: 5px;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: left;
+  color: #151417;
+}
+
+.Search .company-address {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.Search .company-details {
+  margin-bottom: 0px;
+  font-size: 12px;
+  line-height: 14px;
+  font-weight: 500;
+  text-align: left;
+  color: #8b8b8b;
+}
+
+.Search .primary-button {
+  margin-top: 0.2rem;
+  margin-bottom: 0.2rem;
+  height: 35px;
+  padding: 0px 10px;
+  color: #fff;
+  font-size: 13.5px;
+  font-weight: 700;
+  background-color: #6f4cef;
+  border: 1px solid #5537c2;
+  cursor: pointer;
+  transition: 0.3s;
+  -webkit-transition: 0.3s;
+  -moz-transition: 0.3s;
+  border-radius: 0.3rem;
+}
+
+.Search .primary-button:hover {
+  background-color: #8366ed;
+}
+
+.Search .secondary-button-inactive {
+  margin-top: 0.2rem;
+  margin-bottom: 0.2rem;
+  padding: 0px 10px;
+  height: 35px;
+  color: #151417;
+  font-size: 13.5px;
+  font-weight: 600;
+  background-color: transparent;
+  border: 1px solid #d5d5d5;
+  cursor: pointer;
+  transition: 0.3s;
+  -webkit-transition: 0.3s;
+  -moz-transition: 0.3s;
+  border-radius: 0.3rem;
+}
+
+.Search .secondary-button-inactive:hover {
+  background-color: #f6f6f6;
+}
+
+.Search .secondary-button-active {
+  margin-top: 0.2rem;
+  margin-bottom: 0.2rem;
+  padding: 0px 10px;
+  height: 35px;
+  color: #151417;
+  font-size: 13.5px;
+  font-weight: 600;
+  background-color: #f6f6f6;
+  border: 1px solid #d5d5d5;
+  cursor: pointer;
+  transition: 0.3s;
+  -webkit-transition: 0.3s;
+  -moz-transition: 0.3s;
+  border-radius: 0.3rem;
+}
+
+.Search .secondary-button-active:hover {
+  border: 1px solid #6f4cef;
+  background-color: #c7b7ff;
+  color: #6f4cef;
+  cursor: pointer;
+}
+
+.Search .export-csv-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 35px;
+  font-size: 13.5px;
+  padding: 0px 10px;
+  background-color: #f6f6f6;
+  color: #151417;
+  cursor: pointer;
+  margin: 0 0.5rem 0 0.5rem;
+  padding: 0 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #d5d5d5;
+  font-weight: 600;
+  transition: 0.3s;
+  -webkit-transition: 0.3s;
+  -moz-transition: 0.3s;
+}
+
+.Search .export-csv-button:hover {
+  border: 1px solid #6f4cef;
+  background-color: #c7b7ff;
+  color: #6f4cef;
+  cursor: pointer;
+}

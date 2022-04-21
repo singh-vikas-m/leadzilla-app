@@ -99,8 +99,20 @@ export default function Search() {
       render: (text, record, index) => (
         <Space size="middle">
           <div style={{ display: "flex", flexDirection: "column" }}>
-            <h4>{record.firstName + " " + record.lastName}</h4>
-            <p>{record.title}</p>
+            <h4 className="contact-name">
+              {record.firstName + " " + record.lastName}
+            </h4>
+            <p className="contact-role">{record.title}</p>
+
+            <div>
+              {record.dept?.map((department, index) => {
+                return (
+                  <p className="contact-department" key={index}>
+                    {department}
+                  </p>
+                );
+              })}
+            </div>
 
             {record.linkedInId ? (
               <a
@@ -113,7 +125,6 @@ export default function Search() {
             ) : (
               ""
             )}
-
             {record.facebookId ? (
               <a
                 href={"http://" + record.facebookId}
@@ -125,7 +136,6 @@ export default function Search() {
             ) : (
               ""
             )}
-
             {record.twitterId ? (
               <a
                 href={"http://" + record.twitterId}
@@ -152,21 +162,34 @@ export default function Search() {
              * Use clearbit api to fetch company logos using domain name
              */}
             <img
-              style={{ maxWidth: "40px" }}
+              style={{
+                maxWidth: "30px",
+                background: "#f6f6f6",
+                marginBottom: "5px",
+              }}
               src={
-                "https://logo.clearbit.com/" + record.primaryDomain + "?size=40"
+                "https://logo.clearbit.com/" + record.primaryDomain + "?size=30"
               }
               alt=""
             />
-            <h4>{record.companyName}</h4>
-            {/* <img
-              style={{ maxWidth: "30px" }}
-              src={
-                "https://www." + record.primaryDomain + "/favicon.ico" ||
-                "https://" + record.primaryDomain + "/favicon.ico"
-              }
-              alt=""
-            /> */}
+            <h1 className="company-name">{record.companyName}</h1>
+            {record.city || record.country ? (
+              <div className="company-address">
+                <p className="company-details">
+                  {record.city},{record.country}
+                </p>
+              </div>
+            ) : (
+              ""
+            )}
+
+            <p className="company-details">{record.industry}</p>
+
+            {record.companySize ? (
+              <p className="company-details">{record.companySize} employees</p>
+            ) : (
+              ""
+            )}
 
             <a
               href={"http://" + record.primaryDomain}
@@ -186,25 +209,39 @@ export default function Search() {
       render: (text, record, index) => (
         <Space size="middle">
           <div style={{ display: "flex", flexDirection: "column" }}>
-            <h4>{record.emailAddress || "*****@" + record.primaryDomain}</h4>
+            <p className="contact-email">
+              {record.emailAddress || "***@" + record.primaryDomain}
+            </p>
             {record.phoneDirect && record.phoneDirect !== "" ? (
-              <p>Direct {record.phoneDirect}</p>
+              <div className="contact-container">
+                <p className="contact-type">Direct</p>
+                <p className="contact-data">{record.phoneDirect}</p>
+              </div>
             ) : (
               ""
             )}
             {record.phoneCompany && record.phoneCompany !== "" ? (
-              <p>Company {record.phoneCompany}</p>
+              <div className="contact-container">
+                <p className="contact-type">Company</p>
+                <p className="contact-data">{record.phoneCompany}</p>
+              </div>
             ) : (
               ""
             )}
             {record.phoneMobile && record.phoneMobile !== "" ? (
-              <p> Mobile {record.phoneMobile}</p>
+              <div className="contact-container">
+                <p className="contact-type">Mobile</p>
+                <p className="contact-data">{record.phoneMobile}</p>
+              </div>
             ) : (
               ""
             )}
 
             {record.phoneNumber && record.phoneNumber !== "" ? (
-              <p> Other {record.phoneNumber}</p>
+              <div className="contact-container">
+                <p className="contact-type">Other</p>
+                <p className="contact-data">{record.phoneNumber}</p>
+              </div>
             ) : (
               ""
             )}
@@ -217,13 +254,14 @@ export default function Search() {
       key: "action",
       render: (text, record, index) => (
         <Space size="middle">
-          <Button
+          <button
+            className="secondary-button-active"
             onClick={(e) => {
               purchaseContact(index, record.id);
             }}
           >
             View
-          </Button>
+          </button>
         </Space>
       ),
     },
@@ -752,6 +790,7 @@ export default function Search() {
               >
                 Export CSV
               </CSVLink>
+
               <Button
                 style={{ display: "none", margin: "0px 10px" }}
                 onClick={() => {
@@ -760,7 +799,18 @@ export default function Search() {
               >
                 Export CSV
               </Button>
-              <Button
+
+              <button
+                className="primary-button"
+                style={{ margin: "0px 20px" }}
+                onClick={() => {
+                  viewAllSelectedContacts(selectedUserData);
+                }}
+              >
+                View Selected
+              </button>
+
+              {/* <Button
                 style={{ margin: "0px 20px" }}
                 onClick={() => {
                   viewAllSelectedContacts(selectedUserData);
@@ -774,7 +824,16 @@ export default function Search() {
                 }}
               >
                 Next
-              </Button>
+              </Button> */}
+
+              <button
+                className="secondary-button-inactive"
+                onClick={() => {
+                  fetchNextPage();
+                }}
+              >
+                Next
+              </button>
             </div>
 
             <Table

@@ -215,7 +215,12 @@ export default function Topnav() {
             {userPhoto ? (
               <img src={userPhoto} className="user-profile-photo" alt="user" />
             ) : (
-              <Avatar size={64} icon={<UserOutlined />} />
+              // <Avatar size={45} icon={<UserOutlined />} />
+              <Avatar
+                size={45}
+                style={{ background: "#fff", color: "#6f4cef" }}
+                icon={<UserOutlined />}
+              />
             )}
           </Popover>
         </div>
