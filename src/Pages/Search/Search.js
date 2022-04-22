@@ -5,9 +5,21 @@ import { onAuthStateChanged } from "firebase/auth";
 import { db, auth } from "../../firebase-config";
 import { doc, onSnapshot, updateDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
-import { Spin } from "antd";
+import { Divider, Spin } from "antd";
 import { Button, Table, Select, Space } from "antd";
 import axios from "axios";
+import {
+  UserGroupIcon,
+  LinkIcon,
+  OfficeBuildingIcon,
+  LibraryIcon,
+  TrendingUpIcon,
+  LocationMarkerIcon,
+  BriefcaseIcon,
+  StarIcon,
+  UsersIcon,
+  UserIcon,
+} from "@heroicons/react/outline";
 import { CSVLink } from "react-csv";
 
 export default function Search() {
@@ -79,6 +91,7 @@ export default function Search() {
     { label: "firstName", key: "firstName" },
     { label: "lastName", key: "lastName" },
     { label: "companyName", key: "companyName" },
+    { label: "website", key: "primaryDomain" },
     // { label: "verificationStatus", key: "emailStatus" },
     { label: "jobTitle", key: "title" },
     { label: "emailId", key: "emailAddress" },
@@ -666,113 +679,207 @@ export default function Search() {
           {/** Search filter card */}
           <div className="search-filter-card">
             <h1 className="filter-heading">COMPANY</h1>
-            <Select
-              bordered={true}
-              mode="tags"
-              allowClear
-              placeholder="Company Website"
-              onChange={handleDomainChange}
-              style={{ width: "90%", margin: "10px" }}
-            />
 
-            <Select
-              mode="tags"
-              allowClear
-              placeholder="Company Name"
-              onChange={handleCompanyChange}
-              style={{ width: "90%", margin: "10px" }}
-            />
-            <Select
-              mode="multiple"
-              allowClear
-              style={{ width: "90%", margin: "10px" }}
-              placeholder="Department"
-              onChange={handleDepartmentChange}
-            >
-              {departmentOptions}
-            </Select>
+            <span className="search-filter-container">
+              <span className="filter-label-container">
+                <OfficeBuildingIcon
+                  className="filter-icons"
+                  color={"#6f4cef"}
+                />
+                <h1 className="filter-type">Company Name</h1>
+              </span>
+              <Select
+                bordered={false}
+                mode="tags"
+                allowClear
+                placeholder="Enter company name"
+                onChange={handleCompanyChange}
+                style={{ width: "100%", margin: "5px 0px 0px 5px" }}
+              />
+            </span>
 
-            <Select
-              mode="multiple"
-              allowClear
-              style={{ width: "90%", margin: "10px" }}
-              placeholder="Industry"
-              onChange={handleIndustryChange}
-            >
-              {industryOptions}
-            </Select>
+            <span className="search-filter-container">
+              <span className="filter-label-container">
+                <LinkIcon className="filter-icons" color={"#6f4cef"} />
+                <h1 className="filter-type">Company website</h1>
+              </span>
+              <Select
+                bordered={false}
+                mode="tags"
+                allowClear
+                placeholder="Enter company website"
+                onChange={handleDomainChange}
+                style={{ width: "100%", margin: "5px 0px 0px 5px" }}
+              />
+            </span>
 
-            <Select
-              mode="multiple"
-              allowClear
-              style={{ width: "90%", margin: "10px" }}
-              placeholder="Company Size"
-              onChange={handleCompanySizeChange}
-            >
-              {companySizeOptions}
-            </Select>
+            <span className="search-filter-container">
+              <span className="filter-label-container">
+                <LibraryIcon className="filter-icons" color={"#6f4cef"} />
+                <h1 className="filter-type">Industry</h1>
+              </span>
+              <Select
+                bordered={false}
+                mode="multiple"
+                allowClear
+                placeholder="Select industry"
+                onChange={handleIndustryChange}
+                style={{ width: "100%", margin: "5px 0px 0px 5px" }}
+              >
+                {industryOptions}
+              </Select>
+            </span>
 
-            <Select
-              mode="multiple"
-              allowClear
-              style={{ width: "90%", margin: "10px" }}
-              placeholder="Company Revenue"
-              onChange={handleCompanyRevenueChange}
-            >
-              {companyRevenueOptions}
-            </Select>
+            <span className="search-filter-container">
+              <span className="filter-label-container">
+                <UserGroupIcon className="filter-icons" color={"#6f4cef"} />
+                <h1 className="filter-type">Headcount</h1>
+              </span>
+              <Select
+                bordered={false}
+                mode="multiple"
+                allowClear
+                placeholder="Select employee headcount"
+                onChange={handleCompanySizeChange}
+                style={{ width: "100%", margin: "5px 0px 0px 5px" }}
+              >
+                {companySizeOptions}
+              </Select>
+            </span>
+
+            <span className="search-filter-container">
+              <span className="filter-label-container">
+                <TrendingUpIcon className="filter-icons" color={"#6f4cef"} />
+                <h1 className="filter-type">Revenue</h1>
+              </span>
+              <Select
+                bordered={false}
+                mode="multiple"
+                allowClear
+                placeholder="Select company revenue"
+                onChange={handleCompanyRevenueChange}
+                style={{ width: "100%", margin: "5px 0px 0px 5px" }}
+              >
+                {companyRevenueOptions}
+              </Select>
+            </span>
+
+            <span className="search-filter-container">
+              <span className="filter-label-container">
+                <LocationMarkerIcon
+                  className="filter-icons"
+                  color={"#6f4cef"}
+                />
+                <h1 className="filter-type">Country</h1>
+              </span>
+              <Select
+                bordered={false}
+                mode="tags"
+                allowClear
+                placeholder="Enter country of company"
+                onChange={handleCountryChange}
+                style={{ width: "100%", margin: "5px 0px 0px 5px" }}
+              />
+            </span>
 
             {/** custom people filters */}
+            <Divider />
             <h1 className="filter-heading">PEOPLE</h1>
 
-            <Select
-              mode="tags"
-              allowClear
-              placeholder="Title"
-              onChange={handleTitleChange}
-              style={{ width: "90%", margin: "10px" }}
-            />
+            <span className="search-filter-container">
+              <span className="filter-label-container">
+                <BriefcaseIcon className="filter-icons" color={"#6f4cef"} />
+                <h1 className="filter-type">Title</h1>
+              </span>
+              <Select
+                bordered={false}
+                mode="tags"
+                allowClear
+                placeholder="Enter title"
+                onChange={handleTitleChange}
+                style={{ width: "100%", margin: "5px 0px 0px 5px" }}
+              />
+            </span>
 
-            <Select
-              mode="multiple"
-              allowClear
-              style={{ width: "90%", margin: "10px" }}
-              placeholder="Level"
-              onChange={handleLevelChange}
-            >
-              {levelOptions}
-            </Select>
+            <span className="search-filter-container">
+              <span className="filter-label-container">
+                <StarIcon className="filter-icons" color={"#6f4cef"} />
+                <h1 className="filter-type">Seniority</h1>
+              </span>
+              <Select
+                bordered={false}
+                mode="multiple"
+                allowClear
+                placeholder="Select seniority"
+                onChange={handleLevelChange}
+                style={{ width: "100%", margin: "5px 0px 0px 5px" }}
+              >
+                {levelOptions}
+              </Select>
+            </span>
 
-            <Select
-              mode="tags"
-              allowClear
-              placeholder="Full name"
-              onChange={handleNameChange}
-              style={{ width: "90%", margin: "10px" }}
-            />
+            <span className="search-filter-container">
+              <span className="filter-label-container">
+                <UsersIcon className="filter-icons" color={"#6f4cef"} />
+                <h1 className="filter-type">Department</h1>
+              </span>
 
-            <Select
-              mode="tags"
-              allowClear
-              placeholder="First name"
-              onChange={handleFirstNameChange}
-              style={{ width: "90%", margin: "10px" }}
-            />
+              <Select
+                bordered={false}
+                mode="multiple"
+                allowClear
+                placeholder="Select department"
+                onChange={handleDepartmentChange}
+                style={{ width: "100%", margin: "5px 0px 0px 5px" }}
+              >
+                {departmentOptions}
+              </Select>
+            </span>
 
-            <Select
-              mode="tags"
-              allowClear
-              placeholder="Last name"
-              onChange={handleLastNameChange}
-              style={{ width: "90%", margin: "10px" }}
-            />
-            <Select
-              mode="tags"
-              allowClear
-              placeholder="Country"
-              onChange={handleCountryChange}
-              style={{ width: "90%", margin: "10px" }}
-            />
+            <span className="search-filter-container">
+              <span className="filter-label-container">
+                <UserIcon className="filter-icons" color={"#6f4cef"} />
+                <h1 className="filter-type">Full name</h1>
+              </span>
+              <Select
+                bordered={false}
+                mode="tags"
+                allowClear
+                placeholder="Enter full name"
+                onChange={handleNameChange}
+                style={{ width: "100%", margin: "5px 0px 0px 5px" }}
+              />
+            </span>
+
+            <span className="search-filter-container">
+              <span className="filter-label-container">
+                <UserIcon className="filter-icons" color={"#6f4cef"} />
+                <h1 className="filter-type">First name</h1>
+              </span>
+              <Select
+                bordered={false}
+                mode="tags"
+                allowClear
+                placeholder="Enter first name"
+                onChange={handleFirstNameChange}
+                style={{ width: "100%", margin: "5px 0px 0px 5px" }}
+              />
+            </span>
+
+            <span className="search-filter-container">
+              <span className="filter-label-container">
+                <UserIcon className="filter-icons" color={"#6f4cef"} />
+                <h1 className="filter-type">Last name</h1>
+              </span>
+              <Select
+                bordered={false}
+                mode="tags"
+                allowClear
+                placeholder="Enter last name"
+                onChange={handleLastNameChange}
+                style={{ width: "100%", margin: "5px 0px 0px 5px" }}
+              />
+            </span>
           </div>
 
           {/** Search result card */}
