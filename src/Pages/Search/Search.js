@@ -885,9 +885,17 @@ export default function Search() {
           {/** Search result card */}
           <div className="search-result-card">
             <div className="search-result-card-controls">
-              <p style={{ display: "none" }}>
-                {totalContactsAvailable} contacts
-              </p>
+              {totalContactsAvailable ? (
+                <p
+                  className="available-contact-count"
+                  style={{ display: "block" }}
+                >
+                  {totalContactsAvailable} contacts
+                </p>
+              ) : (
+                ""
+              )}
+
               <CSVLink
                 data={selectedUserData}
                 headers={CSVHeaders}
@@ -916,22 +924,6 @@ export default function Search() {
               >
                 View Selected
               </button>
-
-              {/* <Button
-                style={{ margin: "0px 20px" }}
-                onClick={() => {
-                  viewAllSelectedContacts(selectedUserData);
-                }}
-              >
-                View Selected
-              </Button>
-              <Button
-                onClick={() => {
-                  fetchNextPage();
-                }}
-              >
-                Next
-              </Button> */}
 
               <button
                 className="secondary-button-inactive"
