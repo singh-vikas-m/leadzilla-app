@@ -43,6 +43,7 @@ export default function Search() {
   //filter setting states
   const [titleExactMatch, setTitleExactMatch] = useState(false);
   const [cursorMark, setCursorMark] = useState("");
+  const [resultLimit, setResultLimit] = useState(15);
   const [totalContactsAvailable, setTotalContactsAvailable] = useState("");
 
   //misc states
@@ -52,7 +53,6 @@ export default function Search() {
 
   const [loading, setLoading] = useState(false);
   const [orgChartDrawerVisible, setOrgChartDrawerVisible] = useState(false);
-
   const [firebaseAuthUUID, setFirebaseAuthUUID] = useState("");
 
   let navigate = useNavigate();
@@ -382,6 +382,14 @@ export default function Search() {
     <Option key={"> $1B"}>{"> $1B"}</Option>,
   ];
 
+  const resultFetchLimitOptions = [
+    <Option key={15}>15</Option>,
+    <Option key={25}>25</Option>,
+    <Option key={50}>50</Option>,
+    <Option key={75}>75</Option>,
+    <Option key={100}>100</Option>,
+  ];
+
   const fetchSearchResult = async (
     selectedDepartment,
     selectedLevel,
@@ -395,7 +403,10 @@ export default function Search() {
     selectedTitle,
     selectedDomain,
     selectedCountry,
-    titleExactMatch
+    titleExactMatch,
+    cursorMark,
+    resultLimit,
+    fetchNext
   ) => {
     var data = {
       name: selectedName,
@@ -415,8 +426,8 @@ export default function Search() {
       zipCode: [],
       dontDisplayDeadContacts: false,
       dontDisplayOwnedContacts: false,
-      limit: 25,
-      cursorMark: cursorMark || "",
+      limit: resultLimit || 25,
+      cursorMark: fetchNext === true ? cursorMark : "",
       titleExactMatch: titleExactMatch,
     };
 
@@ -434,7 +445,7 @@ export default function Search() {
 
           // add extra data points that are needed in exported data (eg: fullName)
           searchResultData.forEach((data, index) => {
-            data["fullName"] = data.firstName + " " + data.lastName;
+            data["fullName"] = data?.firstName + " " + data?.lastName;
           });
 
           console.log("search result : ", searchResultData);
@@ -538,6 +549,7 @@ export default function Search() {
 
   // respond to changes on filter values
   useEffect(() => {
+    let fetchNext = false;
     if (
       selectedDepartment.length > 0 ||
       selectedLevel.length > 0 ||
@@ -566,7 +578,9 @@ export default function Search() {
         selectedDomain,
         selectedCountry,
         titleExactMatch,
-        cursorMark
+        cursorMark,
+        resultLimit,
+        fetchNext
       );
       // console.log(selectedDepartment);
       // console.log(selectedLevel);
@@ -595,6 +609,7 @@ export default function Search() {
     selectedCompany,
     selectedCountry,
     titleExactMatch,
+    resultLimit,
   ]);
 
   // Org chart side drawer
@@ -646,7 +661,13 @@ export default function Search() {
     setSelectedCountry(value);
   }
 
+  function handleResultLimitChange(value) {
+    setResultLimit(value);
+  }
+
   const fetchNextPage = () => {
+    let fetchNext = true;
+
     fetchSearchResult(
       selectedDepartment,
       selectedLevel,
@@ -661,7 +682,9 @@ export default function Search() {
       selectedDomain,
       selectedCountry,
       titleExactMatch,
-      cursorMark
+      cursorMark,
+      resultLimit,
+      fetchNext
     );
   };
 
@@ -937,6 +960,15 @@ export default function Search() {
                 View Selected
               </button>
 
+              <Select
+                bordered={true}
+                defaultValue={15}
+                onChange={handleResultLimitChange}
+                style={{ width: "80px", margin: "0px 10px 0px 5px" }}
+              >
+                {resultFetchLimitOptions}
+              </Select>
+
               <button
                 className="secondary-button-inactive"
                 onClick={() => {
@@ -954,7 +986,7 @@ export default function Search() {
               rowKey="id"
               rowSelection={{ ...rowSelection }}
               dataSource={[...searchResult]}
-              pagination={{ pageSize: 50 }}
+              pagination={{ pageSize: 100 }}
               scroll={{ y: "max-content" }}
             />
           </div>

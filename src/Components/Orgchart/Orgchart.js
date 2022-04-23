@@ -145,7 +145,7 @@ export default function Orgchart() {
   const nodeSize = { x: 200, y: 200 };
   const foreignObjectProps = { width: nodeSize.x, height: nodeSize.y, x: 20 };
   return (
-    <div style={containerStyles} ref={containerRef}>
+    <div className="Orgchart" style={containerStyles} ref={containerRef}>
       <Tree
         data={orgChartData}
         translate={translate}
