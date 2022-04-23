@@ -5,8 +5,8 @@ import { onAuthStateChanged } from "firebase/auth";
 import { db, auth } from "../../firebase-config";
 import { doc, onSnapshot, updateDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
-import { Divider, Spin } from "antd";
-import { Button, Table, Select, Space } from "antd";
+import { Button, Table, Select, Drawer, Space, Divider, Spin } from "antd";
+import Orgchart from "../../Components/Orgchart/Orgchart";
 import axios from "axios";
 import {
   UserGroupIcon,
@@ -51,8 +51,7 @@ export default function Search() {
   const [selectedUserData, setSelectedUserData] = useState([]);
 
   const [loading, setLoading] = useState(false);
-  const [creditCount, setCreditCount] = useState(0);
-  const [creditsFromDB, setCreditsFromDB] = useState("");
+  const [orgChartDrawerVisible, setOrgChartDrawerVisible] = useState(false);
 
   const [firebaseAuthUUID, setFirebaseAuthUUID] = useState("");
 
@@ -71,8 +70,6 @@ export default function Search() {
       setFirebaseAuthUUID(user.uid);
       onSnapshot(doc(db, "users", `${user.uid}`), (doc) => {
         // console.log("Current data: ", doc.data());
-        setCreditsFromDB(doc.data().credits);
-
         if (currentCredit === 0) {
           //console.log("credit loaded");
           currentCredit = doc.data().credits;
@@ -110,58 +107,56 @@ export default function Search() {
       dataIndex: "firstName",
       key: "firstName",
       render: (text, record, index) => (
-        <Space size="middle">
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            <h4 className="contact-name">
-              {record.firstName + " " + record.lastName}
-            </h4>
-            <p className="contact-role">{record.title}</p>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <h4 className="contact-name">
+            {record.firstName + " " + record.lastName}
+          </h4>
+          <p className="contact-role">{record.title}</p>
 
-            <div>
-              {record.dept?.map((department, index) => {
-                return (
-                  <p className="contact-department" key={index}>
-                    {department}
-                  </p>
-                );
-              })}
-            </div>
-
-            {record.linkedInId ? (
-              <a
-                href={"http://" + record.linkedInId}
-                rel="noopener noreferrer"
-                target="_blank"
-              >
-                LinkedIn
-              </a>
-            ) : (
-              ""
-            )}
-            {record.facebookId ? (
-              <a
-                href={"http://" + record.facebookId}
-                rel="noopener noreferrer"
-                target="_blank"
-              >
-                Facebook
-              </a>
-            ) : (
-              ""
-            )}
-            {record.twitterId ? (
-              <a
-                href={"http://" + record.twitterId}
-                rel="noopener noreferrer"
-                target="_blank"
-              >
-                Twitter
-              </a>
-            ) : (
-              ""
-            )}
+          <div>
+            {record.dept?.map((department, index) => {
+              return (
+                <p className="contact-department" key={index}>
+                  {department}
+                </p>
+              );
+            })}
           </div>
-        </Space>
+
+          {record.linkedInId ? (
+            <a
+              href={"http://" + record.linkedInId}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              LinkedIn
+            </a>
+          ) : (
+            ""
+          )}
+          {record.facebookId ? (
+            <a
+              href={"http://" + record.facebookId}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              Facebook
+            </a>
+          ) : (
+            ""
+          )}
+          {record.twitterId ? (
+            <a
+              href={"http://" + record.twitterId}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              Twitter
+            </a>
+          ) : (
+            ""
+          )}
+        </div>
       ),
     },
     {
@@ -169,50 +164,48 @@ export default function Search() {
       dataIndex: "companyName",
       key: "companyName",
       render: (text, record, index) => (
-        <Space size="middle">
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            {/**
-             * Use clearbit api to fetch company logos using domain name
-             */}
-            <img
-              style={{
-                maxWidth: "30px",
-                background: "#f6f6f6",
-                marginBottom: "5px",
-              }}
-              src={
-                "https://logo.clearbit.com/" + record.primaryDomain + "?size=30"
-              }
-              alt=""
-            />
-            <h1 className="company-name">{record.companyName}</h1>
-            {record.city || record.country ? (
-              <div className="company-address">
-                <p className="company-details">
-                  {record.city},{record.country}
-                </p>
-              </div>
-            ) : (
-              ""
-            )}
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          {/**
+           * Use clearbit api to fetch company logos using domain name
+           */}
+          <img
+            style={{
+              maxWidth: "30px",
+              background: "#f6f6f6",
+              marginBottom: "5px",
+            }}
+            src={
+              "https://logo.clearbit.com/" + record.primaryDomain + "?size=30"
+            }
+            alt=""
+          />
+          <h1 className="company-name">{record.companyName}</h1>
+          {record.city || record.country ? (
+            <div className="company-address">
+              <p className="company-details">
+                {record.city}, {" " + record.country}
+              </p>
+            </div>
+          ) : (
+            ""
+          )}
 
-            <p className="company-details">{record.industry}</p>
+          <p className="company-details">{record.industry}</p>
 
-            {record.companySize ? (
-              <p className="company-details">{record.companySize} employees</p>
-            ) : (
-              ""
-            )}
+          {record.companySize ? (
+            <p className="company-details">{record.companySize} employees</p>
+          ) : (
+            ""
+          )}
 
-            <a
-              href={"http://" + record.primaryDomain}
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              {record.primaryDomain}
-            </a>
-          </div>
-        </Space>
+          <a
+            href={"http://" + record.primaryDomain}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            {record.primaryDomain}
+          </a>
+        </div>
       ),
     },
     {
@@ -220,54 +213,53 @@ export default function Search() {
       dataIndex: "contact",
       key: "contact",
       render: (text, record, index) => (
-        <Space size="middle">
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            <p className="contact-email">
-              {record.emailAddress || "***@" + record.primaryDomain}
-            </p>
-            {record.phoneDirect && record.phoneDirect !== "" ? (
-              <div className="contact-container">
-                <p className="contact-type">Direct</p>
-                <p className="contact-data">{record.phoneDirect}</p>
-              </div>
-            ) : (
-              ""
-            )}
-            {record.phoneCompany && record.phoneCompany !== "" ? (
-              <div className="contact-container">
-                <p className="contact-type">Company</p>
-                <p className="contact-data">{record.phoneCompany}</p>
-              </div>
-            ) : (
-              ""
-            )}
-            {record.phoneMobile && record.phoneMobile !== "" ? (
-              <div className="contact-container">
-                <p className="contact-type">Mobile</p>
-                <p className="contact-data">{record.phoneMobile}</p>
-              </div>
-            ) : (
-              ""
-            )}
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <p className="contact-email">
+            {record.emailAddress || "***@" + record.primaryDomain}
+          </p>
+          {record.phoneDirect && record.phoneDirect !== "" ? (
+            <div className="contact-container">
+              <p className="contact-type">Direct</p>
+              <p className="contact-data">{record.phoneDirect}</p>
+            </div>
+          ) : (
+            ""
+          )}
+          {record.phoneCompany && record.phoneCompany !== "" ? (
+            <div className="contact-container">
+              <p className="contact-type">Company</p>
+              <p className="contact-data">{record.phoneCompany}</p>
+            </div>
+          ) : (
+            ""
+          )}
+          {record.phoneMobile && record.phoneMobile !== "" ? (
+            <div className="contact-container">
+              <p className="contact-type">Mobile</p>
+              <p className="contact-data">{record.phoneMobile}</p>
+            </div>
+          ) : (
+            ""
+          )}
 
-            {record.phoneNumber && record.phoneNumber !== "" ? (
-              <div className="contact-container">
-                <p className="contact-type">Other</p>
-                <p className="contact-data">{record.phoneNumber}</p>
-              </div>
-            ) : (
-              ""
-            )}
-          </div>
-        </Space>
+          {record.phoneNumber && record.phoneNumber !== "" ? (
+            <div className="contact-container">
+              <p className="contact-type">Other</p>
+              <p className="contact-data">{record.phoneNumber}</p>
+            </div>
+          ) : (
+            ""
+          )}
+        </div>
       ),
     },
     {
       title: "Action",
       key: "action",
       render: (text, record, index) => (
-        <Space size="middle">
+        <>
           <button
+            style={{ margin: "2px 5px" }}
             className="secondary-button-active"
             onClick={(e) => {
               purchaseContact(index, record.id);
@@ -275,7 +267,17 @@ export default function Search() {
           >
             View
           </button>
-        </Space>
+
+          <button
+            style={{ margin: "2px 5px" }}
+            className="secondary-button-active"
+            onClick={(e) => {
+              showOrgChart();
+            }}
+          >
+            Org Chart
+          </button>
+        </>
       ),
     },
   ];
@@ -594,6 +596,16 @@ export default function Search() {
     selectedCountry,
     titleExactMatch,
   ]);
+
+  // Org chart side drawer
+  const showOrgChart = () => {
+    console.log("org chart");
+    setOrgChartDrawerVisible(true);
+  };
+
+  const onClose = () => {
+    setOrgChartDrawerVisible(false);
+  };
 
   // handle changes on filter selectors
   function handleDepartmentChange(value) {
@@ -946,6 +958,21 @@ export default function Search() {
               scroll={{ y: "max-content" }}
             />
           </div>
+
+          <Drawer
+            title={"Org Chart"}
+            placement="right"
+            size={"large"}
+            onClose={onClose}
+            visible={orgChartDrawerVisible}
+            extra={
+              <Space>
+                <p>Tip: Use drag-drop and zoom gesture </p>
+              </Space>
+            }
+          >
+            <Orgchart />
+          </Drawer>
         </div>
       </div>
     </div>
