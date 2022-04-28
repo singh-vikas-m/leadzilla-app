@@ -5,7 +5,18 @@ import { onAuthStateChanged } from "firebase/auth";
 import { db, auth } from "../../firebase-config";
 import { doc, onSnapshot, updateDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
-import { Button, Table, Select, Drawer, Space, Divider, Spin } from "antd";
+import {
+  Button,
+  Table,
+  Select,
+  Drawer,
+  Space,
+  Divider,
+  Spin,
+  Tree,
+  Switch,
+} from "antd";
+
 import Orgchart from "../../Components/Orgchart/Orgchart";
 import axios from "axios";
 import {
@@ -23,6 +34,17 @@ import {
 import { CSVLink } from "react-csv";
 
 export default function Search() {
+  const [selectedOrgchartNodeKeys, setSelectedOrgchartNodeKeys] = useState([]);
+
+  const onSelect = (selectedKeys, info) => {
+    console.log("selected", selectedKeys, info);
+  };
+
+  const onOrgchartNodeSelect = (selectedKeysValue, info) => {
+    console.log("onSelect", info);
+    setSelectedOrgchartNodeKeys(selectedKeysValue);
+  };
+
   //filter selector values
   const [selectedDepartment, setSelectedDepartment] = useState([]);
   const [selectedLevel, setSelectedLevel] = useState([]);
@@ -272,7 +294,11 @@ export default function Search() {
             style={{ margin: "2px 5px" }}
             className="secondary-button-active"
             onClick={(e) => {
-              showOrgChart();
+              showOrgChart(
+                record.level,
+                record.companyName,
+                record.primaryDomain
+              );
             }}
           >
             Org Chart
@@ -612,14 +638,162 @@ export default function Search() {
     resultLimit,
   ]);
 
+  const [treeData, setTreeData] = useState([
+    {
+      level: "C-Level",
+      count: "",
+      children: [
+        {
+          firstName: "vikas",
+          title: "engineer",
+          children: [],
+        },
+      ],
+    },
+    {
+      level: "VP-Level",
+      count: "",
+      children: [
+        {
+          firstName: "vikas",
+          title: "engineer",
+          children: [],
+        },
+      ],
+    },
+    {
+      level: "Director-Level",
+      count: "",
+      children: [
+        {
+          firstName: "vikas",
+          title: "engineer",
+          children: [],
+        },
+      ],
+    },
+
+    {
+      level: "Manager-Level",
+      count: "",
+      children: [
+        {
+          firstName: "vikas",
+          title: "engineer",
+          children: [],
+        },
+      ],
+    },
+
+    {
+      level: "Staff",
+      count: "",
+      children: [
+        {
+          firstName: "vikas",
+          title: "engineer",
+          children: [],
+        },
+      ],
+    },
+    {
+      level: "Other",
+      count: "",
+      children: [
+        {
+          firstName: "vikas",
+          title: "engineer",
+          children: [],
+        },
+      ],
+    },
+  ]);
+
   // Org chart side drawer
-  const showOrgChart = () => {
-    console.log("org chart");
+  const showOrgChart = async (level, company, website) => {
+    const employeeLevelType = [
+      "C-Level",
+      "VP-Level",
+      "Director-Level",
+      "Manager-Level",
+      "Staff",
+      "Other",
+    ];
+
+    let treeDataCopy = treeData;
+
+    employeeLevelType.forEach(async (level, index) => {
+      let fetchAvailableContacts = await fetchOrgChartData(
+        level,
+        company,
+        website
+      );
+
+      if (fetchAvailableContacts.length === 0) {
+        delete treeDataCopy[index];
+      } else {
+        treeDataCopy[index].children.length = 0;
+        treeDataCopy[index].children = fetchAvailableContacts;
+        treeDataCopy[index].count = fetchAvailableContacts.length;
+      }
+    });
+    setTreeData([...treeDataCopy]);
     setOrgChartDrawerVisible(true);
   };
 
   const onClose = () => {
     setOrgChartDrawerVisible(false);
+  };
+
+  const fetchOrgChartData = async (level, company, website) => {
+    var data = {
+      name: [],
+      firstName: [],
+      lastName: [],
+      title: [],
+      dept: [],
+      level: [level],
+      companyName: [company],
+      nameDomain: [website],
+      numberOfEmployees: [],
+      revenue: [],
+      industryName: [],
+      city: [],
+      country: [],
+      state: [],
+      zipCode: [],
+      dontDisplayDeadContacts: false,
+      dontDisplayOwnedContacts: false,
+      limit: 25,
+    };
+
+    var fetchedData = [];
+    try {
+      await axios
+        .post(`${serverURL}/contacts`, JSON.stringify(data), {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        })
+        .then((response) => {
+          let searchResultData = response.data.result;
+
+          // add extra data points that are needed in exported data (eg: fullName)
+          searchResultData.forEach((data, index) => {
+            data["fullName"] = data?.firstName + " " + data?.lastName;
+          });
+
+          //console.log("org chart raw result : ", searchResultData);
+          fetchedData = searchResultData;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } catch (err) {
+      console.log(err);
+    }
+    return fetchedData;
   };
 
   // handle changes on filter selectors
@@ -980,6 +1154,7 @@ export default function Search() {
             </div>
 
             <Table
+              headers={false}
               size="large"
               columns={columns}
               loading={loading}
@@ -1003,7 +1178,83 @@ export default function Search() {
               </Space>
             }
           >
-            <Orgchart />
+            {/* <Orgchart /> */}
+
+            {/* <DirectoryTree
+              checkable={false}
+              className="treeSelect"
+              showLine={true}
+              showIcon={false}
+              treeData={treeData}
+              onSelect={onOrgchartNodeSelect}
+              selectedKeys={selectedOrgchartNodeKeys}
+              titleRender={(treeNode) => {
+                return (
+                  <>
+                    <span
+                      className="title"
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        padding: "5px 10px",
+                        border: "1px solid #e2e2e2",
+                        borderRadius: "5px",
+                        minHeight: "50px",
+                        boxShadow: "0px 0px 10px 5px rgba(200, 200, 200, 0.2)",
+                      }}
+                    >
+                      <span className="text">{treeNode.title}</span>
+                      <span className="text">{treeNode.department}</span>
+                    </span>
+                  </>
+                );
+              }}
+            /> */}
+
+            <Tree
+              defaultSelectedKeys={["0-0-0"]}
+              showLine={true}
+              showIcon={false}
+              treeData={[...treeData]}
+              onSelect={onOrgchartNodeSelect}
+              selectedKeys={selectedOrgchartNodeKeys}
+              titleRender={(treeNode) => {
+                return (
+                  <>
+                    <span
+                      className="title"
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        padding: "5px 10px",
+                        border: "1px solid #e2e2e2",
+                        borderRadius: "5px",
+                        minHeight: "50px",
+                        minWidth: "200px",
+                        boxShadow: "0px 0px 10px 5px rgba(200, 200, 200, 0.2)",
+                      }}
+                    >
+                      <span className="contact-role">{treeNode.level}</span>
+                      <span className="contact-name">{treeNode.count}</span>
+                      <span className="contact-name">{treeNode.fullName}</span>
+                      <span className="contact-role">{treeNode.title}</span>
+
+                      {treeNode.linkedInId ? (
+                        <a
+                          href={"http://" + treeNode.linkedInId}
+                          rel="noopener noreferrer"
+                          target="_blank"
+                        >
+                          LinkedIn
+                        </a>
+                      ) : (
+                        ""
+                      )}
+                    </span>
+                  </>
+                );
+              }}
+            />
           </Drawer>
         </div>
       </div>

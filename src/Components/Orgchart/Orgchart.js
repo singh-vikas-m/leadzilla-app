@@ -12,7 +12,7 @@ const containerStyles = {
 };
 
 const orgChartData = {
-  name: "CEO",
+  name: "Company",
   children: [
     {
       name: "Manager",
