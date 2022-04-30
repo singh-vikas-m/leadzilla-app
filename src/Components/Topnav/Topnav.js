@@ -8,6 +8,7 @@ import { doc, onSnapshot, updateDoc } from "firebase/firestore";
 import { Avatar } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import { Popover, Button } from "antd";
+import { Link } from "react-router-dom";
 
 export default function Topnav() {
   const [userName, setUserName] = useState("");
@@ -197,6 +198,15 @@ export default function Topnav() {
             stroke="#6F4CEF"
           />
         </svg>
+      </div>
+
+      <div className="nav-links">
+        <Link to="/search">
+          <h1 className="nav-link">Search</h1>
+        </Link>
+        <Link to="/sequence">
+          <h1 className="nav-link">Sequence</h1>
+        </Link>
       </div>
 
       <div className="account-info">
