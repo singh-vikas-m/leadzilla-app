@@ -14,10 +14,8 @@ import {
   Divider,
   Spin,
   Tree,
-  Switch,
 } from "antd";
 
-import Orgchart from "../../Components/Orgchart/Orgchart";
 import axios from "axios";
 import {
   UserGroupIcon,

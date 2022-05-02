@@ -2,6 +2,8 @@ import React from "react";
 import "./App.css";
 import Home from "./Pages/Home/Home.js";
 import Search from "./Pages/Search/Search.js";
+import Sequence from "./Pages/Sequence/Sequence.js";
+
 import Login from "./Pages/Login/Login.js";
 import { Routes, Route } from "react-router-dom";
 
@@ -12,8 +14,8 @@ function App() {
         <Route path="/" element={<Search />} />
         {/* <Route path="/home" element={<Home />} /> */}
         <Route path="/search" element={<Search />} />
+        <Route path="/email_writer" element={<Sequence />} />
         <Route path="/Login" element={<Login />} />
-        Search
         {/* Using path="*"" means "match anything", so this route
                 acts like a catch-all for URLs that we don't have explicit
                 routes for. */}

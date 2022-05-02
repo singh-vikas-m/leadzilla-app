@@ -1,0 +1,103 @@
+.Sequence {
+  min-height: 100vh;
+  background-color: #f5f9fc;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.Sequence .content {
+  margin-top: 70px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  background-color: transparent;
+}
+
+.Sequence .sequence-cards-container {
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+  height: 100%;
+}
+
+.Sequence .sequence-cards-container .sequence-input-card {
+  background-color: #fff;
+  border: 1px solid #e2e2e2;
+  box-shadow: 0px 0px 10px 5px rgba(200, 200, 200, 0.2);
+  min-height: 80vh;
+  width: 400px;
+  margin: 20px 10px 30px 30px;
+  border-radius: 5px;
+  padding: 30px;
+}
+
+.Sequence .sequence-cards-container .sequence-input-card .filter-heading {
+  margin: 0px 0px 10px 22px;
+  font-size: 11px;
+  line-height: 14px;
+  font-weight: 700;
+  text-align: left;
+  color: #8b8b8b;
+}
+
+.Sequence .sequence-cards-container .sequence-result-card {
+  background-color: #fff;
+  border: 1px solid #e2e2e2;
+  box-shadow: 0px 0px 10px 5px rgba(200, 200, 200, 0.2);
+  min-height: 80vh;
+  width: 70%;
+  margin: 20px 30px 30px 10px;
+  border-radius: 5px;
+  padding: 30px;
+}
+
+.Sequence input {
+  height: 50px;
+  width: 280px;
+  padding: 1rem;
+  border: 2px solid #6f4cef;
+  font-weight: 500;
+  margin-top: 0.2rem;
+  margin-bottom: 0.5rem;
+  transition: 0.3s;
+  -webkit-transition: 0.3s;
+  -moz-transition: 0.3s;
+  border-radius: 0.3rem;
+}
+
+.Sequence .input-large {
+  height: 150px;
+  width: 280px;
+  padding: 1rem;
+  border: 2px solid #6f4cef;
+  font-weight: 500;
+  margin-top: 0.2rem;
+  margin-bottom: 0.5rem;
+  transition: 0.3s;
+  -webkit-transition: 0.3s;
+  -moz-transition: 0.3s;
+  border-radius: 0.3rem;
+}
+
+.Sequence .primary-button {
+  margin-top: 0.2rem;
+  margin-bottom: 0.2rem;
+  height: 35px;
+  width: 280px;
+  padding: 0px 10px;
+  color: #fff;
+  font-size: 13.5px;
+  font-weight: 700;
+  background-color: #6f4cef;
+  border: 1px solid #5537c2;
+  cursor: pointer;
+  transition: 0.3s;
+  -webkit-transition: 0.3s;
+  -moz-transition: 0.3s;
+  border-radius: 0.3rem;
+}

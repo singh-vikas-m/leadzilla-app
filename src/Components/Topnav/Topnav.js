@@ -204,8 +204,8 @@ export default function Topnav() {
         <Link to="/search">
           <h1 className="nav-link">Search</h1>
         </Link>
-        <Link to="/sequence">
-          <h1 className="nav-link">Sequence</h1>
+        <Link to="/email_writer">
+          <h1 className="nav-link">Email Writer</h1>
         </Link>
       </div>
 
