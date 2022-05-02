@@ -1,36 +1,21 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import "./Sequence.css";
 import Topnav from "../../Components/Topnav/Topnav";
 import { onAuthStateChanged } from "firebase/auth";
 import { db, auth } from "../../firebase-config";
-import { doc, onSnapshot, updateDoc } from "firebase/firestore";
+import { doc, onSnapshot } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
-import {
-  Button,
-  Table,
-  Select,
-  Drawer,
-  Space,
-  Divider,
-  Spin,
-  Tree,
-  Switch,
-} from "antd";
+import { Spin, List } from "antd";
 import axios from "axios";
 
 export default function Sequence() {
   //misc states
   const [loggedInUser, setLoggedInUser] = useState(false);
-  const [searchResult, setSearchResult] = useState([]);
-  const [selectedUserData, setSelectedUserData] = useState([]);
-
-  const [loading, setLoading] = useState(false);
-  const [orgChartDrawerVisible, setOrgChartDrawerVisible] = useState(false);
   const [firebaseAuthUUID, setFirebaseAuthUUID] = useState("");
 
   const [companyName, setCompanyName] = useState("");
   const [companyDescription, setCompanyDescription] = useState("");
-  const [generatedCopy, setGeneratedCopy] = useState("");
+  const [generatedCopyList, setGeneratedCopyList] = useState([]);
   const [copyLoading, setCopyLoading] = useState(false);
 
   let navigate = useNavigate();
@@ -77,7 +62,8 @@ export default function Sequence() {
      */
 
     var gpt3_data = {
-      prompt: `Write an impactful and convincing cold email based on the product name and product description.\n\nProduct name: FitnessMarketer\nProduct description: A marketing service to help your gym get new clients repeatably\nEmail body: When your gym is seeking new clients, you may be seeking a marketing service.\nOur team has over 10 years of experience making sure your gym gets new clients, with no financial risk. We can help you grow your business.\nWe offer free trials, so you can try them before you buy.\nClick here to learn more about our gym marketing services.\n\nProduct name: Roambee\nProduct description: Roambee is an IoT solution that helps companies track shipments and give them real-time visibility.\nEmail body: Roambee is an IoT solution that helps companies track shipments and give them real-time visibility\nRoambee offers an app that allows businesses to track their shipments like never before. With its hardware, they can even monitor which areas of the vehicles are getting hotter, colder, or when containers are in motion.\nBy installing this system, customers can cut costs by identifying vehicle breakdowns before they happen. They can also prevent theft by better monitoring the location of their cargo while they are in transit.\nSign up now to learn more about Roambee and how it can help your business run more efficiently!\n\nProduct name: ${productName}\nProduct description: ${productDescription}\nEmail body:`,
+      prompt:
+        "Write an impactful and convincing cold email based on the product name and product description.\n\nProduct name: FitnessMarketer\nProduct description: A marketing service to help your gym get new clients repeatably\nEmail: Want to increase your gym clients? When your gym is seeking new clients, you may be seeking a marketing service.\nOur team has over 10 years of experience making sure your gym gets new clients, with no financial risk. We can help you grow your business.\nWe offer free trials, so you can try them before you buy.\nClick here to learn more about our gym marketing services.\n\nProduct name: Roambee\nProduct description: Roambee is an IoT solution that helps companies track shipments and give them real-time visibility.\nEmail: Want to track your shipments in real-time? Roambee is an IoT solution that helps companies track shipments and give them real-time visibility\nRoambee offers an app that allows businesses to track their shipments like never before. With its hardware, they can even monitor which areas of the vehicles are getting hotter, colder, or when containers are in motion.\nBy installing this system, customers can cut costs by identifying vehicle breakdowns before they happen. They can also prevent theft by better monitoring the location of their cargo while they are in transit.\nSign up now to learn more about Roambee and how it can help your business run more efficiently!\n\nProduct name: Lambdatest\nProduct description: Ensure Your Website Works Seamlessly On 3000+ Real Desktop & Mobile Browsers.\nEmail: ",
       temperature: 0.5,
       max_tokens: 500,
       top_p: 1,
@@ -86,8 +72,10 @@ export default function Sequence() {
       presence_penalty: 0,
     };
 
+    let generatedCopy = "";
+
     try {
-      setCopyLoading(true);
+      // setCopyLoading(true);
       await axios
         .post(`${serverURL}/email`, JSON.stringify(gpt3_data), {
           headers: {
@@ -98,15 +86,34 @@ export default function Sequence() {
         .then((response) => {
           let searchResultData = response?.data;
           //console.log(searchResultData);
-          setGeneratedCopy(searchResultData?.choices[0]?.text);
-          setCopyLoading(false);
+          //setGeneratedCopy(searchResultData?.choices[0]?.text);
+          // setCopyLoading(false);
+
+          generatedCopy = searchResultData?.choices[0]?.text;
         })
         .catch((error) => {
           console.log(error);
         });
+      return generatedCopy;
     } catch (err) {
       console.log(err);
     }
+  };
+
+  const createEmailCopyList = async () => {
+    let emailCopyList = [];
+    setCopyLoading(true);
+
+    for (let i = 0; i < 10; i++) {
+      let generatedEmail = await fetchEmailTemplates(
+        companyName,
+        companyDescription
+      );
+      emailCopyList.push({ body: generatedEmail });
+    }
+    console.log(emailCopyList);
+    setCopyLoading(false);
+    setGeneratedCopyList(emailCopyList);
   };
 
   return loggedInUser ? (
@@ -133,7 +140,7 @@ export default function Sequence() {
             <button
               className="primary-button"
               onClick={() => {
-                fetchEmailTemplates(companyName, companyDescription);
+                createEmailCopyList();
               }}
             >
               Create copy
@@ -141,7 +148,30 @@ export default function Sequence() {
           </div>
           <div className="sequence-result-card">
             <h3>Generated copy</h3>
-            {copyLoading ? <Spin /> : <p>{generatedCopy}</p>}
+            {copyLoading ? (
+              <span>
+                <p>This can take around 10-20 seconds :)</p>
+              </span>
+            ) : (
+              ""
+            )}
+            <span>
+              <List
+                itemLayout="horizontal"
+                loading={copyLoading}
+                dataSource={generatedCopyList}
+                renderItem={(item) => (
+                  <List.Item>
+                    <List.Item.Meta
+                      title={item.body}
+                      actions={<button>edit</button>}
+
+                      // description="Ant Design, a design language for background applications, is refined by Ant UED Team"
+                    />
+                  </List.Item>
+                )}
+              />
+            </span>
           </div>
         </div>
       </div>
