@@ -297,6 +297,7 @@ export default function Search() {
                 record.companyName,
                 record.primaryDomain
               );
+              console.log("button-clicked");
             }}
           >
             Org Chart
@@ -709,6 +710,8 @@ export default function Search() {
 
   // Org chart side drawer
   const showOrgChart = async (level, company, website) => {
+    console.log("fetching org chart data");
+
     const employeeLevelType = [
       "C-Level",
       "VP-Level",
@@ -721,19 +724,11 @@ export default function Search() {
     let treeDataCopy = treeData;
 
     employeeLevelType.forEach(async (level, index) => {
-      let fetchAvailableContacts = await fetchOrgChartData(
-        level,
-        company,
-        website
-      );
+      let orgChartData = await fetchOrgChartData(level, company, website);
 
-      if (fetchAvailableContacts.length === 0) {
-        delete treeDataCopy[index];
-      } else {
-        treeDataCopy[index].children.length = 0;
-        treeDataCopy[index].children = fetchAvailableContacts;
-        treeDataCopy[index].count = fetchAvailableContacts.length;
-      }
+      treeDataCopy[index].children.length = 0;
+      treeDataCopy[index].children = orgChartData.data;
+      treeDataCopy[index].count = orgChartData.count;
     });
     setTreeData([...treeDataCopy]);
     setOrgChartDrawerVisible(true);
@@ -776,6 +771,7 @@ export default function Search() {
         })
         .then((response) => {
           let searchResultData = response.data.result;
+          let allAvailableContactCount = response.data.hits;
 
           // add extra data points that are needed in exported data (eg: fullName)
           searchResultData.forEach((data, index) => {
@@ -783,7 +779,11 @@ export default function Search() {
           });
 
           //console.log("org chart raw result : ", searchResultData);
-          fetchedData = searchResultData;
+          fetchedData = {
+            count: allAvailableContactCount,
+            data: searchResultData,
+          };
+          console.log(fetchedData);
         })
         .catch((error) => {
           console.log(error);
@@ -1171,9 +1171,7 @@ export default function Search() {
             onClose={onClose}
             visible={orgChartDrawerVisible}
             extra={
-              <Space>
-                <p>Tip: Use drag-drop and zoom gesture </p>
-              </Space>
+              <Space>{/* <p>Tip: Use drag-drop and zoom gesture </p> */}</Space>
             }
           >
             {/* <Orgchart /> */}
@@ -1213,7 +1211,7 @@ export default function Search() {
               defaultSelectedKeys={["0-0-0"]}
               showLine={true}
               showIcon={false}
-              treeData={[...treeData]}
+              treeData={treeData}
               onSelect={onOrgchartNodeSelect}
               selectedKeys={selectedOrgchartNodeKeys}
               titleRender={(treeNode) => {
@@ -1232,10 +1230,10 @@ export default function Search() {
                         boxShadow: "0px 0px 10px 5px rgba(200, 200, 200, 0.2)",
                       }}
                     >
+                      <h4 className="contact-name">{treeNode.fullName}</h4>
+                      <span className="contact-role">{treeNode.title}</span>
                       <span className="contact-role">{treeNode.level}</span>
                       <span className="contact-name">{treeNode.count}</span>
-                      <span className="contact-name">{treeNode.fullName}</span>
-                      <span className="contact-role">{treeNode.title}</span>
 
                       {treeNode.linkedInId ? (
                         <a
