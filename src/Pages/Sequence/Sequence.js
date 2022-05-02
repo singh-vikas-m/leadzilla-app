@@ -96,9 +96,9 @@ export default function Sequence() {
           },
         })
         .then((response) => {
-          let searchResultData = response.data;
-          console.log(searchResultData);
-          setGeneratedCopy(searchResultData.choices[0].text);
+          let searchResultData = response?.data;
+          //console.log(searchResultData);
+          setGeneratedCopy(searchResultData?.choices[0]?.text);
           setCopyLoading(false);
         })
         .catch((error) => {
