@@ -15,7 +15,16 @@ export default function Sequence() {
 
   const [companyName, setCompanyName] = useState("");
   const [companyDescription, setCompanyDescription] = useState("");
-  const [generatedCopyList, setGeneratedCopyList] = useState([]);
+  const [generatedCopyList, setGeneratedCopyList] = useState([
+    {
+      subject: " Get quality LinkedIn leads every day\n\n",
+      body: "\n\nIf you're looking for a way to get more leads from LinkedIn, you need to try our automation software. Our 2000+ users are getting quality leads every day, and there's no reason you can't be one of them!\n\nWith our software, you can set up automated messages and follow-ups that will help you build relationships with potential customers. You can also track your progress and see which leads are most interested in your products or services.\n\nSign up now to try our software free for 14 days. After that, it's just $97/month. There's no risk, so why not give it a try?",
+    },
+    {
+      subject: " Get quality leads on LinkedIn every day\n\n",
+      body: "\n\nIf you're looking for a way to get quality leads on LinkedIn, our software can help. Our 2000+ users have seen great results, and we're confident we can help you too.\n\nWith our LinkedIn automation software, you can get quality leads every day without spending hours manually searching. Plus, our software is easy to use and comes with a free trial, so you can try it out before you commit.\n\nClick here to learn more about our software and how it can help you get the leads you need.",
+    },
+  ]);
   const [copyLoading, setCopyLoading] = useState(false);
 
   let navigate = useNavigate();
@@ -61,8 +70,18 @@ export default function Sequence() {
      * related setting taken directly from opan ai playground
      */
 
+    // var gpt3_data = {
+    //   prompt: `Write an impactful and convincing cold email based on the product name and product description.\n\nProduct name: FitnessMarketer\nProduct description: A marketing service to help your gym get new clients repeatably\nEmail: Want to increase your gym clients? When your gym is seeking new clients, you may be seeking a marketing service.\nOur team has over 10 years of experience making sure your gym gets new clients, with no financial risk. We can help you grow your business.\nWe offer free trials, so you can try them before you buy.\nClick here to learn more about our gym marketing services.\n\nProduct name: Roambee\nProduct description: Roambee is an IoT solution that helps companies track shipments and give them real-time visibility.\nEmail: Want to track your shipments in real-time? Roambee is an IoT solution that helps companies track shipments and give them real-time visibility\nRoambee offers an app that allows businesses to track their shipments like never before. With its hardware, they can even monitor which areas of the vehicles are getting hotter, colder, or when containers are in motion.\nBy installing this system, customers can cut costs by identifying vehicle breakdowns before they happen. They can also prevent theft by better monitoring the location of their cargo while they are in transit.\nSign up now to learn more about Roambee and how it can help your business run more efficiently!\n\nProduct name: ${companyName}\nProduct description: ${companyDescription}.\nEmail: `,
+    //   temperature: 0.5,
+    //   max_tokens: 500,
+    //   top_p: 1,
+    //   best_of: 5,
+    //   frequency_penalty: 0,
+    //   presence_penalty: 0,
+    // };
+
     var gpt3_data = {
-      prompt: `Write an impactful and convincing cold email based on the product name and product description.\n\nProduct name: FitnessMarketer\nProduct description: A marketing service to help your gym get new clients repeatably\nEmail: Want to increase your gym clients? When your gym is seeking new clients, you may be seeking a marketing service.\nOur team has over 10 years of experience making sure your gym gets new clients, with no financial risk. We can help you grow your business.\nWe offer free trials, so you can try them before you buy.\nClick here to learn more about our gym marketing services.\n\nProduct name: Roambee\nProduct description: Roambee is an IoT solution that helps companies track shipments and give them real-time visibility.\nEmail: Want to track your shipments in real-time? Roambee is an IoT solution that helps companies track shipments and give them real-time visibility\nRoambee offers an app that allows businesses to track their shipments like never before. With its hardware, they can even monitor which areas of the vehicles are getting hotter, colder, or when containers are in motion.\nBy installing this system, customers can cut costs by identifying vehicle breakdowns before they happen. They can also prevent theft by better monitoring the location of their cargo while they are in transit.\nSign up now to learn more about Roambee and how it can help your business run more efficiently!\n\nProduct name: ${companyName}\nProduct description: ${companyDescription}.\nEmail: `,
+      prompt: `Write an impactful and convincing cold email & subject based on the product name and product description.\n\nProduct name: FitnessMarketer\nProduct description: A marketing service to help your gym get new clients repeatably\nSubject: Want to increase your gym clients? \nEmail: When your gym is seeking new clients, you may be seeking a marketing service.\nOur team has over 10 years of experience making sure your gym gets new clients, with no financial risk. We can help you grow your business.\nWe offer free trials, so you can try them before you buy.\nClick here to learn more about our gym marketing services.\n\nProduct name: Roambee\nProduct description: Roambee is an IoT solution that helps companies track shipments and give them real-time visibility.\nSubject: Want to track your shipments in real-time?\nEmail: Roambee is an IoT solution that helps companies track shipments and give them real-time visibility\nRoambee offers an app that allows businesses to track their shipments like never before. With its hardware, they can even monitor which areas of the vehicles are getting hotter, colder, or when containers are in motion.\nBy installing this system, customers can cut costs by identifying vehicle breakdowns before they happen. They can also prevent theft by better monitoring the location of their cargo while they are in transit.\nSign up now to learn more about Roambee and how it can help your business run more efficiently!\n\nProduct name: ${companyName}\nProduct description: ${companyDescription}\nSubject:`,
       temperature: 0.5,
       max_tokens: 500,
       top_p: 1,
@@ -71,7 +90,7 @@ export default function Sequence() {
       presence_penalty: 0,
     };
 
-    let generatedCopy = "";
+    let generatedCopy = {};
 
     try {
       // setCopyLoading(true);
@@ -83,12 +102,16 @@ export default function Sequence() {
           },
         })
         .then((response) => {
-          let searchResultData = response?.data;
-          //console.log(searchResultData);
-          //setGeneratedCopy(searchResultData?.choices[0]?.text);
-          // setCopyLoading(false);
+          let rawData = response?.data;
 
-          generatedCopy = searchResultData?.choices[0]?.text;
+          let emailData = rawData?.choices[0]?.text?.split("Email:");
+          let emailSubject = emailData[0],
+            emailBody = emailData[1];
+
+          generatedCopy = {
+            subject: emailSubject,
+            body: emailBody,
+          };
         })
         .catch((error) => {
           console.log(error);
@@ -103,16 +126,16 @@ export default function Sequence() {
     let emailCopyList = [];
     setCopyLoading(true);
 
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 2; i++) {
       let generatedEmail = await fetchEmailTemplates(
         companyName,
         companyDescription
       );
-      emailCopyList.push({ body: generatedEmail });
+      emailCopyList.push(generatedEmail);
+      setGeneratedCopyList(emailCopyList);
     }
     console.log(emailCopyList);
     setCopyLoading(false);
-    setGeneratedCopyList(emailCopyList);
   };
 
   return loggedInUser ? (
@@ -149,21 +172,37 @@ export default function Sequence() {
             <h3>Generated copy</h3>
             {copyLoading ? (
               <span>
-                <p>This can take around 10-20 seconds :)</p>
+                <Spin />
+                <p>This can take around 20 seconds to load completely :)</p>
               </span>
             ) : (
               ""
             )}
+
             <span>
               <List
-                itemLayout="horizontal"
-                loading={copyLoading}
-                dataSource={generatedCopyList}
+                itemLayout="vertical"
+                dataSource={[...generatedCopyList]}
                 renderItem={(item) => (
-                  <List.Item>
+                  <List.Item
+                    actions={[
+                      // eslint-disable-next-line react/jsx-no-target-blank
+                      <a
+                        href={decodeURIComponent(
+                          "https://mail.google.com/mail/?view=cm&fs=1&su=" +
+                            item.subject +
+                            "&body=" +
+                            item.body
+                        )}
+                        target="_blank"
+                      >
+                        Open Email
+                      </a>,
+                    ]}
+                  >
                     <List.Item.Meta
-                      title={item.body}
-                      actions={<button>edit</button>}
+                      title={item.subject}
+                      description={item.body}
 
                       // description="Ant Design, a design language for background applications, is refined by Ant UED Team"
                     />
