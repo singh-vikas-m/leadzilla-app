@@ -126,7 +126,7 @@ export default function Sequence() {
     let emailCopyList = [];
     setCopyLoading(true);
 
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < 10; i++) {
       let generatedEmail = await fetchEmailTemplates(
         companyName,
         companyDescription
