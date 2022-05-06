@@ -7,14 +7,19 @@ import { useNavigate } from "react-router-dom";
 import { doc, onSnapshot, updateDoc } from "firebase/firestore";
 import { Avatar } from "antd";
 import { UserOutlined } from "@ant-design/icons";
+import axios from "axios";
 import { Popover, Button } from "antd";
 import { Link } from "react-router-dom";
+import { Tooltip } from "antd";
+import { CurrencyDollarIcon } from "@heroicons/react/solid";
 
 export default function Topnav() {
   const [userName, setUserName] = useState("");
   const [userEmail, setUserEmail] = useState("");
   const [userPhoto, setUserPhoto] = useState("");
   const [creditCount, setCreditCount] = useState(0);
+
+  const serverURL = process.env.REACT_APP_SERVER_URL;
 
   let navigate = useNavigate();
   const loggedInUser = auth.currentUser;
@@ -45,6 +50,35 @@ export default function Topnav() {
         // An error happened.
         console.log(error);
       });
+  };
+
+  //fetch chargebee hosted page link
+  const getChargebeeHostedPageInfo = async () => {
+    try {
+      // Get logged-in user data
+      const loggedInUser = auth.currentUser;
+      if (loggedInUser !== null) {
+        const firebaseUUID = loggedInUser.uid;
+
+        // request chargebee hosted page URL
+        const response = await axios.get(
+          `${serverURL}/new-subscription?firebase_uuid=${firebaseUUID}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        console.log(response.data);
+        var hostedPageUrl = response.data.hosted_page.url;
+
+        window.open(`${hostedPageUrl}`, "_blank");
+      } else {
+        console.log("login first to start billing");
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
   };
 
   useEffect(() => {
@@ -210,6 +244,15 @@ export default function Topnav() {
       </div>
 
       <div className="account-info">
+        <button onClick={getChargebeeHostedPageInfo}>
+          <CurrencyDollarIcon
+            style={{ height: "25px" }}
+            className="heroicons"
+            color={"#ffffff"}
+          />
+          Billing
+        </button>
+
         <div className="credits">
           <h1>{creditCount}</h1>
           {creditCount !== null ? <p>credits</p> : ""}

@@ -34,11 +34,11 @@
   font-size: 14px;
   font-weight: 600;
   background-color: #6f4cef;
+  border-radius: 0.3rem;
   cursor: pointer;
   transition: 0.3s;
   -webkit-transition: 0.3s;
   -moz-transition: 0.3s;
-  border-radius: 0.3rem;
 }
 
 .Topnav .nav-links .nav-link:hover {
@@ -61,6 +61,39 @@
   height: 45px;
   border-radius: 50px;
   /* border: 2px solid #b19cff; */
+}
+
+.Topnav .account-info button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: transparent;
+  border: none;
+  margin: 0px 5px;
+  margin-right: 20px;
+  padding: 10px 10px;
+  text-align: center;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  background-color: #6f4cef;
+  border-radius: 0.3rem;
+  cursor: pointer;
+  transition: 0.3s;
+  -webkit-transition: 0.3s;
+  -moz-transition: 0.3s;
+}
+
+.Topnav .account-info button:hover {
+  background-color: #8366ed;
+}
+
+.Topnav .account-info button .heroicons {
+  transition: 0.3s;
+  -webkit-transition: 0.3s;
+  -moz-transition: 0.3s;
+  background-color: transparent;
+  margin-right: 5px;
 }
 
 .Topnav .account-info .credits {
