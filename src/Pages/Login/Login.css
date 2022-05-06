@@ -67,6 +67,17 @@
   background-color: #8366ed;
 }
 
+.Login .card .button-link {
+  background-color: transparent;
+  border: none;
+  color: #1890ff;
+  cursor: pointer;
+  font-weight: 500;
+}
+.Login .card .button-link:hover {
+  color: #389fff;
+}
+
 .Login .card .google-auth-button {
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;

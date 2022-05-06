@@ -15,16 +15,7 @@ export default function Sequence() {
 
   const [companyName, setCompanyName] = useState("");
   const [companyDescription, setCompanyDescription] = useState("");
-  const [generatedCopyList, setGeneratedCopyList] = useState([
-    {
-      subject: " Get quality LinkedIn leads every day\n\n",
-      body: "\n\nIf you're looking for a way to get more leads from LinkedIn, you need to try our automation software. Our 2000+ users are getting quality leads every day, and there's no reason you can't be one of them!\n\nWith our software, you can set up automated messages and follow-ups that will help you build relationships with potential customers. You can also track your progress and see which leads are most interested in your products or services.\n\nSign up now to try our software free for 14 days. After that, it's just $97/month. There's no risk, so why not give it a try?",
-    },
-    {
-      subject: " Get quality leads on LinkedIn every day\n\n",
-      body: "\n\nIf you're looking for a way to get quality leads on LinkedIn, our software can help. Our 2000+ users have seen great results, and we're confident we can help you too.\n\nWith our LinkedIn automation software, you can get quality leads every day without spending hours manually searching. Plus, our software is easy to use and comes with a free trial, so you can try it out before you commit.\n\nClick here to learn more about our software and how it can help you get the leads you need.",
-    },
-  ]);
+  const [generatedCopyList, setGeneratedCopyList] = useState([]);
   const [copyLoading, setCopyLoading] = useState(false);
 
   let navigate = useNavigate();

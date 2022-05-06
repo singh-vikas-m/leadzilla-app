@@ -9,8 +9,10 @@ import {
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  sendPasswordResetEmail,
 } from "firebase/auth";
 import LeadzillaLogo from "../../Assets/leadzilla-full-logo.png";
+import { notification, Divider } from "antd";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -47,7 +49,7 @@ function Login() {
       .catch((error) => {
         console.log(error.message);
         console.log(error.code);
-        setErrorMessage(`${error.code.replace("auth/", "")}`);
+        setErrorMessage(`${error.code.replace("auth/", "").replace("-", " ")}`);
       });
   };
 
@@ -66,7 +68,22 @@ function Login() {
       .catch((error) => {
         console.log(error.message);
         console.log(error.code);
-        setErrorMessage(`${error.code.replace("auth/", "")}`);
+        setErrorMessage(`${error.code.replace("auth/", "").replace("-", " ")}`);
+      });
+  };
+
+  const resetPassword = async (email) => {
+    sendPasswordResetEmail(auth, email)
+      .then(() => {
+        console.log("password reset requested");
+        // open notification
+        notification["success"]({
+          description: `Password reset link sent to ${email}`,
+        });
+      })
+      .catch((error) => {
+        console.log(error.message);
+        setErrorMessage(`${error.code.replace("auth/", "").replace("-", " ")}`);
       });
   };
 
@@ -104,9 +121,18 @@ function Login() {
         >
           Login
         </button>
-        <h3>OR</h3>
+        <Divider />
         <button className="google-auth-button" onClick={signInWithGoogle}>
           Sign in with google
+        </button>
+        <button
+          className="button-link"
+          onClick={() => {
+            console.log("password reset email sent");
+            resetPassword(email);
+          }}
+        >
+          Forgot password ?
         </button>
       </div>
     </div>
