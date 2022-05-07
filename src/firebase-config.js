@@ -34,7 +34,7 @@ export const signInWithGoogle = () => {
       // The signed-in user info.
       const user = result.user;
       console.log(user);
-      createCraeteUserInFirestore(user.uid, user.email);
+      createUserInFirestore(user.uid, user.email);
     })
     .catch((error) => {
       // Handle Errors here.
@@ -43,7 +43,7 @@ export const signInWithGoogle = () => {
 };
 
 //save user data
-export const createCraeteUserInFirestore = async (
+export const createUserInFirestore = async (
   firebaseUserUUID,
   firebaseUserEmail
 ) => {
@@ -58,6 +58,7 @@ export const createCraeteUserInFirestore = async (
       // Add a new document in collection "Users"
       await setDoc(doc(db, "users", `${firebaseUserUUID}`), {
         credits: 20,
+        base_credits: 0,
         email: `${firebaseUserEmail}`,
         firebase_auth_uuid: `${firebaseUserUUID}`,
         subscription_id: "none",

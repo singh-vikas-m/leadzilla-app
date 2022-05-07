@@ -10,7 +10,6 @@ import { UserOutlined } from "@ant-design/icons";
 import axios from "axios";
 import { Popover, Button } from "antd";
 import { Link } from "react-router-dom";
-import { Tooltip } from "antd";
 import { CurrencyDollarIcon } from "@heroicons/react/solid";
 
 export default function Topnav() {
@@ -20,6 +19,7 @@ export default function Topnav() {
   const [creditCount, setCreditCount] = useState(0);
 
   const serverURL = process.env.REACT_APP_SERVER_URL;
+  // const serverURL = "http://localhost:6060";
 
   let navigate = useNavigate();
   const loggedInUser = auth.currentUser;
@@ -72,6 +72,7 @@ export default function Topnav() {
         console.log(response.data);
         var hostedPageUrl = response.data.hosted_page.url;
 
+        //? open new widnow with ChargeBee payment link
         window.open(`${hostedPageUrl}`, "_blank");
       } else {
         console.log("login first to start billing");

@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import {
   signInWithGoogle,
   auth,
-  createCraeteUserInFirestore,
+  createUserInFirestore,
 } from "../../firebase-config";
 import {
   createUserWithEmailAndPassword,
@@ -60,7 +60,7 @@ function Login() {
       .then((userCredential) => {
         const user = userCredential.user;
         console.log(user);
-        createCraeteUserInFirestore(user.uid, user.email);
+        createUserInFirestore(user.uid, user.email);
       })
       .then(() => {
         logInWithEmailPassword(email, password);
