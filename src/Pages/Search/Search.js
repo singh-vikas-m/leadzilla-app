@@ -30,6 +30,8 @@ import {
   UserIcon,
 } from "@heroicons/react/outline";
 import { CSVLink } from "react-csv";
+import LogRocket from "logrocket";
+LogRocket.init("7ahtfn/leadzilla-search-console");
 
 export default function Search() {
   const [selectedOrgchartNodeKeys, setSelectedOrgchartNodeKeys] = useState([]);
@@ -96,6 +98,12 @@ export default function Search() {
         } else {
           //console.log("credit exists");
         }
+      });
+
+      //identify user in logRocket
+      LogRocket.identify(`${user.uid}`, {
+        name: user.displayName || "none",
+        email: user.email,
       });
     } else {
       console.log("user not logged in");

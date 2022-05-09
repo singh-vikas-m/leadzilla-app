@@ -3,9 +3,11 @@ import "./App.css";
 import Home from "./Pages/Home/Home.js";
 import Search from "./Pages/Search/Search.js";
 import Sequence from "./Pages/Sequence/Sequence.js";
-
 import Login from "./Pages/Login/Login.js";
 import { Routes, Route } from "react-router-dom";
+
+import LogRocket from "logrocket";
+LogRocket.init("7ahtfn/leadzilla-search-console");
 
 function App() {
   return (
