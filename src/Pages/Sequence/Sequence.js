@@ -5,7 +5,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { db, auth } from "../../firebase-config";
 import { doc, onSnapshot } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
-import { Spin, List } from "antd";
+import { Spin, List, Divider } from "antd";
 import axios from "axios";
 
 export default function Sequence() {
@@ -113,9 +113,41 @@ export default function Sequence() {
     }
   };
 
+  const checkUserInput = async (productName, productDescription) => {
+    /**
+     * data contains paragraph as sample data, and other open ai
+     * related setting taken directly from opan ai playground
+     */
+
+    var userInput = productName + " " + productDescription;
+
+    try {
+      // setCopyLoading(true);
+      await axios
+        .post(`${serverURL}/check_content`, JSON.stringify(userInput), {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        })
+        .then((response) => {
+          let rawData = response?.data;
+          console.log(rawData);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      //return generatedCopy;
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   const createEmailCopyList = async () => {
     let emailCopyList = [];
     setCopyLoading(true);
+
+    //checkUserInput(companyName, companyDescription);
 
     for (let i = 0; i < 10; i++) {
       let generatedEmail = await fetchEmailTemplates(
@@ -160,11 +192,15 @@ export default function Sequence() {
             </button>
           </div>
           <div className="sequence-result-card">
-            <h3>Generated copy</h3>
+            <h3>AI generated copy</h3>
+            <Divider />
+
             {copyLoading ? (
               <span>
                 <Spin />
-                <p>This can take around 20 seconds to load completely :)</p>
+                <p>
+                  AI can take around 20 seconds to generate emails completely :)
+                </p>
               </span>
             ) : (
               ""
