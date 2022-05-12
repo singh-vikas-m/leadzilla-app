@@ -5,7 +5,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { db, auth } from "../../firebase-config";
 import { doc, onSnapshot } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
-import { Spin, List, Divider } from "antd";
+import { Spin, List, Divider, notification } from "antd";
 import axios from "axios";
 
 export default function Sequence() {
@@ -17,11 +17,13 @@ export default function Sequence() {
   const [companyDescription, setCompanyDescription] = useState("");
   const [generatedCopyList, setGeneratedCopyList] = useState([]);
   const [copyLoading, setCopyLoading] = useState(false);
+  const [emailGenerationAPICallCount, setEmailGenerationAPICallCount] =
+    useState(0);
 
   let navigate = useNavigate();
 
-  // const serverURL = "http://localhost:6060";
-  const serverURL = "https://leadzilla.herokuapp.com";
+  const serverURL = "http://localhost:6060";
+  // const serverURL = "https://leadzilla.herokuapp.com";
 
   var currentCredit = 0;
 
@@ -55,30 +57,23 @@ export default function Sequence() {
     setCompanyDescription(e.target.value);
   };
 
-  const fetchEmailTemplates = async (productName, productDescription) => {
+  // reset email generation api call count
+  setInterval(function () {
+    console.log(new Date());
+    setEmailGenerationAPICallCount(0);
+    console.log(emailGenerationAPICallCount);
+  }, 60000);
+
+  const fetchEmailTemplates = async (companyName, companyDescription) => {
     /**
      * data contains paragraph as sample data, and other open ai
      * related setting taken directly from opan ai playground
      */
 
-    // var gpt3_data = {
-    //   prompt: `Write an impactful and convincing cold email based on the product name and product description.\n\nProduct name: FitnessMarketer\nProduct description: A marketing service to help your gym get new clients repeatably\nEmail: Want to increase your gym clients? When your gym is seeking new clients, you may be seeking a marketing service.\nOur team has over 10 years of experience making sure your gym gets new clients, with no financial risk. We can help you grow your business.\nWe offer free trials, so you can try them before you buy.\nClick here to learn more about our gym marketing services.\n\nProduct name: Roambee\nProduct description: Roambee is an IoT solution that helps companies track shipments and give them real-time visibility.\nEmail: Want to track your shipments in real-time? Roambee is an IoT solution that helps companies track shipments and give them real-time visibility\nRoambee offers an app that allows businesses to track their shipments like never before. With its hardware, they can even monitor which areas of the vehicles are getting hotter, colder, or when containers are in motion.\nBy installing this system, customers can cut costs by identifying vehicle breakdowns before they happen. They can also prevent theft by better monitoring the location of their cargo while they are in transit.\nSign up now to learn more about Roambee and how it can help your business run more efficiently!\n\nProduct name: ${companyName}\nProduct description: ${companyDescription}.\nEmail: `,
-    //   temperature: 0.5,
-    //   max_tokens: 500,
-    //   top_p: 1,
-    //   best_of: 5,
-    //   frequency_penalty: 0,
-    //   presence_penalty: 0,
-    // };
-
-    var gpt3_data = {
-      prompt: `Write an impactful and convincing cold email & subject based on the product name and product description.\n\nProduct name: FitnessMarketer\nProduct description: A marketing service to help your gym get new clients repeatably\nSubject: Want to increase your gym clients? \nEmail: When your gym is seeking new clients, you may be seeking a marketing service.\nOur team has over 10 years of experience making sure your gym gets new clients, with no financial risk. We can help you grow your business.\nWe offer free trials, so you can try them before you buy.\nClick here to learn more about our gym marketing services.\n\nProduct name: Roambee\nProduct description: Roambee is an IoT solution that helps companies track shipments and give them real-time visibility.\nSubject: Want to track your shipments in real-time?\nEmail: Roambee is an IoT solution that helps companies track shipments and give them real-time visibility\nRoambee offers an app that allows businesses to track their shipments like never before. With its hardware, they can even monitor which areas of the vehicles are getting hotter, colder, or when containers are in motion.\nBy installing this system, customers can cut costs by identifying vehicle breakdowns before they happen. They can also prevent theft by better monitoring the location of their cargo while they are in transit.\nSign up now to learn more about Roambee and how it can help your business run more efficiently!\n\nProduct name: ${companyName}\nProduct description: ${companyDescription}\nSubject:`,
-      temperature: 0.5,
-      max_tokens: 500,
-      top_p: 1,
-      best_of: 5,
-      frequency_penalty: 0,
-      presence_penalty: 0,
+    var productData = {
+      companyName: companyName,
+      companyDescription: companyDescription,
+      userId: firebaseAuthUUID,
     };
 
     let generatedCopy = {};
@@ -86,7 +81,7 @@ export default function Sequence() {
     try {
       // setCopyLoading(true);
       await axios
-        .post(`${serverURL}/email`, JSON.stringify(gpt3_data), {
+        .post(`${serverURL}/email`, JSON.stringify(productData), {
           headers: {
             "Content-Type": "application/json",
             Accept: "application/json",
@@ -113,52 +108,83 @@ export default function Sequence() {
     }
   };
 
-  const checkUserInput = async (productName, productDescription) => {
-    /**
-     * data contains paragraph as sample data, and other open ai
-     * related setting taken directly from opan ai playground
-     */
+  const checkUserInput = async (companyName, companyDescription) => {
+    var isContentOK = null;
 
-    var userInput = productName + " " + productDescription;
-
+    var userInput = companyName + " " + companyDescription;
     try {
-      // setCopyLoading(true);
       await axios
-        .post(`${serverURL}/check_content`, JSON.stringify(userInput), {
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-        })
+        .post(
+          `${serverURL}/check_content`,
+          JSON.stringify({
+            text: userInput,
+          }),
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+          }
+        )
         .then((response) => {
-          let rawData = response?.data;
-          console.log(rawData);
+          var rawData = response?.data;
+          //console.log(rawData);
+          isContentOK = rawData;
+          return rawData;
         })
         .catch((error) => {
           console.log(error);
         });
-      //return generatedCopy;
     } catch (err) {
       console.log(err);
     }
+    return isContentOK;
   };
 
   const createEmailCopyList = async () => {
-    let emailCopyList = [];
-    setCopyLoading(true);
+    if (
+      companyName.length > 0 &&
+      companyDescription.length > 0 &&
+      emailGenerationAPICallCount < 60
+    ) {
+      setEmailGenerationAPICallCount(emailGenerationAPICallCount - 10);
 
-    //checkUserInput(companyName, companyDescription);
+      let emailCopyList = [];
+      setCopyLoading(true);
 
-    for (let i = 0; i < 10; i++) {
-      let generatedEmail = await fetchEmailTemplates(
-        companyName,
-        companyDescription
-      );
-      emailCopyList.push(generatedEmail);
-      setGeneratedCopyList(emailCopyList);
+      var isContentGood = await checkUserInput(companyName, companyDescription);
+
+      if (isContentGood) {
+        for (let i = 0; i < 10; i++) {
+          let generatedEmail = await fetchEmailTemplates(
+            companyName,
+            companyDescription
+          );
+          emailCopyList.push(generatedEmail);
+          setGeneratedCopyList(emailCopyList);
+        }
+      } else {
+        console.log("please dont use offensive words");
+        notification["warning"]({
+          message: "Offensive words detected!",
+          description:
+            "Please rephrase your input to avoid the use of offensive words.",
+        });
+      }
+      //console.log(emailCopyList);
+      setCopyLoading(false);
+    } else {
+      if (emailGenerationAPICallCount < 60) {
+        console.log("Please dont leave company and description empty");
+        notification["warning"]({
+          message: "Empty company name or description!",
+        });
+      } else {
+        notification["warning"]({
+          message: "Rate limit, try after 1 minute!",
+        });
+      }
     }
-    console.log(emailCopyList);
-    setCopyLoading(false);
   };
 
   return loggedInUser ? (
@@ -171,6 +197,7 @@ export default function Sequence() {
             <input
               type="text"
               placeholder="eg: Leadzilla"
+              maxLength="500"
               onChange={handleCompanyNameInputChange}
             />
 
@@ -179,6 +206,7 @@ export default function Sequence() {
             <textarea
               type="text"
               className="input-large"
+              maxLength="500"
               placeholder="eg: An AI powered tool for better sales prospecting and engagement"
               onChange={handleCompanyDescriptionInputChange}
             />
