@@ -76,18 +76,28 @@ export default function Search() {
   const [loading, setLoading] = useState(false);
   const [orgChartDrawerVisible, setOrgChartDrawerVisible] = useState(false);
   const [firebaseAuthUUID, setFirebaseAuthUUID] = useState("");
+  // const [accessToken, setAccessToken] = useState("");
 
   let navigate = useNavigate();
   const { Option } = Select;
 
-  //const serverURL = "http://localhost:6060";
-  const serverURL = "https://leadzilla.herokuapp.com";
+  const serverURL = "http://localhost:6060";
+  // const serverURL = "https://leadzilla.herokuapp.com";
 
+  var accessToken = "";
   var currentCredit = 0;
 
-  onAuthStateChanged(auth, (user) => {
+  onAuthStateChanged(auth, async (user) => {
     if (user) {
       //console.log("user logged in");
+
+      //fetch and saved firebase auth access token
+      await user.getIdToken().then((token) => {
+        // setAccessToken(token);
+        accessToken = token;
+        //console.log(token);
+      });
+
       setLoggedInUser(user);
       setFirebaseAuthUUID(user.uid);
       onSnapshot(doc(db, "users", `${user.uid}`), (doc) => {
@@ -1474,6 +1484,7 @@ export default function Search() {
           headers: {
             "Content-Type": "application/json",
             Accept: "application/json",
+            Autherization: "Bearer " + accessToken,
           },
         })
         .then((response) => {
@@ -1512,6 +1523,7 @@ export default function Search() {
           headers: {
             "Content-Type": "application/json",
             Accept: "application/json",
+            Autherization: "Bearer " + accessToken,
           },
         })
         .then((response) => {
@@ -1530,7 +1542,7 @@ export default function Search() {
               });
             }
             currentCredit = `${currentCredit - 1}`;
-            console.log("current credit: ", currentCredit);
+            //console.log("current credit: ", currentCredit);
           }
 
           // save purchased(found) email/phone data
@@ -1778,6 +1790,7 @@ export default function Search() {
           headers: {
             "Content-Type": "application/json",
             Accept: "application/json",
+            Autherization: "Bearer " + accessToken,
           },
         })
         .then((response) => {

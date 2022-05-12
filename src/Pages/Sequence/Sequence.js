@@ -25,11 +25,20 @@ export default function Sequence() {
   const serverURL = "http://localhost:6060";
   // const serverURL = "https://leadzilla.herokuapp.com";
 
+  var accessToken = "";
   var currentCredit = 0;
 
-  onAuthStateChanged(auth, (user) => {
+  onAuthStateChanged(auth, async (user) => {
     if (user) {
       //console.log("user logged in");
+
+      //fetch and saved firebase auth access token
+      await user.getIdToken().then((token) => {
+        // setAccessToken(token);
+        accessToken = token;
+        //console.log(token);
+      });
+
       setLoggedInUser(user);
       setFirebaseAuthUUID(user.uid);
       onSnapshot(doc(db, "users", `${user.uid}`), (doc) => {
@@ -59,9 +68,9 @@ export default function Sequence() {
 
   // reset email generation api call count
   setInterval(function () {
-    console.log(new Date());
+    // console.log(new Date());
     setEmailGenerationAPICallCount(0);
-    console.log(emailGenerationAPICallCount);
+    // console.log(emailGenerationAPICallCount);
   }, 60000);
 
   const fetchEmailTemplates = async (companyName, companyDescription) => {
@@ -85,6 +94,7 @@ export default function Sequence() {
           headers: {
             "Content-Type": "application/json",
             Accept: "application/json",
+            Autherization: "Bearer " + accessToken,
           },
         })
         .then((response) => {
@@ -123,6 +133,7 @@ export default function Sequence() {
             headers: {
               "Content-Type": "application/json",
               Accept: "application/json",
+              Autherization: "Bearer " + accessToken,
             },
           }
         )
@@ -145,7 +156,8 @@ export default function Sequence() {
     if (
       companyName.length > 0 &&
       companyDescription.length > 0 &&
-      emailGenerationAPICallCount < 60
+      emailGenerationAPICallCount < 60 &&
+      copyLoading === false
     ) {
       setEmailGenerationAPICallCount(emailGenerationAPICallCount - 10);
 
@@ -174,14 +186,14 @@ export default function Sequence() {
       //console.log(emailCopyList);
       setCopyLoading(false);
     } else {
-      if (emailGenerationAPICallCount < 60) {
+      if (emailGenerationAPICallCount < 60 && copyLoading === false) {
         console.log("Please dont leave company and description empty");
         notification["warning"]({
           message: "Empty company name or description!",
         });
       } else {
         notification["warning"]({
-          message: "Rate limit, try after 1 minute!",
+          message: "Rate limit, try after sometime!",
         });
       }
     }
