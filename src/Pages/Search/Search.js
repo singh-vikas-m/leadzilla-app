@@ -81,8 +81,8 @@ export default function Search() {
   let navigate = useNavigate();
   const { Option } = Select;
 
-  const serverURL = "http://localhost:6060";
-  // const serverURL = "https://leadzilla.herokuapp.com";
+  // const serverURL = "http://localhost:6060";
+  const serverURL = "https://leadzilla.herokuapp.com";
 
   var accessToken = "";
   var currentCredit = 0;
@@ -1484,7 +1484,7 @@ export default function Search() {
           headers: {
             "Content-Type": "application/json",
             Accept: "application/json",
-            Autherization: "Bearer " + accessToken,
+            // Autherization: "Bearer " + accessToken,
           },
         })
         .then((response) => {
@@ -1523,7 +1523,7 @@ export default function Search() {
           headers: {
             "Content-Type": "application/json",
             Accept: "application/json",
-            Autherization: "Bearer " + accessToken,
+            // Autherization: "Bearer " + accessToken,
           },
         })
         .then((response) => {
@@ -1790,7 +1790,7 @@ export default function Search() {
           headers: {
             "Content-Type": "application/json",
             Accept: "application/json",
-            Autherization: "Bearer " + accessToken,
+            // Autherization: "Bearer " + accessToken,
           },
         })
         .then((response) => {

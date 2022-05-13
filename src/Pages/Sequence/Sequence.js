@@ -22,8 +22,8 @@ export default function Sequence() {
 
   let navigate = useNavigate();
 
-  const serverURL = "http://localhost:6060";
-  // const serverURL = "https://leadzilla.herokuapp.com";
+  // const serverURL = "http://localhost:6060";
+  const serverURL = "https://leadzilla.herokuapp.com";
 
   var accessToken = "";
   var currentCredit = 0;
@@ -94,7 +94,7 @@ export default function Sequence() {
           headers: {
             "Content-Type": "application/json",
             Accept: "application/json",
-            Autherization: "Bearer " + accessToken,
+            //Autherization: "Bearer " + accessToken,
           },
         })
         .then((response) => {
@@ -121,19 +121,20 @@ export default function Sequence() {
   const checkUserInput = async (companyName, companyDescription) => {
     var isContentOK = null;
 
-    var userInput = companyName + " " + companyDescription;
     try {
       await axios
         .post(
           `${serverURL}/check_content`,
           JSON.stringify({
-            text: userInput,
+            companyName: companyName,
+            companyDescription: companyDescription,
+            userId: firebaseAuthUUID,
           }),
           {
             headers: {
               "Content-Type": "application/json",
               Accept: "application/json",
-              Autherization: "Bearer " + accessToken,
+              //Autherization: "Bearer " + accessToken,
             },
           }
         )
@@ -255,7 +256,7 @@ export default function Sequence() {
                     actions={[
                       // eslint-disable-next-line react/jsx-no-target-blank
                       <a
-                        href={decodeURIComponent(
+                        href={decodeURI(
                           "https://mail.google.com/mail/?view=cm&fs=1&su=" +
                             item.subject +
                             "&body=" +
