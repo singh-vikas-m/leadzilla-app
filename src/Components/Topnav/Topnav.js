@@ -3,7 +3,7 @@ import "./Topnav.css";
 import leadzillaIcon from "../../Assets/leadzilla-logo.png";
 import { signOut } from "firebase/auth";
 import { db, auth } from "../../firebase-config";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { doc, onSnapshot, updateDoc } from "firebase/firestore";
 import { Avatar } from "antd";
 import { UserOutlined } from "@ant-design/icons";
@@ -22,8 +22,16 @@ export default function Topnav() {
   // const serverURL = "http://localhost:6060";
 
   let navigate = useNavigate();
+  var location = useLocation();
   const loggedInUser = auth.currentUser;
 
+  const navLinkSelectedStyle = {
+    background: "#8d6dff",
+  };
+
+  const navLinkUnselectedStyle = {
+    background: "transparent",
+  };
   const accountPopupContent = (
     <div>
       <p>{userName}</p>
@@ -237,10 +245,42 @@ export default function Topnav() {
 
       <div className="nav-links">
         <Link to="/search">
-          <h1 className="nav-link">Search</h1>
+          <h1
+            style={
+              location.pathname === "/search"
+                ? navLinkSelectedStyle
+                : navLinkUnselectedStyle
+            }
+            className="nav-link"
+          >
+            Search
+          </h1>
         </Link>
+
+        <Link to="/track">
+          <h1
+            style={
+              location.pathname === "/track"
+                ? navLinkSelectedStyle
+                : navLinkUnselectedStyle
+            }
+            className="nav-link"
+          >
+            Track
+          </h1>
+        </Link>
+
         <Link to="/email_writer">
-          <h1 className="nav-link">Email Writer</h1>
+          <h1
+            style={
+              location.pathname === "/email_writer"
+                ? navLinkSelectedStyle
+                : navLinkUnselectedStyle
+            }
+            className="nav-link"
+          >
+            Email Writer
+          </h1>
         </Link>
       </div>
 

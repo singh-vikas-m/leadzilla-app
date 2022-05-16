@@ -12,7 +12,7 @@ import {
   sendPasswordResetEmail,
 } from "firebase/auth";
 import LeadzillaLogo from "../../Assets/leadzilla-full-logo.png";
-import { notification, Divider } from "antd";
+import { notification, Divider, message, Modal } from "antd";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -20,6 +20,7 @@ function Login() {
   const [errorMessage, setErrorMessage] = useState("");
 
   let navigate = useNavigate();
+  const { confirm } = Modal;
 
   // redirect on main page when login state change
   auth.onAuthStateChanged((user) => {
@@ -76,16 +77,29 @@ function Login() {
     sendPasswordResetEmail(auth, email)
       .then(() => {
         console.log("password reset requested");
-        // open notification
-        notification["success"]({
-          description: `Password reset link sent to ${email}`,
-        });
+
+        // email reset link sent confirmation notification
+        message.success(`Password reset link sent to ${email}`);
       })
       .catch((error) => {
         console.log(error.message);
         setErrorMessage(`${error.code.replace("auth/", "").replace("-", " ")}`);
       });
   };
+
+  function confirmPasswordResetModal() {
+    confirm({
+      title: "Do you really want to reset password?",
+      content: "You will receive password reset link on email.",
+      onOk() {
+        console.log("OK");
+        resetPassword(email);
+      },
+      onCancel() {
+        console.log("Cancel password reset");
+      },
+    });
+  }
 
   return (
     <div className="Login">
@@ -128,8 +142,7 @@ function Login() {
         <button
           className="button-link"
           onClick={() => {
-            console.log("password reset email sent");
-            resetPassword(email);
+            confirmPasswordResetModal();
           }}
         >
           Forgot password ?

@@ -42,7 +42,7 @@
 }
 
 .Topnav .nav-links .nav-link:hover {
-  background-color: #8366ed;
+  background-color: #8d6dff;
 }
 
 .Topnav .account-info {
@@ -85,7 +85,7 @@
 }
 
 .Topnav .account-info button:hover {
-  background-color: #8366ed;
+  background-color: #8d6dff;
 }
 
 .Topnav .account-info button .heroicons {

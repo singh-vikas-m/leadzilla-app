@@ -208,6 +208,11 @@
   color: #151417;
 }
 
+.Search .company-name:hover {
+  font-weight: 700;
+  text-decoration: underline;
+}
+
 .Search .company-address {
   display: flex;
   justify-content: flex-start;

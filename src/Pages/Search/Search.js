@@ -4,7 +4,7 @@ import Topnav from "../../Components/Topnav/Topnav";
 import { onAuthStateChanged } from "firebase/auth";
 import { db, auth } from "../../firebase-config";
 import { arrayRemove, doc, onSnapshot, updateDoc } from "firebase/firestore";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import {
   Button,
   Table,
@@ -86,6 +86,160 @@ export default function Search() {
 
   var accessToken = "";
   var currentCredit = 0;
+
+  const testDataSource = [
+    {
+      key: "1",
+      name: "",
+      level: "C Level",
+      count: "3",
+      child: false,
+      children: [
+        {
+          key: "mflmbvkj",
+          name: "Vikas",
+          role: "CMO",
+          level: "",
+          linkedInId: "www.linkedin.com/in/satyanadella/",
+          child: true,
+        },
+        {
+          key: "wqguygdb",
+          name: "Maruti",
+          role: "CEO",
+          level: "",
+          linkedInId: "www.linkedin.com/in/satyanadella/",
+          child: true,
+        },
+        {
+          key: "sanmnfkjfk",
+          name: "Naina",
+          role: "CTO",
+          level: "",
+          linkedInId: "www.linkedin.com/in/satyanadella/",
+          child: true,
+        },
+      ],
+    },
+    {
+      key: "2",
+      name: "",
+      level: "Director Level",
+      count: "0",
+      child: false,
+    },
+    {
+      key: "3",
+      name: "",
+      level: "VP Level",
+      count: "0",
+      child: false,
+    },
+    {
+      key: "4",
+      name: "",
+      level: "Manager Level",
+      count: "3",
+      child: false,
+      children: [
+        {
+          key: "mflmbvkj",
+          name: "Vikas",
+          role: "CMO",
+          level: "",
+          linkedInId: "www.linkedin.com/in/satyanadella/",
+          child: true,
+        },
+        {
+          key: "wqguygdb",
+          name: "Maruti",
+          role: "CEO",
+          level: "",
+          linkedInId: "www.linkedin.com/in/satyanadella/",
+          child: true,
+        },
+        {
+          key: "sanmnfkjfk",
+          name: "Naina",
+          role: "CTO",
+          level: "",
+          linkedInId: "www.linkedin.com/in/satyanadella/",
+          child: true,
+        },
+      ],
+    },
+    {
+      key: "5",
+      name: "",
+      level: "Staff Level",
+      count: "0",
+      child: false,
+    },
+    {
+      key: "6",
+      name: "",
+      level: "Others",
+      count: "0",
+      child: false,
+    },
+  ];
+
+  const testColumns = [
+    {
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+      render(text, record) {
+        return {
+          props: {
+            style: {
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "flexStart",
+              alignItems: "flexStart",
+              padding: "5px 15px",
+              margin: "5px 5px",
+              marginLeft: record.child ? "70px" : "5px",
+              border: "1px solid #e2e2e2",
+              borderRadius: "5px",
+              minHeight: "50px",
+              minWidth: "200px",
+              lineHeight: "5px",
+              boxShadow: "0px 0px 10px 5px rgba(200, 200, 200, 0.2)",
+            },
+          },
+          children: (
+            <div
+              style={{
+                padding: "5px 15px",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "flexStart",
+                alignItems: "flexStart",
+              }}
+            >
+              <p>{record.name}</p>
+              {record.level ? <p>{record.level}</p> : ""}
+              <p>{record.count}</p>
+              <p>{record.role}</p>
+
+              {record.linkedInId ? (
+                <a
+                  href={"http://" + record.linkedInId}
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  LinkedIn
+                </a>
+              ) : (
+                ""
+              )}
+            </div>
+          ),
+        };
+      },
+    },
+  ];
 
   onAuthStateChanged(auth, async (user) => {
     if (user) {
@@ -217,7 +371,19 @@ export default function Search() {
             }
             alt=""
           />
-          <h1 className="company-name">{record.companyName}</h1>
+
+          {record.companyName ? (
+            <Link to={`/company?domain=${record.primaryDomain}`}>
+              <h1 className="company-name">{record.companyName}</h1>
+            </Link>
+          ) : (
+            <Link to={`/company?domain=${record.primaryDomain}`}>
+              <h1 className="company-name">
+                {record.primaryDomain?.split(".")[0]}
+              </h1>
+            </Link>
+          )}
+
           {record.city || record.country ? (
             <div className="company-address">
               <p className="company-details">
@@ -1794,20 +1960,8 @@ export default function Search() {
           },
         })
         .then((response) => {
-          let searchResultData = response.data.result;
-          let allAvailableContactCount = response.data.hits;
-
-          // add extra data points that are needed in exported data (eg: fullName)
-          searchResultData.forEach((data, index) => {
-            data["fullName"] = data?.firstName + " " + data?.lastName;
-          });
-
-          //console.log("org chart raw result : ", searchResultData);
-          fetchedData = {
-            count: allAvailableContactCount,
-            data: searchResultData,
-          };
-          console.log(fetchedData);
+          let companyData = response.data.result;
+          console.log(companyData);
         })
         .catch((error) => {
           console.log(error);
@@ -1815,7 +1969,6 @@ export default function Search() {
     } catch (err) {
       console.log(err);
     }
-    return fetchedData;
   };
 
   // handle changes on filter selectors
@@ -2201,38 +2354,12 @@ export default function Search() {
             }
           >
             {/* <Orgchart /> */}
-
-            {/* <DirectoryTree
-              checkable={false}
-              className="treeSelect"
-              showLine={true}
-              showIcon={false}
-              treeData={treeData}
-              onSelect={onOrgchartNodeSelect}
-              selectedKeys={selectedOrgchartNodeKeys}
-              titleRender={(treeNode) => {
-                return (
-                  <>
-                    <span
-                      className="title"
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        padding: "5px 10px",
-                        border: "1px solid #e2e2e2",
-                        borderRadius: "5px",
-                        minHeight: "50px",
-                        boxShadow: "0px 0px 10px 5px rgba(200, 200, 200, 0.2)",
-                      }}
-                    >
-                      <span className="text">{treeNode.title}</span>
-                      <span className="text">{treeNode.department}</span>
-                    </span>
-                  </>
-                );
-              }}
-            /> */}
-
+            <Table
+              showHeader={false}
+              pagination={false}
+              dataSource={testDataSource}
+              columns={testColumns}
+            />
             <Tree
               defaultSelectedKeys={["0-0-0"]}
               showLine={true}
