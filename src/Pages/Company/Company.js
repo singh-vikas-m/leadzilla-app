@@ -39,7 +39,7 @@ export default function Company() {
     fetchCompanyDetails(companyWebsite);
   }, []);
 
-  const fetchCompanyDetails = async (domainName) => {
+  const fetchCompanyDetails = async (domain) => {
     var data = {
       name: [],
       firstName: [],
@@ -48,7 +48,7 @@ export default function Company() {
       dept: [],
       level: [],
       companyName: [],
-      nameDomain: [`${domainName}`],
+      nameDomain: [`${domain}`],
       numberOfEmployees: [],
       revenue: [],
       industryName: [],
@@ -162,7 +162,7 @@ export default function Company() {
                 {/** company headcount */}
                 {companyDetails.companySize ? (
                   <h1 className="text-2">
-                    Headcount {companyDetails.companySize}
+                    {companyDetails.companySize} employees
                   </h1>
                 ) : (
                   ""
@@ -191,11 +191,11 @@ export default function Company() {
                 companyDetails.state ||
                 companyDetails.country ? (
                   <h1 className="text-2">
-                    {companyDetails.city +
-                      ", " +
-                      companyDetails.state +
-                      ", " +
-                      companyDetails.country}
+                    {(companyDetails.city ? companyDetails.city + ", " : "") +
+                      (companyDetails.state
+                        ? companyDetails.state + ", "
+                        : "") +
+                      (companyDetails.country ? companyDetails.country : "")}
                   </h1>
                 ) : (
                   ""
@@ -220,7 +220,9 @@ export default function Company() {
             <h1 className="section-text">Search Leads</h1>
             <span className="actions">
               {/** available contacts in leadzilla */}
-              <Link to="/search??filter={}">
+              <Link
+                to={`/search?filter={"domain":["${companyDetails.domain}"]}`}
+              >
                 {companyDetails.availableContacts ? (
                   <h1 className="link">
                     Available People({availableContactCount})
@@ -231,7 +233,9 @@ export default function Company() {
               </Link>
 
               <h1 className="link">.</h1>
-              <Link to="/search?filter={}">
+              <Link
+                to={`/search?filter={"domain":["${companyDetails.domain}"], "level":["C-Level", "VP-Level", "Director-Level"]}`}
+              >
                 <h1 className="link">Decision makers ({decisionMakerCount})</h1>
               </Link>
             </span>

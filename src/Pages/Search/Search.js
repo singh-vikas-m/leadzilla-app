@@ -4,7 +4,7 @@ import Topnav from "../../Components/Topnav/Topnav";
 import { onAuthStateChanged } from "firebase/auth";
 import { db, auth } from "../../firebase-config";
 import { arrayRemove, doc, onSnapshot, updateDoc } from "firebase/firestore";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import {
   Button,
   Table,
@@ -14,6 +14,7 @@ import {
   Divider,
   Spin,
   Tree,
+  Tag,
 } from "antd";
 
 import axios from "axios";
@@ -31,6 +32,12 @@ import {
 } from "@heroicons/react/outline";
 import { CSVLink } from "react-csv";
 import LogRocket from "logrocket";
+import {
+  FacebookFilled,
+  LinkedinFilled,
+  TwitterCircleFilled,
+  TwitterSquareFilled,
+} from "@ant-design/icons";
 LogRocket.init("7ahtfn/leadzilla-search-console");
 
 export default function Search() {
@@ -80,12 +87,31 @@ export default function Search() {
 
   let navigate = useNavigate();
   const { Option } = Select;
+  const [searchParams, setSearchParams] = useSearchParams();
 
   // const serverURL = "http://localhost:6060";
   const serverURL = "https://leadzilla.herokuapp.com";
 
   var accessToken = "";
   var currentCredit = 0;
+
+  // get filters from url use it to fetch latest contact data
+  useEffect(() => {
+    try {
+      let filterFromUrl = JSON.parse(searchParams.get("filter"));
+      console.log(filterFromUrl);
+      if (
+        filterFromUrl !== undefined &&
+        filterFromUrl !== null &&
+        filterFromUrl !== " "
+      ) {
+        setSelectedDomain(filterFromUrl.domain || []);
+        setSelectedLevel(filterFromUrl.level || []);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }, []);
 
   const testDataSource = [
     {
@@ -315,39 +341,44 @@ export default function Search() {
             })}
           </div>
 
-          {record.linkedInId ? (
-            <a
-              href={"http://" + record.linkedInId}
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              LinkedIn
-            </a>
-          ) : (
-            ""
-          )}
-          {record.facebookId ? (
-            <a
-              href={"http://" + record.facebookId}
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              Facebook
-            </a>
-          ) : (
-            ""
-          )}
-          {record.twitterId ? (
-            <a
-              href={"http://" + record.twitterId}
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              Twitter
-            </a>
-          ) : (
-            ""
-          )}
+          <span className="social-account-link-container">
+            {record.linkedInId ? (
+              <a
+                href={"http://" + record.linkedInId}
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                <LinkedinFilled className="social-icons" color={"#6f4cef"} />
+              </a>
+            ) : (
+              ""
+            )}
+            {record.facebookId ? (
+              <a
+                href={"http://" + record.facebookId}
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                <FacebookFilled className="social-icons" color={"#6f4cef"} />
+              </a>
+            ) : (
+              ""
+            )}
+            {record.twitterId ? (
+              <a
+                href={"http://" + record.twitterId}
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                <TwitterSquareFilled
+                  className="social-icons"
+                  color={"#6f4cef"}
+                />
+              </a>
+            ) : (
+              ""
+            )}
+          </span>
         </div>
       ),
     },
@@ -406,6 +437,7 @@ export default function Search() {
             href={"http://" + record.primaryDomain}
             rel="noopener noreferrer"
             target="_blank"
+            className="company-url"
           >
             {record.primaryDomain}
           </a>
@@ -472,7 +504,7 @@ export default function Search() {
             View
           </button>
 
-          <button
+          {/* <button
             style={{ margin: "2px 5px" }}
             className="secondary-button-active"
             onClick={(e) => {
@@ -485,7 +517,7 @@ export default function Search() {
             }}
           >
             Org Chart
-          </button>
+          </button> */}
         </>
       ),
     },
@@ -1514,6 +1546,25 @@ export default function Search() {
     countryOptions.push(<Option key={country.Name}>{country.Name}</Option>);
   });
 
+  function customSelectTagUI(props) {
+    const { label, closable, onClose } = props;
+    const onPreventMouseDown = (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+    };
+    return (
+      <Tag
+        color={"green"}
+        onMouseDown={onPreventMouseDown}
+        closable={closable}
+        onClose={onClose}
+        style={{ marginRight: 3 }}
+      >
+        {label}
+      </Tag>
+    );
+  }
+
   const departmentOptions = [
     <Option key={"Engineering"}>{"Engineering"}</Option>,
     <Option key={"Finance & Administration"}>
@@ -2075,6 +2126,7 @@ export default function Search() {
               <Select
                 bordered={false}
                 mode="tags"
+                tagRender={customSelectTagUI}
                 allowClear
                 placeholder="Enter company name"
                 onChange={handleCompanyChange}
@@ -2090,9 +2142,11 @@ export default function Search() {
               <Select
                 bordered={false}
                 mode="tags"
+                tagRender={customSelectTagUI}
                 allowClear
                 placeholder="Enter company website"
                 onChange={handleDomainChange}
+                value={[...selectedDomain]}
                 style={{ width: "100%", margin: "5px 0px 0px 5px" }}
               />
             </span>
@@ -2105,6 +2159,7 @@ export default function Search() {
               <Select
                 bordered={false}
                 mode="multiple"
+                tagRender={customSelectTagUI}
                 allowClear
                 placeholder="Select industry"
                 onChange={handleIndustryChange}
@@ -2122,6 +2177,7 @@ export default function Search() {
               <Select
                 bordered={false}
                 mode="multiple"
+                tagRender={customSelectTagUI}
                 allowClear
                 placeholder="Select employee headcount"
                 onChange={handleCompanySizeChange}
@@ -2139,6 +2195,7 @@ export default function Search() {
               <Select
                 bordered={false}
                 mode="multiple"
+                tagRender={customSelectTagUI}
                 allowClear
                 placeholder="Select company revenue"
                 onChange={handleCompanyRevenueChange}
@@ -2159,6 +2216,7 @@ export default function Search() {
               <Select
                 bordered={false}
                 mode="tags"
+                tagRender={customSelectTagUI}
                 allowClear
                 placeholder="Enter country of company"
                 onChange={handleCountryChange}
@@ -2180,6 +2238,7 @@ export default function Search() {
               <Select
                 bordered={false}
                 mode="tags"
+                tagRender={customSelectTagUI}
                 allowClear
                 placeholder="Enter title"
                 onChange={handleTitleChange}
@@ -2195,8 +2254,10 @@ export default function Search() {
               <Select
                 bordered={false}
                 mode="multiple"
+                tagRender={customSelectTagUI}
                 allowClear
                 placeholder="Select seniority"
+                value={[...selectedLevel]}
                 onChange={handleLevelChange}
                 style={{ width: "100%", margin: "5px 0px 0px 5px" }}
               >
@@ -2213,6 +2274,7 @@ export default function Search() {
               <Select
                 bordered={false}
                 mode="multiple"
+                tagRender={customSelectTagUI}
                 allowClear
                 placeholder="Select department"
                 onChange={handleDepartmentChange}
@@ -2230,6 +2292,7 @@ export default function Search() {
               <Select
                 bordered={false}
                 mode="tags"
+                tagRender={customSelectTagUI}
                 allowClear
                 placeholder="Enter full name"
                 onChange={handleNameChange}
@@ -2245,6 +2308,7 @@ export default function Search() {
               <Select
                 bordered={false}
                 mode="tags"
+                tagRender={customSelectTagUI}
                 allowClear
                 placeholder="Enter first name"
                 onChange={handleFirstNameChange}
@@ -2260,6 +2324,7 @@ export default function Search() {
               <Select
                 bordered={false}
                 mode="tags"
+                tagRender={customSelectTagUI}
                 allowClear
                 placeholder="Enter last name"
                 onChange={handleLastNameChange}
@@ -2338,7 +2403,8 @@ export default function Search() {
               rowKey="id"
               rowSelection={{ ...rowSelection }}
               dataSource={[...searchResult]}
-              pagination={{ pageSize: 100 }}
+              // pagination={{ pageSize: 100 }}
+              pagination={false}
               scroll={{ y: "max-content" }}
             />
           </div>
