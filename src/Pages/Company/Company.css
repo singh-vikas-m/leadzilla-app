@@ -1,6 +1,7 @@
 .Company {
   min-height: 100vh;
   background-color: #f5f9fc;
+  /* background-color: #f7f6f5; */
   display: flex;
   flex-direction: column;
   align-items: center;

@@ -222,9 +222,12 @@ export default function Company() {
                   rel="noopener noreferrer"
                   target="_blank"
                 >
-                  <Button type="primary" ghost icon={<ExportOutlined />}>
-                    Visite Website
-                  </Button>
+                  <button
+                    className="secondary-button-inactive"
+                    style={{ marginRight: "10px" }}
+                  >
+                    Visit Website <ExportOutlined />
+                  </button>
                 </a>
 
                 <h1 className="section-text">Search Leads</h1>
