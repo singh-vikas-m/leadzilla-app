@@ -259,11 +259,12 @@ export default function Topnav() {
 
         <Link to="/track">
           <h1
-            style={
-              location.pathname === "/track"
-                ? navLinkSelectedStyle
-                : navLinkUnselectedStyle
-            }
+            // style={
+            //   location.pathname === "/track"
+            //     ? navLinkSelectedStyle
+            //     : navLinkUnselectedStyle
+            // }
+            style={{ display: "none" }}
             className="nav-link"
           >
             Track

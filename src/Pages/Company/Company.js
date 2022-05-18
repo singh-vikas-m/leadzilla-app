@@ -6,7 +6,7 @@ import { auth } from "../../firebase-config";
 import { signOut } from "firebase/auth";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import axios from "axios";
-import { Spin, Button } from "antd";
+import { Spin, Button, Skeleton } from "antd";
 import { ExportOutlined, PoweroffOutlined } from "@ant-design/icons";
 
 export default function Company() {
@@ -126,119 +126,133 @@ export default function Company() {
       <div className="content">
         <div className="company-cards-container">
           <div className="company-filter-card">
-            {/**
-             * Use clearbit api to fetch company logos using domain name
-             */}
+            {loading === true ? (
+              <Skeleton />
+            ) : (
+              <div>
+                {/**
+                 * Use clearbit api to fetch company logos using domain name
+                 */}
 
-            {/** company logo */}
-            <div className="company-info-container">
-              <img
-                className="company-logo"
-                src={
-                  "https://logo.clearbit.com/" +
-                  searchParams.get("domain") +
-                  "?size=100"
-                }
-                alt=""
-              />
+                {/** company logo */}
+                <div className="company-info-container">
+                  <img
+                    className="company-logo"
+                    src={
+                      "https://logo.clearbit.com/" +
+                      searchParams.get("domain") +
+                      "?size=100"
+                    }
+                    alt=""
+                  />
 
-              <span className="company-info-text">
-                {/** company name */}
-                {companyDetails.companyName ? (
-                  <h1 className="text-1">{companyDetails.companyName}</h1>
-                ) : (
-                  <h1 className="text-1">
-                    {companyDetails.domain?.split(".")[0]}
-                  </h1>
-                )}
+                  <span className="company-info-text">
+                    {/** company name */}
+                    {companyDetails.companyName ? (
+                      <h1 className="text-1">{companyDetails.companyName}</h1>
+                    ) : (
+                      <h1 className="text-1">
+                        {companyDetails.domain?.split(".")[0]}
+                      </h1>
+                    )}
 
-                {/** company revenue */}
-                {companyDetails.companyRevenue ? (
-                  <h1 className="text-2">{companyDetails.companyRevenue}</h1>
-                ) : (
-                  ""
-                )}
+                    {/** company revenue */}
+                    {companyDetails.companyRevenue ? (
+                      <h1 className="text-2">
+                        {companyDetails.companyRevenue}
+                      </h1>
+                    ) : (
+                      ""
+                    )}
 
-                {/** company headcount */}
-                {companyDetails.companySize ? (
-                  <h1 className="text-2">
-                    {companyDetails.companySize} employees
-                  </h1>
-                ) : (
-                  ""
-                )}
+                    {/** company headcount */}
+                    {companyDetails.companySize ? (
+                      <h1 className="text-2">
+                        {companyDetails.companySize} employees
+                      </h1>
+                    ) : (
+                      ""
+                    )}
 
-                {/** company industry */}
-                {companyDetails.industry ? (
-                  <h1 className="text-2">{companyDetails.industry}</h1>
-                ) : (
-                  ""
-                )}
+                    {/** company industry */}
+                    {companyDetails.industry ? (
+                      <h1 className="text-2">{companyDetails.industry}</h1>
+                    ) : (
+                      ""
+                    )}
 
-                {/** company sector */}
-                {companyDetails.sector
-                  ? companyDetails.sector.map((sector, index) => {
-                      return (
-                        <h1 className="text-2" key={index}>
-                          {companyDetails.sector}
-                        </h1>
-                      );
-                    })
-                  : ""}
+                    {/** company sector */}
+                    {companyDetails.sector
+                      ? companyDetails.sector.map((sector, index) => {
+                          return (
+                            <h1 className="text-2" key={index}>
+                              {companyDetails.sector}
+                            </h1>
+                          );
+                        })
+                      : ""}
 
-                {/** company address */}
-                {companyDetails.city ||
-                companyDetails.state ||
-                companyDetails.country ? (
-                  <h1 className="text-2">
-                    {(companyDetails.city ? companyDetails.city + ", " : "") +
-                      (companyDetails.state
-                        ? companyDetails.state + ", "
-                        : "") +
-                      (companyDetails.country ? companyDetails.country : "")}
-                  </h1>
-                ) : (
-                  ""
-                )}
+                    {/** company address */}
+                    {companyDetails.city ||
+                    companyDetails.state ||
+                    companyDetails.country ? (
+                      <h1 className="text-2">
+                        {(companyDetails.city
+                          ? companyDetails.city + ", "
+                          : "") +
+                          (companyDetails.state
+                            ? companyDetails.state + ", "
+                            : "") +
+                          (companyDetails.country
+                            ? companyDetails.country
+                            : "")}
+                      </h1>
+                    ) : (
+                      ""
+                    )}
 
-                {/** company website */}
-                <h1 className="text-2">{searchParams.get("domain")}</h1>
-              </span>
-            </div>
+                    {/** company website */}
+                    <h1 className="text-2">{searchParams.get("domain")}</h1>
+                  </span>
+                </div>
 
-            {/** open website button */}
-            <a
-              href={"http://" + companyDetails.domain}
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              <Button type="primary" ghost icon={<ExportOutlined />}>
-                Visite Website
-              </Button>
-            </a>
+                {/** open website button */}
+                <a
+                  href={"http://" + companyDetails.domain}
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  <Button type="primary" ghost icon={<ExportOutlined />}>
+                    Visite Website
+                  </Button>
+                </a>
 
-            <h1 className="section-text">Search Leads</h1>
-            <span className="actions">
-              {/** available contacts in leadzilla */}
-              <Link
-                to={`/search?filter={"domain":["${companyDetails.domain}"]}`}
-              >
-                {companyDetails.availableContacts ? (
-                  <h1 className="link">
-                    Available People({availableContactCount})
-                  </h1>
-                ) : (
-                  ""
-                )}
-              </Link>
+                <h1 className="section-text">Search Leads</h1>
+                <span className="actions">
+                  {/** available contacts in leadzilla */}
+                  <Link
+                    to={`/search?filter={"domain":["${companyDetails.domain}"]}`}
+                  >
+                    {companyDetails.availableContacts ? (
+                      <h1 className="link">
+                        Available People({availableContactCount})
+                      </h1>
+                    ) : (
+                      ""
+                    )}
+                  </Link>
 
-              <h1 className="link">.</h1>
-              <Link
-                to={`/search?filter={"domain":["${companyDetails.domain}"], "level":["C-Level", "VP-Level", "Director-Level"]}`}
-              >
-                <h1 className="link">Decision makers ({decisionMakerCount})</h1>
-              </Link>
-            </span>
+                  <h1 className="link">.</h1>
+                  <Link
+                    to={`/search?filter={"domain":["${companyDetails.domain}"], "level":["C-Level", "VP-Level", "Director-Level"]}`}
+                  >
+                    <h1 className="link">
+                      Decision makers ({decisionMakerCount})
+                    </h1>
+                  </Link>
+                </span>
+              </div>
+            )}
           </div>
         </div>
       </div>
