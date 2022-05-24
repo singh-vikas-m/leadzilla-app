@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import "./Company.css";
 import Topnav from "../../Components/Topnav/Topnav";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../../firebase-config";
+import { auth, saveCompany } from "../../firebase-config";
 import { signOut } from "firebase/auth";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import axios from "axios";
-import { Spin, Button, Skeleton } from "antd";
+import { Spin, Button, Skeleton, Popover } from "antd";
 import { ExportOutlined, PoweroffOutlined } from "@ant-design/icons";
 
 export default function Company() {
@@ -216,6 +216,35 @@ export default function Company() {
                   </span>
                 </div>
 
+                <Popover
+                  title={"Save to"}
+                  placement="rightTop"
+                  content={
+                    <button
+                      style={{ margin: "2px 5px" }}
+                      className="secondary-button-active"
+                      onClick={(e) => {
+                        // purchaseContact(index, record.id);
+                        saveCompany(
+                          "1xMRg7MhS6Q1ShVS95G6BsJK6mO2",
+                          "Test List",
+                          companyDetails.domain
+                        );
+                      }}
+                    >
+                      Save
+                    </button>
+                  }
+                  trigger="click"
+                >
+                  <button
+                    className="primary-button"
+                    style={{ marginRight: "10px", padding: "0px 20px" }}
+                  >
+                    Save company
+                  </button>
+                </Popover>
+
                 {/** open website button */}
                 <a
                   href={"http://" + companyDetails.domain}
@@ -224,9 +253,9 @@ export default function Company() {
                 >
                   <button
                     className="secondary-button-inactive"
-                    style={{ marginRight: "10px" }}
+                    style={{ marginRight: "10px", padding: "0px 20px" }}
                   >
-                    Visit Website <ExportOutlined />
+                    Visit website <ExportOutlined />
                   </button>
                 </a>
 
@@ -238,7 +267,7 @@ export default function Company() {
                   >
                     {companyDetails.availableContacts ? (
                       <h1 className="link">
-                        Available People({availableContactCount})
+                        Available people ({availableContactCount})
                       </h1>
                     ) : (
                       ""

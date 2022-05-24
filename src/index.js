@@ -1,15 +1,18 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import "./index.css";
+import "./index.less";
+import { UserIdContextProvider } from "./Context/UserIdContext";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter } from "react-router-dom";
 
 ReactDOM.render(
   <React.StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <UserIdContextProvider>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </UserIdContextProvider>
   </React.StrictMode>,
   document.getElementById("root")
 );

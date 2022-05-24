@@ -2397,6 +2397,7 @@ export default function Search() {
 
             <Table
               headers={false}
+              style={{ padding: "0px 30px" }}
               size="large"
               columns={columns}
               loading={loading}

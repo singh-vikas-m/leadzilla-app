@@ -1,5 +1,5 @@
 import React from "react";
-import "./App.css";
+import "./App.less";
 import Home from "./Pages/Home/Home.js";
 import Search from "./Pages/Search/Search.js";
 import Track from "./Pages/Track/Track.js";
@@ -20,7 +20,13 @@ function App() {
         {/* <Route path="/home" element={<Home />} /> */}
         <Route path="/search" element={<Search />} />
         <Route path="/email_writer" element={<Sequence />} />
-        <Route path="/track" element={<Track />} />
+
+        <Route path="/track" element={<Track />}>
+          <Route path=":list_type" element={<Track />}>
+            <Route path=":list_name" element={<Track />} />
+          </Route>
+        </Route>
+
         <Route path="/company" element={<Company />} />
         <Route path="/Login" element={<Login />} />
         {/* Using path="*"" means "match anything", so this route

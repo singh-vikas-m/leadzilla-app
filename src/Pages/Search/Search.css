@@ -30,7 +30,7 @@
   border: 1px solid #e2e2e2;
   box-shadow: 0px 0px 10px 5px rgba(200, 200, 200, 0.2);
   min-height: 80vh;
-  width: 280px;
+  width: 300px;
   margin: 20px 10px 30px 30px;
   border-radius: 5px;
   padding: 30px 0px;
@@ -116,7 +116,7 @@
   width: 70%;
   margin: 20px 30px 30px 10px;
   border-radius: 5px;
-  padding: 30px;
+  padding: 30px 0px;
 }
 
 .Search .search-cards-container .search-result-card-controls {
@@ -124,6 +124,7 @@
   justify-content: flex-end;
   align-items: center;
   margin: 5px 0px 20px 0px;
+  padding: 0px 30px;
 }
 
 .Search .available-contact-count {

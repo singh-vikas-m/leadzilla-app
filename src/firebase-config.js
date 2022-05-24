@@ -2,7 +2,17 @@
 
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  getDoc,
+  addDoc,
+  getDocs,
+  where,
+  query,
+  collection,
+} from "firebase/firestore";
 
 import "firebase/firestore";
 // TODO: Add SDKs for Firebase products that you want to use
@@ -73,4 +83,134 @@ export const getCreditsInfo = async (firebaseUserUUID) => {
   const docSnap = await getDoc(doc(db, "users", `${firebaseUserUUID}`));
   let credits = docSnap.credits;
   return credits;
+};
+
+/**
+ * All firebase helper queries regarding company lists
+ */
+
+export const createCompanyList = async (
+  firebaseUserUUID,
+  listName,
+  listDescription
+) => {
+  try {
+    // check if this list already exists in db
+    const querySnapshot = await getDocs(
+      query(
+        collection(db, "company_list"),
+        where("firebase_auth_uuid", "==", firebaseUserUUID),
+        where("listName", "==", listName)
+      )
+    );
+    console.log(querySnapshot.docs.length);
+    if (querySnapshot.docs.length === 0) {
+      //console.log(firebaseUserUUID, listName, listDescription);
+      //check if content are not empty
+      if (
+        (firebaseUserUUID.length > 0,
+        listName.length > 0,
+        listDescription.length > 0)
+      ) {
+        // Save list
+        const docRef = await addDoc(collection(db, "company_list"), {
+          contentCount: 0,
+          listName: `${listName}`,
+          listDescription: `${listDescription}`,
+          firebase_auth_uuid: `${firebaseUserUUID}`,
+        });
+        // console.log("Document written with ID: ", docRef.id);
+      }
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const fetchCompanyList = async (firebaseUserUUID) => {
+  let list = [];
+  try {
+    // check if this list already exists in db
+    const querySnapshot = await getDocs(
+      query(
+        collection(db, "company_list"),
+        where("firebase_auth_uuid", "==", firebaseUserUUID)
+      )
+    );
+    console.log(querySnapshot.docs);
+    querySnapshot.forEach((doc) => {
+      list.push(doc.data());
+      //console.log(doc.data());
+      // console.log(doc.id, " => ", doc.data());
+    });
+
+    //console.log(list);
+  } catch (err) {
+    console.log(err);
+  }
+  return list;
+};
+
+/**
+ * All firebase helper queries regarding saved companies
+ */
+
+export const saveCompany = async (firebaseUserUUID, listName, domain) => {
+  try {
+    console.log("saving this company to list");
+
+    // check if this list already exists in db
+    const querySnapshot = await getDocs(
+      query(
+        collection(db, "companies"),
+        where("firebase_auth_uuid", "==", firebaseUserUUID),
+        where("listName", "==", listName)
+      )
+    );
+    console.log(querySnapshot.docs.length);
+    if (querySnapshot.docs.length === 0) {
+      //console.log(firebaseUserUUID, listName, listDescription);
+      //check if content are not empty
+      if ((firebaseUserUUID.length > 0, listName.length > 0)) {
+        // Save list
+        const docRef = await addDoc(collection(db, "companies"), {
+          listName: `${listName}`,
+          domain: `${domain}` || "",
+          firebase_auth_uuid: `${firebaseUserUUID}`,
+        });
+        // console.log("Document written with ID: ", docRef.id);
+      }
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const fetchSavedCompanies = async (
+  firebaseUserUUID,
+  companyListName
+) => {
+  let list = [];
+
+  try {
+    // check if this list already exists in db
+    const querySnapshot = await getDocs(
+      query(
+        collection(db, "companies"),
+        where("firebase_auth_uuid", "==", firebaseUserUUID),
+        where("listName", "==", companyListName)
+      )
+    );
+    console.log(querySnapshot.docs);
+    querySnapshot.forEach((doc) => {
+      list.push(doc.data());
+      //console.log(doc.data());
+      // console.log(doc.id, " => ", doc.data());
+    });
+
+    //console.log(list);
+  } catch (err) {
+    console.log(err);
+  }
+  return list;
 };
