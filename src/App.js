@@ -1,6 +1,6 @@
 import React from "react";
 import "./App.less";
-import Home from "./Pages/Home/Home.js";
+// import Home from "./Pages/Home/Home.js";
 import Search from "./Pages/Search/Search.js";
 import Track from "./Pages/Track/Track.js";
 import Company from "./Pages/Company/Company.js";
@@ -18,7 +18,9 @@ function App() {
       <Routes>
         <Route path="/" element={<Navigate to="/search" />} />
         {/* <Route path="/home" element={<Home />} /> */}
-        <Route path="/search" element={<Search />} />
+        <Route path="/search" element={<Search />}>
+          <Route path=":search_type" element={<Search />} />
+        </Route>
         <Route path="/email_writer" element={<Sequence />} />
 
         <Route path="/track" element={<Track />}>
@@ -28,6 +30,7 @@ function App() {
         </Route>
 
         <Route path="/company" element={<Company />} />
+
         <Route path="/Login" element={<Login />} />
         {/* Using path="*"" means "match anything", so this route
                 acts like a catch-all for URLs that we don't have explicit

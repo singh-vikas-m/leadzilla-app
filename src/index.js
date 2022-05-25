@@ -8,11 +8,11 @@ import { BrowserRouter } from "react-router-dom";
 
 ReactDOM.render(
   <React.StrictMode>
-    <UserIdContextProvider>
-      <BrowserRouter>
+    <BrowserRouter>
+      <UserIdContextProvider>
         <App />
-      </BrowserRouter>
-    </UserIdContextProvider>
+      </UserIdContextProvider>
+    </BrowserRouter>
   </React.StrictMode>,
   document.getElementById("root")
 );

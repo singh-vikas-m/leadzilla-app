@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import "./Login.css";
 import { useNavigate } from "react-router-dom";
 import {
@@ -12,9 +12,11 @@ import {
   sendPasswordResetEmail,
 } from "firebase/auth";
 import LeadzillaLogo from "../../Assets/leadzilla-full-logo.png";
-import { notification, Divider, message, Modal } from "antd";
+import { Divider, message, Modal } from "antd";
+import { UserIdContext } from "../../Context/UserIdContext";
 
 function Login() {
+  const [UserId, setUserId] = useContext(UserIdContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -26,6 +28,7 @@ function Login() {
   auth.onAuthStateChanged((user) => {
     if (user) {
       navigate("/");
+      setUserId(user.uid);
     }
   });
 

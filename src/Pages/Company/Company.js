@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import "./Company.css";
 import Topnav from "../../Components/Topnav/Topnav";
 import { onAuthStateChanged } from "firebase/auth";
@@ -8,6 +8,7 @@ import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import axios from "axios";
 import { Spin, Button, Skeleton, Popover } from "antd";
 import { ExportOutlined, PoweroffOutlined } from "@ant-design/icons";
+import { UserIdContext } from "../../Context/UserIdContext";
 
 export default function Company() {
   const [user, setUser] = useState(null);
@@ -18,6 +19,7 @@ export default function Company() {
   const [availableContactCount, setAvailableContactCount] = useState("");
   const [availableContacts, setAvailableContacts] = useState([]);
 
+  const [UserId, setUserId] = useContext(UserIdContext);
   let [searchParams, setSearchParams] = useSearchParams();
   let navigate = useNavigate();
 
@@ -28,6 +30,7 @@ export default function Company() {
     if (user) {
       console.log("user logged in");
       setUser(user);
+      setUserId(user.uid);
     } else {
       console.log("user not logged in");
       navigate("/login");
@@ -228,7 +231,8 @@ export default function Company() {
                         saveCompany(
                           "1xMRg7MhS6Q1ShVS95G6BsJK6mO2",
                           "Test List",
-                          companyDetails.domain
+                          companyDetails.domain,
+                          companyDetails.domain?.split(".")[0]
                         );
                       }}
                     >
@@ -263,7 +267,7 @@ export default function Company() {
                 <span className="actions">
                   {/** available contacts in leadzilla */}
                   <Link
-                    to={`/search?filter={"domain":["${companyDetails.domain}"]}`}
+                    to={`/search/people?filter={"domain":["${companyDetails.domain}"]}`}
                   >
                     {companyDetails.availableContacts ? (
                       <h1 className="link">
@@ -276,7 +280,7 @@ export default function Company() {
 
                   <h1 className="link">.</h1>
                   <Link
-                    to={`/search?filter={"domain":["${companyDetails.domain}"], "level":["C-Level", "VP-Level", "Director-Level"]}`}
+                    to={`/search/people?filter={"domain":["${companyDetails.domain}"], "level":["C-Level", "VP-Level", "Director-Level"]}`}
                   >
                     <h1 className="link">
                       Decision makers ({decisionMakerCount})

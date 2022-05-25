@@ -7,8 +7,22 @@
   justify-content: flex-start;
 }
 
-.Search .content {
+.Search .bottom-nav {
+  position: fixed;
+  z-index: 100;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  font-weight: 600;
+  width: 100vw;
+  height: 50px;
   margin-top: 70px;
+  background: #fff;
+  border-bottom: 1px solid #e2e2e2;
+}
+
+.Search .content {
+  margin-top: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -17,7 +31,7 @@
 }
 
 .Search .search-cards-container {
-  margin-top: 15px;
+  margin-top: 40px;
   display: flex;
   justify-content: center;
   align-items: flex-start;

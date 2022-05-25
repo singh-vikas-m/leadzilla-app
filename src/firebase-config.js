@@ -155,21 +155,27 @@ export const fetchCompanyList = async (firebaseUserUUID) => {
  * All firebase helper queries regarding saved companies
  */
 
-export const saveCompany = async (firebaseUserUUID, listName, domain) => {
+export const saveCompany = async (
+  firebaseUserUUID,
+  listName,
+  domain,
+  company
+) => {
   try {
     console.log("saving this company to list");
 
+    console.log(firebaseUserUUID, listName, domain, company);
     // check if this list already exists in db
     const querySnapshot = await getDocs(
       query(
         collection(db, "companies"),
         where("firebase_auth_uuid", "==", firebaseUserUUID),
-        where("listName", "==", listName)
+        where("listName", "==", listName),
+        where("company", "==", company),
+        where("domain", "==", domain)
       )
     );
-    console.log(querySnapshot.docs.length);
     if (querySnapshot.docs.length === 0) {
-      //console.log(firebaseUserUUID, listName, listDescription);
       //check if content are not empty
       if ((firebaseUserUUID.length > 0, listName.length > 0)) {
         // Save list
@@ -177,6 +183,7 @@ export const saveCompany = async (firebaseUserUUID, listName, domain) => {
           listName: `${listName}`,
           domain: `${domain}` || "",
           firebase_auth_uuid: `${firebaseUserUUID}`,
+          company: `${company}`,
         });
         // console.log("Document written with ID: ", docRef.id);
       }

@@ -245,7 +245,7 @@ export default function Topnav() {
         </div>
 
         <div className="nav-links">
-          <Link to="/search">
+          <Link to="/search/people">
             <h1
               style={
                 location.pathname.includes("/search")

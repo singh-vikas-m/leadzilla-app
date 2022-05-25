@@ -13,7 +13,6 @@ import {
   Link,
   useSearchParams,
   useParams,
-  Outlet,
 } from "react-router-dom";
 import { MoreOutlined } from "@ant-design/icons";
 import { Spin, Table, Tabs, Modal, Popover, Button } from "antd";
@@ -49,12 +48,16 @@ export default function Track() {
   }, []);
 
   useEffect(() => {
+    console.log(UserId);
+  }, [UserId]);
+
+  useEffect(() => {
     getCompanyList();
-  }, [firebaseAuthUUID]);
+  }, [UserId]);
 
   const getCompanyList = async () => {
     setLoading(true);
-    const list = await fetchCompanyList(firebaseAuthUUID);
+    const list = await fetchCompanyList(UserId);
     setcompanyList(list);
     setLoading(false);
   };
@@ -157,7 +160,7 @@ export default function Track() {
 
   function onTabChange(key) {
     // change url route as tab changes
-    //console.log(key);
+    // console.log(key);
     if (key === "company") {
       navigate("/track/company");
     } else if (key === "people") {
@@ -166,11 +169,7 @@ export default function Track() {
   }
 
   const saveCompanyList = async () => {
-    await createCompanyList(
-      firebaseAuthUUID,
-      companyListName,
-      companyListDescription
-    );
+    await createCompanyList(UserId, companyListName, companyListDescription);
     setConfirmLoading(false);
     setcompanyListName("");
     setcompanyListDescription("");
@@ -270,7 +269,6 @@ export default function Track() {
                 loading={loading}
                 companyList={companyList}
                 listName={list_name}
-                firebaseAuthUUID={firebaseAuthUUID}
               />
             ) : (
               <PeopleList />
@@ -296,16 +294,12 @@ export default function Track() {
 
 function CompanyList(props) {
   var { list_name } = useParams();
-  console.log(list_name);
 
   return (
     <>
       {list_name ? (
         <>
-          <SavedCompanies
-            listName={list_name}
-            firebaseAuthUUID={props.firebaseAuthUUID}
-          />
+          <SavedCompanies listName={list_name} />
         </>
       ) : (
         <Table
@@ -409,11 +403,10 @@ function SavedCompanies(props) {
 
   useEffect(() => {
     getSavedCompanies();
-  }, [list_name]);
+  }, [list_name, UserId]);
 
   const getSavedCompanies = async () => {
-    console.log("fetching lists...", list_name, UserId);
-
+    console.log("fetching lists...", list_name);
     try {
       setLoading(true);
       let companies = await fetchSavedCompanies(UserId, list_name);
