@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import "./Search.css";
 import Topnav from "../../Components/Topnav/Topnav";
 import { onAuthStateChanged } from "firebase/auth";
-import { db, auth } from "../../firebase-config";
+import { db, auth, fetchCompanyList, saveCompany } from "../../firebase-config";
 import { arrayRemove, doc, onSnapshot, updateDoc } from "firebase/firestore";
 import {
   useNavigate,
@@ -21,6 +21,7 @@ import {
   Tree,
   Tag,
   Tabs,
+  Popover,
 } from "antd";
 
 import axios from "axios";
@@ -43,6 +44,8 @@ import {
   LinkedinFilled,
   TwitterSquareFilled,
 } from "@ant-design/icons";
+import { UserIdContext } from "../../Context/UserIdContext";
+
 LogRocket.init("7ahtfn/leadzilla-search-console");
 
 export default function Search() {
@@ -50,6 +53,8 @@ export default function Search() {
   const [loggedInUser, setLoggedInUser] = useState(false);
 
   const [firebaseAuthUUID, setFirebaseAuthUUID] = useState("");
+  const [UserId, setUserId] = useContext(UserIdContext);
+
   // const [accessToken, setAccessToken] = useState("");
 
   let navigate = useNavigate();
@@ -78,6 +83,8 @@ export default function Search() {
 
       setLoggedInUser(user);
       setFirebaseAuthUUID(user.uid);
+      setUserId(user.uid);
+
       onSnapshot(doc(db, "users", `${user.uid}`), (doc) => {
         // console.log("Current data: ", doc.data());
         if (currentCredit === 0) {
@@ -127,7 +134,7 @@ export default function Search() {
         {search_type === "people" ? (
           <PeopleSearch currentCredit={currentCredit} />
         ) : (
-          <CompanySearch />
+          <CompanySearch currentCredit={currentCredit} />
         )}
       </div>
     </div>
@@ -192,16 +199,22 @@ function PeopleSearch(props) {
   const [searchResult, setSearchResult] = useState([]);
   const [selectedUserData, setSelectedUserData] = useState([]);
 
+  const [savedCompanyList, setSavedCompanyList] = useState([]);
+  const [isSaveCompanyPopoverVisible, setIsSaveCompanyPopoverVisible] =
+    useState(false);
+
   const [loading, setLoading] = useState(false);
   const [orgChartDrawerVisible, setOrgChartDrawerVisible] = useState(false);
   const [firebaseAuthUUID, setFirebaseAuthUUID] = useState("");
+  const [UserId, setUserId] = useContext(UserIdContext);
+
   // const [accessToken, setAccessToken] = useState("");
 
   const { Option } = Select;
-
   var { search_type } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
 
+  var selectedCompanyList = "";
   // const serverURL = "http://localhost:6060";
   const serverURL = "https://leadzilla.herokuapp.com";
 
@@ -226,6 +239,31 @@ function PeopleSearch(props) {
       console.log(err);
     }
   }, []);
+
+  useEffect(() => {
+    fetchSavedListNames();
+  }, [UserId]);
+
+  const fetchSavedListNames = async () => {
+    try {
+      console.log("fetching saved list name");
+      const list = await fetchCompanyList(UserId);
+      setSavedCompanyList(list);
+    } catch (err) {}
+  };
+
+  // saved company list options for selector
+  const companyListOptions = [];
+  savedCompanyList.forEach((country) => {
+    companyListOptions.push(
+      <Option key={country.listName}>{country.listName}</Option>
+    );
+  });
+
+  function handleSaveCompanySelectChange(value) {
+    console.log(value);
+    selectedCompanyList = value;
+  }
 
   const testDataSource = [
     {
@@ -583,6 +621,53 @@ function PeopleSearch(props) {
           >
             View
           </button>
+
+          {/** save company to list */}
+          <Popover
+            title={"Save to"}
+            placement="rightTop"
+            trigger="hover"
+            content={
+              <>
+                <Select
+                  bordered={true}
+                  allowClear
+                  placeholder="Select a company list"
+                  onChange={handleSaveCompanySelectChange}
+                  style={{ width: "100%", margin: "5px 10px 10px 5px" }}
+                >
+                  {companyListOptions}
+                </Select>
+
+                <Button
+                  style={{ margin: "2px 5px" }}
+                  // className="secondary-button-active"
+                  onClick={async (e) => {
+                    // purchaseContact(index, record.id);
+                    await saveCompany(
+                      UserId,
+                      selectedCompanyList,
+                      record.primaryDomain,
+                      record.primaryDomain?.split(".")[0]
+                    );
+                    setIsSaveCompanyPopoverVisible(false);
+                  }}
+                >
+                  Save
+                </Button>
+              </>
+            }
+          >
+            <button
+              className="primary-button"
+              style={{ marginRight: "10px", padding: "0px 20px" }}
+              onClick={() => {
+                setIsSaveCompanyPopoverVisible(true);
+              }}
+            >
+              Save company
+            </button>
+          </Popover>
 
           {/* <button
             style={{ margin: "2px 5px" }}
@@ -1639,7 +1724,12 @@ function PeopleSearch(props) {
         onMouseDown={onPreventMouseDown}
         closable={closable}
         onClose={onClose}
-        style={{ marginRight: 3 }}
+        style={{
+          height: "23px",
+          fontSize: "13px",
+          fontWeight: "500",
+          margin: "3px 3px 3px 0px",
+        }}
       >
         {label}
       </Tag>
@@ -2570,45 +2660,40 @@ function CompanySearch(props) {
   };
 
   //filter selector values
-  const [selectedDepartment, setSelectedDepartment] = useState([]);
-  const [selectedLevel, setSelectedLevel] = useState([]);
   const [selectedIndustry, setSelectedIndustry] = useState([]);
   const [selectedCompanySize, setSelectedCompanySize] = useState([]);
   const [selectedCompanyRevenue, setSelectedCompanyRevenue] = useState([]);
-  const [selectedName, setSelectedName] = useState([]);
-  const [selectedFirstName, setSelectedFirstName] = useState([]);
-  const [selectedLastName, setSelectedLastName] = useState([]);
-  const [selectedTitle, setSelectedTitle] = useState([]);
   const [selectedCity, setSelectedCity] = useState([]);
   const [selectedCountry, setSelectedCountry] = useState([]);
   const [selectedState, setSelectedState] = useState([]);
-  const [selectedZipCode, setSelectedZipCode] = useState([]);
   const [selectedDomain, setSelectedDomain] = useState([]);
   const [selectedCompany, setSelectedCompany] = useState([]);
 
   //filter setting states
-  const [titleExactMatch, setTitleExactMatch] = useState(false);
   const [cursorMark, setCursorMark] = useState("");
   const [resultLimit, setResultLimit] = useState(15);
   const [totalContactsAvailable, setTotalContactsAvailable] = useState("");
 
   //misc states
-  const [loggedInUser, setLoggedInUser] = useState(false);
   const [searchResult, setSearchResult] = useState([]);
   const [selectedUserData, setSelectedUserData] = useState([]);
+
+  const [savedCompanyList, setSavedCompanyList] = useState([]);
 
   const [loading, setLoading] = useState(false);
   const [orgChartDrawerVisible, setOrgChartDrawerVisible] = useState(false);
   const [firebaseAuthUUID, setFirebaseAuthUUID] = useState("");
+  const [UserId, setUserId] = useContext(UserIdContext);
+
   // const [accessToken, setAccessToken] = useState("");
 
   const { Option } = Select;
-
   var { search_type } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const serverURL = "http://localhost:6060";
-  // const serverURL = "https://leadzilla.herokuapp.com";
+  var selectedCompanyList = "";
+  // const serverURL = "http://localhost:6060";
+  const serverURL = "https://leadzilla.herokuapp.com";
 
   useEffect(() => {
     console.log("params", search_type);
@@ -2625,12 +2710,36 @@ function CompanySearch(props) {
         filterFromUrl !== " "
       ) {
         setSelectedDomain(filterFromUrl.domain || []);
-        setSelectedLevel(filterFromUrl.level || []);
       }
     } catch (err) {
       console.log(err);
     }
   }, []);
+
+  useEffect(() => {
+    fetchSavedListNames();
+  }, [UserId]);
+
+  const fetchSavedListNames = async () => {
+    try {
+      console.log("fetching saved list name");
+      const list = await fetchCompanyList(UserId);
+      setSavedCompanyList(list);
+    } catch (err) {}
+  };
+
+  // saved company list options for selector
+  const companyListOptions = [];
+  savedCompanyList.forEach((country) => {
+    companyListOptions.push(
+      <Option key={country.listName}>{country.listName}</Option>
+    );
+  });
+
+  function handleSaveCompanySelectChange(value) {
+    console.log(value);
+    selectedCompanyList = value;
+  }
 
   const testDataSource = [
     {
@@ -2827,7 +2936,7 @@ function CompanySearch(props) {
           />
 
           {record.companyName ? (
-            <Link to={`/company?domain=${record.primaryDomain}`}>
+            <Link to={`/company?domain=${record.companyWebsite}`}>
               <h1 className="company-name">{record.companyName}</h1>
             </Link>
           ) : (
@@ -2939,6 +3048,12 @@ function CompanySearch(props) {
       key: "contact",
       render: (text, record, index) => (
         <div style={{ display: "flex", flexDirection: "column" }}>
+          {
+            <h1 className="contact-department" style={{ marginBottom: "10px" }}>
+              {record.numberOfContacts} employee contacts
+            </h1>
+          }
+
           {record.phoneDirect && record.phoneDirect !== "" ? (
             <div className="contact-container">
               <p className="contact-type">Direct</p>
@@ -2979,19 +3094,72 @@ function CompanySearch(props) {
       title: "Action",
       key: "action",
       render: (text, record, index) => (
-        <>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          {/** save company to list */}
+          <Popover
+            title={"Save to"}
+            placement="rightTop"
+            trigger="hover"
+            content={
+              <>
+                <Select
+                  bordered={true}
+                  allowClear
+                  placeholder="Select a company list"
+                  onChange={handleSaveCompanySelectChange}
+                  style={{ width: "100%", margin: "5px 10px 10px 5px" }}
+                >
+                  {companyListOptions}
+                </Select>
+
+                <Button
+                  style={{ margin: "2px 5px" }}
+                  // className="secondary-button-active"
+                  onClick={async (e) => {
+                    // purchaseContact(index, record.id);
+                    await saveCompany(
+                      UserId,
+                      selectedCompanyList,
+                      record.companyWebsite?.split(".")[1] +
+                        "." +
+                        record.companyWebsite?.split(".")[2],
+                      record.companyWebsite?.split(".")[1]
+                    );
+
+                    console.log(
+                      UserId,
+                      selectedCompanyList,
+                      record.companyWebsite?.split(".")[1] +
+                        "." +
+                        record.companyWebsite?.split(".")[2],
+                      record.companyWebsite?.split(".")[1]
+                    );
+                  }}
+                >
+                  Save
+                </Button>
+              </>
+            }
+          >
+            <button
+              className="primary-button"
+              style={{ margin: "2px 5px", padding: "0px 20px" }}
+            >
+              Save company
+            </button>
+          </Popover>
+
           <Link
-            to={`search/people?filter={"domain":["${record.companyWebsite}"]}`}
+            to={`/search/people?filter={"domain":["${record.companyWebsite}"]}`}
           >
             <button
               style={{
                 margin: "2px 5px",
-                padding: "5px",
-                height: "fitContent",
+                padding: "0px 20px",
               }}
               className="secondary-button-active"
             >
-              View all {record.numberOfContacts} employee
+              View employees
             </button>
           </Link>
           {/* <button
@@ -3008,7 +3176,7 @@ function CompanySearch(props) {
           >
             Org Chart
           </button> */}
-        </>
+        </div>
       ),
     },
   ];
@@ -4049,7 +4217,12 @@ function CompanySearch(props) {
         onMouseDown={onPreventMouseDown}
         closable={closable}
         onClose={onClose}
-        style={{ marginRight: 3 }}
+        style={{
+          height: "23px",
+          fontSize: "13px",
+          fontWeight: "500",
+          margin: "3px 3px 3px 0px",
+        }}
       >
         {label}
       </Tag>
@@ -4123,12 +4296,13 @@ function CompanySearch(props) {
 
   const fetchSearchResult = async (
     selectedCompany,
+    selectedDomain,
     selectedCompanySize,
     selectedCompanyRevenue,
-    selectedDomain,
+    selectedIndustry,
     selectedCountry,
-    cursorMark,
     resultLimit,
+    cursorMark,
     fetchNext
   ) => {
     var data = {
@@ -4184,25 +4358,19 @@ function CompanySearch(props) {
       selectedCountry.length > 0
     ) {
       fetchSearchResult(
-        selectedIndustry,
         selectedCompany,
+        selectedDomain,
         selectedCompanySize,
         selectedCompanyRevenue,
-        selectedDomain,
+        selectedIndustry,
         selectedCountry,
-        cursorMark,
         resultLimit,
+        cursorMark,
         fetchNext
       );
-      // console.log(selectedDepartment);
-      // console.log(selectedLevel);
       // console.log(selectedIndustry);
       // console.log(selectedCompanySize);
       // console.log(selectedCompanyRevenue);
-      // console.log(selectedName);
-      // console.log(selectedFirstName);
-      // console.log(selectedLastName);
-      // console.log(selectedTitle);
       // console.log(selectedDomain);
       // console.log(selectedCompany);
     }
@@ -4214,7 +4382,6 @@ function CompanySearch(props) {
     selectedDomain,
     selectedCompany,
     selectedCountry,
-    titleExactMatch,
     resultLimit,
   ]);
 
@@ -4364,12 +4531,6 @@ function CompanySearch(props) {
   };
 
   // handle changes on filter selectors
-  function handleDepartmentChange(value) {
-    setSelectedDepartment(value);
-  }
-  function handleLevelChange(value) {
-    setSelectedLevel(value);
-  }
   function handleIndustryChange(value) {
     setSelectedIndustry(value);
   }
@@ -4385,23 +4546,9 @@ function CompanySearch(props) {
   function handleCompanyChange(value) {
     setSelectedCompany(value);
   }
-  function handleNameChange(value) {
-    setSelectedName(value);
-  }
-  function handleFirstNameChange(value) {
-    setSelectedFirstName(value);
-  }
-  function handleLastNameChange(value) {
-    setSelectedLastName(value);
-  }
-  function handleTitleChange(value) {
-    setSelectedTitle(value);
-  }
-
   function handleCountryChange(value) {
     setSelectedCountry(value);
   }
-
   function handleResultLimitChange(value) {
     setResultLimit(value);
   }
@@ -4410,14 +4557,14 @@ function CompanySearch(props) {
     let fetchNext = true;
 
     fetchSearchResult(
-      selectedIndustry,
       selectedCompany,
+      selectedDomain,
       selectedCompanySize,
       selectedCompanyRevenue,
-      selectedDomain,
+      selectedIndustry,
       selectedCountry,
-      cursorMark,
       resultLimit,
+      cursorMark,
       fetchNext
     );
   };
@@ -4548,7 +4695,7 @@ function CompanySearch(props) {
                 className="available-contact-count"
                 style={{ display: "block" }}
               >
-                {totalContactsAvailable} contacts
+                {totalContactsAvailable} companies
               </p>
             ) : (
               ""
@@ -4560,6 +4707,7 @@ function CompanySearch(props) {
               filename={"leadzilla-console-export.csv"}
               className="export-csv-button"
               target="_blank"
+              style={{ display: "none" }}
             >
               Export CSV
             </CSVLink>

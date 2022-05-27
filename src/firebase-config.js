@@ -12,6 +12,7 @@ import {
   where,
   query,
   collection,
+  deleteDoc,
 } from "firebase/firestore";
 
 import "firebase/firestore";
@@ -151,8 +152,62 @@ export const fetchCompanyList = async (firebaseUserUUID) => {
   return list;
 };
 
+export const deleteCompanyList = async (
+  firebaseUserUUID,
+  listName,
+  listDescription
+) => {
+  try {
+    //console.log(firebaseUserUUID, listName, listDescription);
+    //check if content are not empty
+    if (
+      (firebaseUserUUID.length > 0,
+      listName.length > 0,
+      listDescription.length > 0)
+    ) {
+      //first delete all the saved companies inside that list
+
+      //get all saved companies in this list
+      let companies = await fetchSavedCompanies(firebaseUserUUID, listName);
+      console.log(companies);
+
+      // delete each company one by one
+      companies.forEach(async (company) => {
+        // console.log(
+        //   firebaseUserUUID,
+        //   company.listName,
+        //   company.company,
+        //   company.domain
+        // );
+
+        await deleteSavedCompany(
+          firebaseUserUUID,
+          company.listName,
+          company.company,
+          company.domain
+        );
+      });
+
+      //now delete the actual list
+      const listQuery = query(
+        collection(db, "company_list"),
+        where("firebase_auth_uuid", "==", firebaseUserUUID),
+        where("listName", "==", listName),
+        where("listDescription", "==", listDescription)
+      );
+      const listQuerySnapshot = await getDocs(listQuery);
+      listQuerySnapshot.forEach(async (record) => {
+        //console.log(record.data());
+        await deleteDoc(doc(db, "company_list", `${record.id}`));
+      });
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 /**
- * All firebase helper queries regarding saved companies
+ * All firebase helper queries regarding individual saved companies
  */
 
 export const saveCompany = async (
@@ -220,4 +275,32 @@ export const fetchSavedCompanies = async (
     console.log(err);
   }
   return list;
+};
+
+export const deleteSavedCompany = async (
+  firebaseUserUUID,
+  listName,
+  company,
+  domain
+) => {
+  try {
+    console.log(firebaseUserUUID, listName, domain, company);
+
+    const q = query(
+      collection(db, "companies"),
+      where("firebase_auth_uuid", "==", firebaseUserUUID),
+      where("listName", "==", listName),
+      where("company", "==", company),
+      where("domain", "==", domain)
+    );
+
+    const querySnapshot = await getDocs(q);
+
+    querySnapshot.forEach(async (record) => {
+      //console.log(record.data());
+      await deleteDoc(doc(db, "companies", `${record.id}`));
+    });
+  } catch (err) {
+    console.log(err);
+  }
 };

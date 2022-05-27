@@ -7,6 +7,8 @@ import {
   createCompanyList,
   fetchCompanyList,
   fetchSavedCompanies,
+  deleteCompanyList,
+  deleteSavedCompany,
 } from "../../firebase-config";
 import {
   useNavigate,
@@ -126,8 +128,19 @@ export default function Track() {
               <button
                 style={{ margin: "2px 5px" }}
                 className="secondary-button-active"
-                onClick={(e) => {
+                onClick={async (e) => {
                   // purchaseContact(index, record.id);
+                  await deleteCompanyList(
+                    UserId,
+                    record.listName,
+                    record.listDescription
+                  );
+                  console.log(
+                    "deleting",
+                    record.listName,
+                    record.listDescription
+                  );
+                  await getCompanyList();
                 }}
               >
                 Delete
@@ -368,6 +381,17 @@ function SavedCompanies(props) {
     },
 
     {
+      title: "Signals",
+      dataIndex: "signals",
+      key: "signals",
+      render: (text, record, index) => (
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          {/* <h4>{record.domain}</h4> */}
+        </div>
+      ),
+    },
+
+    {
       title: "Action",
       key: "action",
       render: (text, record, index) => (
@@ -375,18 +399,25 @@ function SavedCompanies(props) {
           <Popover
             title={"Setting"}
             placement="rightTop"
+            trigger="hover"
             content={
               <button
                 style={{ margin: "2px 5px" }}
                 className="secondary-button-active"
-                onClick={(e) => {
+                onClick={async (e) => {
                   // purchaseContact(index, record.id);
+                  await deleteSavedCompany(
+                    UserId,
+                    list_name,
+                    record.company,
+                    record.domain
+                  );
+                  await getSavedCompanies();
                 }}
               >
                 Delete
               </button>
             }
-            trigger="hover"
           >
             <MoreOutlined
               style={{
