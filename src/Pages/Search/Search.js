@@ -121,7 +121,7 @@ export default function Search() {
       <Topnav />
       <div className="bottom-nav">
         <Tabs
-          style={{ margin: "4px 0px 0px 5.5vw" }}
+          style={{ margin: "2px 0px 0px 5.5vw" }}
           defaultActiveKey="people"
           onChange={onTabChange}
           size={"medium"}

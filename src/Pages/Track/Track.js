@@ -252,7 +252,7 @@ export default function Track() {
       <Topnav />
       <div className="bottom-nav">
         <Tabs
-          style={{ margin: "4px 0px 0px 5.5vw" }}
+          style={{ margin: "2px 0px 0px 5.5vw" }}
           defaultActiveKey="company"
           onChange={onTabChange}
           size={"medium"}

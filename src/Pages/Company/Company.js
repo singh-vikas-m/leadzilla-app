@@ -331,7 +331,6 @@ export default function Company() {
                     </>
                   ) : (
                     <>
-                      <p>Some contents...</p>
                       <Table
                         headers={true}
                         style={{ padding: "0px 0px" }}
