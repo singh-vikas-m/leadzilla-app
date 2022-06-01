@@ -310,7 +310,7 @@ export default function Company() {
         <div className="company-cards-container">
           <div className="company-filter-card">
             {loading === true ? (
-              <Skeleton />
+              <Skeleton active />
             ) : (
               <div>
                 <Drawer

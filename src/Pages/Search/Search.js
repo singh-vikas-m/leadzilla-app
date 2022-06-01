@@ -1725,10 +1725,9 @@ function PeopleSearch(props) {
         closable={closable}
         onClose={onClose}
         style={{
-          height: "23px",
-          fontSize: "13px",
           fontWeight: "500",
-          margin: "3px 3px 3px 0px",
+          color: "green",
+          margin: "3px 0px 3px 0px",
         }}
       >
         {label}
@@ -1770,9 +1769,8 @@ function PeopleSearch(props) {
     <Option key={"Energy & Utilities"}>{"Energy & Utilities"}</Option>,
     <Option key={"Financial Services"}>{"Financial Services"}</Option>,
     <Option key={"Government"}>{"Government"}</Option>,
-    <Option key={"Healthcare"}>{"Healthcare"}</Option>,
-    <Option key={"Pharmaceuticals & Biotech"}>
-      {"Pharmaceuticals & Biotech"}
+    <Option key={"Healthcare, Pharmaceuticals, & Biotech"}>
+      {"Healthcare, Pharmaceuticals, & Biotech"}
     </Option>,
     <Option key={"Manufacturing"}>{"Manufacturing"}</Option>,
     <Option key={"Media & Entertainment"}>{"Media & Entertainment"}</Option>,
@@ -1787,8 +1785,9 @@ function PeopleSearch(props) {
     <Option key={"Transportation & Storage"}>
       {"Transportation & Storage"}
     </Option>,
-    <Option key={"Travel"}>{"Travel"}</Option>,
-    <Option key={"Recreation and Leisure"}>{"Recreation and Leisure"}</Option>,
+    <Option key={"Travel, Recreation, and Leisure"}>
+      {"Travel, Recreation, and Leisure"}
+    </Option>,
     <Option key={"Wholesale & Distribution"}>
       {"Wholesale & Distribution"}
     </Option>,
@@ -4218,10 +4217,9 @@ function CompanySearch(props) {
         closable={closable}
         onClose={onClose}
         style={{
-          height: "23px",
-          fontSize: "13px",
           fontWeight: "500",
-          margin: "3px 3px 3px 0px",
+          color: "green",
+          margin: "3px 0px 3px 0px",
         }}
       >
         {label}
@@ -4240,9 +4238,8 @@ function CompanySearch(props) {
     <Option key={"Energy & Utilities"}>{"Energy & Utilities"}</Option>,
     <Option key={"Financial Services"}>{"Financial Services"}</Option>,
     <Option key={"Government"}>{"Government"}</Option>,
-    <Option key={"Healthcare"}>{"Healthcare"}</Option>,
-    <Option key={"Pharmaceuticals & Biotech"}>
-      {"Pharmaceuticals & Biotech"}
+    <Option key={"Healthcare, Pharmaceuticals, & Biotech"}>
+      {"Healthcare, Pharmaceuticals, & Biotech"}
     </Option>,
     <Option key={"Manufacturing"}>{"Manufacturing"}</Option>,
     <Option key={"Media & Entertainment"}>{"Media & Entertainment"}</Option>,
@@ -4257,8 +4254,9 @@ function CompanySearch(props) {
     <Option key={"Transportation & Storage"}>
       {"Transportation & Storage"}
     </Option>,
-    <Option key={"Travel"}>{"Travel"}</Option>,
-    <Option key={"Recreation and Leisure"}>{"Recreation and Leisure"}</Option>,
+    <Option key={"Travel, Recreation, and Leisure"}>
+      {"Travel, Recreation, and Leisure"}
+    </Option>,
     <Option key={"Wholesale & Distribution"}>
       {"Wholesale & Distribution"}
     </Option>,
