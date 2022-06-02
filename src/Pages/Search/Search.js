@@ -35,6 +35,7 @@ import {
   BriefcaseIcon,
   StarIcon,
   UsersIcon,
+  ServerIcon,
   UserIcon,
 } from "@heroicons/react/outline";
 import { CSVLink } from "react-csv";
@@ -2668,6 +2669,12 @@ function CompanySearch(props) {
   const [selectedDomain, setSelectedDomain] = useState([]);
   const [selectedCompany, setSelectedCompany] = useState([]);
 
+  // advance filter selector values
+  const [selectedTechnology, setSelectedTechnology] = useState([]);
+  const [selectedSimilarTo, setSelectedSimilarTo] = useState([]);
+  const [advanceSearchLimit, setAdvanceSearchLimit] = useState(15);
+  const [advanceSearchCursorMark, setAdvanceSearchCursorMark] = useState(0);
+
   //filter setting states
   const [cursorMark, setCursorMark] = useState("");
   const [resultLimit, setResultLimit] = useState(15);
@@ -4293,6 +4300,8 @@ function CompanySearch(props) {
   ];
 
   const fetchSearchResult = async (
+    selectedSimilarTo,
+    selectedTechnology,
     selectedCompany,
     selectedDomain,
     selectedCompanySize,
@@ -4304,6 +4313,8 @@ function CompanySearch(props) {
     fetchNext
   ) => {
     var data = {
+      similarTo: selectedSimilarTo,
+      technographics: selectedTechnology,
       companyName: selectedCompany,
       nameDomain: selectedDomain,
       numberOfEmployees: selectedCompanySize,
@@ -4348,6 +4359,8 @@ function CompanySearch(props) {
   useEffect(() => {
     let fetchNext = false;
     if (
+      selectedSimilarTo.length > 0 ||
+      selectedTechnology.length > 0 ||
       selectedIndustry.length > 0 ||
       selectedCompanySize.length > 0 ||
       selectedCompanyRevenue.length > 0 ||
@@ -4356,6 +4369,8 @@ function CompanySearch(props) {
       selectedCountry.length > 0
     ) {
       fetchSearchResult(
+        selectedSimilarTo,
+        selectedTechnology,
         selectedCompany,
         selectedDomain,
         selectedCompanySize,
@@ -4374,6 +4389,8 @@ function CompanySearch(props) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
+    selectedSimilarTo,
+    selectedTechnology,
     selectedIndustry,
     selectedCompanySize,
     selectedCompanyRevenue,
@@ -4551,6 +4568,16 @@ function CompanySearch(props) {
     setResultLimit(value);
   }
 
+  // handle changes on adavance filter selectors
+  function handleTechnologyChange(value) {
+    setSelectedTechnology(value);
+    console.log(value);
+  }
+  function handleSimilarToChange(value) {
+    setSelectedSimilarTo(value);
+    console.log(value);
+  }
+
   const fetchNextPage = () => {
     let fetchNext = true;
 
@@ -4682,6 +4709,45 @@ function CompanySearch(props) {
             >
               {countryOptions}
             </Select>
+          </span>
+
+          <Divider />
+          <h1 className="filter-heading">Advance filters</h1>
+          <span
+            className="search-filter-container"
+            style={{ background: "#e8eef4" }}
+          >
+            <span className="filter-label-container">
+              <UsersIcon className="filter-icons" color={"#6f4cef"} />
+              <h1 className="filter-type">Similar companies</h1>
+            </span>
+            <Select
+              bordered={false}
+              mode="tags"
+              tagRender={customSelectTagUI}
+              allowClear
+              placeholder="Eg: ikea.com"
+              onChange={handleSimilarToChange}
+              style={{ width: "100%", margin: "5px 0px 0px 5px" }}
+            />
+          </span>
+          <span
+            className="search-filter-container"
+            style={{ background: "#e8eef4" }}
+          >
+            <span className="filter-label-container">
+              <ServerIcon className="filter-icons" color={"#6f4cef"} />
+              <h1 className="filter-type">Technology</h1>
+            </span>
+            <Select
+              bordered={false}
+              mode="tags"
+              tagRender={customSelectTagUI}
+              allowClear
+              placeholder="Eg: shopify"
+              onChange={handleTechnologyChange}
+              style={{ width: "100%", margin: "5px 0px 0px 5px" }}
+            />
           </span>
         </div>
 
