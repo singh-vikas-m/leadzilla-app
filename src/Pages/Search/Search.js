@@ -4312,6 +4312,8 @@ function CompanySearch(props) {
     cursorMark,
     fetchNext
   ) => {
+    console.log("cursorMarkadat", cursorMark);
+
     var data = {
       similarTo: selectedSimilarTo,
       technographics: selectedTechnology,
@@ -4353,6 +4355,24 @@ function CompanySearch(props) {
     } catch (err) {
       console.log(err);
     }
+  };
+
+  const fetchNextPage = () => {
+    let fetchNext = true;
+
+    fetchSearchResult(
+      selectedSimilarTo,
+      selectedTechnology,
+      selectedCompany,
+      selectedDomain,
+      selectedCompanySize,
+      selectedCompanyRevenue,
+      selectedIndustry,
+      selectedCountry,
+      resultLimit,
+      cursorMark,
+      fetchNext
+    );
   };
 
   // respond to changes on filter values
@@ -4577,22 +4597,6 @@ function CompanySearch(props) {
     setSelectedSimilarTo(value);
     console.log(value);
   }
-
-  const fetchNextPage = () => {
-    let fetchNext = true;
-
-    fetchSearchResult(
-      selectedCompany,
-      selectedDomain,
-      selectedCompanySize,
-      selectedCompanyRevenue,
-      selectedIndustry,
-      selectedCountry,
-      resultLimit,
-      cursorMark,
-      fetchNext
-    );
-  };
 
   const exportData = (selectedUserData) => {
     console.log("exporting :", selectedUserData);
