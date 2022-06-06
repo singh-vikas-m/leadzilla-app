@@ -549,10 +549,25 @@ function PeopleSearch(props) {
             ""
           )}
 
+          <div>
+            {record.subIndustry?.map((subInd, index) => {
+              return (
+                <p className="contact-department" key={index}>
+                  {subInd}
+                </p>
+              );
+            })}
+          </div>
           <p className="company-details">{record.industry}</p>
 
           {record.companySize ? (
             <p className="company-details">{record.companySize} employees</p>
+          ) : (
+            ""
+          )}
+
+          {record.companyRevenue ? (
+            <p className="company-details">{record.companyRevenue} revenue</p>
           ) : (
             ""
           )}
@@ -834,6 +849,7 @@ function PeopleSearch(props) {
     selectedDepartment,
     selectedLevel,
     selectedIndustry,
+    selectedSubIndustry,
     selectedCompany,
     selectedCompanySize,
     selectedCompanyRevenue,
@@ -860,6 +876,7 @@ function PeopleSearch(props) {
       numberOfEmployees: selectedCompanySize,
       revenue: selectedCompanyRevenue,
       industryName: selectedIndustry,
+      subIndustry: selectedSubIndustry,
       city: [],
       country: selectedCountry,
       state: [],
@@ -874,7 +891,7 @@ function PeopleSearch(props) {
     try {
       setLoading(true);
       await axios
-        .post(`${serverURL}/contacts`, JSON.stringify(data), {
+        .post(`${serverURL}/contactsV2`, JSON.stringify(data), {
           headers: {
             "Content-Type": "application/json",
             Accept: "application/json",
@@ -996,6 +1013,7 @@ function PeopleSearch(props) {
       selectedDepartment.length > 0 ||
       selectedLevel.length > 0 ||
       selectedIndustry.length > 0 ||
+      selectedSubIndustry.length > 0 ||
       selectedCompanySize.length > 0 ||
       selectedCompanyRevenue.length > 0 ||
       selectedName.length > 0 ||
@@ -1010,6 +1028,7 @@ function PeopleSearch(props) {
         selectedDepartment,
         selectedLevel,
         selectedIndustry,
+        selectedSubIndustry,
         selectedCompany,
         selectedCompanySize,
         selectedCompanyRevenue,
@@ -1041,6 +1060,7 @@ function PeopleSearch(props) {
     selectedDepartment,
     selectedLevel,
     selectedIndustry,
+    selectedSubIndustry,
     selectedCompanySize,
     selectedCompanyRevenue,
     selectedName,
@@ -1180,7 +1200,7 @@ function PeopleSearch(props) {
     var fetchedData = [];
     try {
       await axios
-        .post(`${serverURL}/contacts`, JSON.stringify(data), {
+        .post(`${serverURL}/contactsV2`, JSON.stringify(data), {
           headers: {
             "Content-Type": "application/json",
             Accept: "application/json",
@@ -1215,7 +1235,7 @@ function PeopleSearch(props) {
       }
     });
 
-    console.log(industry, subIndustry);
+    //console.log(industry, subIndustry);
     setSelectedIndustry(industry);
     setSelectedSubIndustry(subIndustry);
   }
@@ -1267,6 +1287,7 @@ function PeopleSearch(props) {
       selectedDepartment,
       selectedLevel,
       selectedIndustry,
+      selectedSubIndustry,
       selectedCompany,
       selectedCompanySize,
       selectedCompanyRevenue,
@@ -2083,7 +2104,7 @@ function CompanySearch(props) {
           )}
 
           {record.companyRevenue ? (
-            <p className="company-details">{record.companyRevenue}</p>
+            <p className="company-details">{record.companyRevenue} revenue</p>
           ) : (
             ""
           )}
@@ -2359,6 +2380,7 @@ function CompanySearch(props) {
     selectedCompanySize,
     selectedCompanyRevenue,
     selectedIndustry,
+    selectedSubIndustry,
     selectedCountry,
     resultLimit,
     cursorMark,
@@ -2374,6 +2396,7 @@ function CompanySearch(props) {
       numberOfEmployees: selectedCompanySize,
       revenue: selectedCompanyRevenue,
       industryName: selectedIndustry,
+      subIndustry: selectedSubIndustry,
       city: [],
       country: selectedCountry,
       state: [],
@@ -2420,6 +2443,7 @@ function CompanySearch(props) {
       selectedCompanySize,
       selectedCompanyRevenue,
       selectedIndustry,
+      selectedSubIndustry,
       selectedCountry,
       resultLimit,
       cursorMark,
@@ -2434,6 +2458,7 @@ function CompanySearch(props) {
       selectedSimilarTo.length > 0 ||
       selectedTechnology.length > 0 ||
       selectedIndustry.length > 0 ||
+      selectedSubIndustry.length > 0 ||
       selectedCompanySize.length > 0 ||
       selectedCompanyRevenue.length > 0 ||
       selectedDomain.length > 0 ||
@@ -2448,6 +2473,7 @@ function CompanySearch(props) {
         selectedCompanySize,
         selectedCompanyRevenue,
         selectedIndustry,
+        selectedSubIndustry,
         selectedCountry,
         resultLimit,
         cursorMark,
@@ -2464,6 +2490,7 @@ function CompanySearch(props) {
     selectedSimilarTo,
     selectedTechnology,
     selectedIndustry,
+    selectedSubIndustry,
     selectedCompanySize,
     selectedCompanyRevenue,
     selectedDomain,
@@ -2598,7 +2625,7 @@ function CompanySearch(props) {
     var fetchedData = [];
     try {
       await axios
-        .post(`${serverURL}/contacts`, JSON.stringify(data), {
+        .post(`${serverURL}/contactsV2`, JSON.stringify(data), {
           headers: {
             "Content-Type": "application/json",
             Accept: "application/json",
@@ -2633,7 +2660,7 @@ function CompanySearch(props) {
       }
     });
 
-    console.log(industry, subIndustry);
+    //console.log(industry, subIndustry);
     setSelectedIndustry(industry);
     setSelectedSubIndustry(subIndustry);
   }
