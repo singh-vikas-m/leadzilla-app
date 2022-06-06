@@ -151,7 +151,7 @@ export default function Company() {
     try {
       //setLoading(true);
       await axios
-        .post(`${serverURL}/contacts`, JSON.stringify(data), {
+        .post(`${serverURL}/contactsV2`, JSON.stringify(data), {
           headers: {
             "Content-Type": "application/json",
             Accept: "application/json",
