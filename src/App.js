@@ -16,7 +16,7 @@ function App() {
   return (
     <div className="App">
       <Routes>
-        <Route path="/" element={<Navigate to="/search" />} />
+        <Route path="/" element={<Navigate to="/search/people" />} />
         {/* <Route path="/home" element={<Home />} /> */}
         <Route path="/search" element={<Search />}>
           <Route path=":search_type" element={<Search />} />

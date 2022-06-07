@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import "./Topnav.css";
 import leadzillaIcon from "../../Assets/leadzilla-logo.png";
 import { signOut } from "firebase/auth";
@@ -11,12 +11,15 @@ import axios from "axios";
 import { Popover, Button } from "antd";
 import { Link } from "react-router-dom";
 import { CurrencyDollarIcon } from "@heroicons/react/solid";
+import { CreditCountContext } from "../../Context/CreditCountContext";
 
 export default function Topnav() {
   const [userName, setUserName] = useState("");
   const [userEmail, setUserEmail] = useState("");
   const [userPhoto, setUserPhoto] = useState("");
-  const [creditCount, setCreditCount] = useState(0);
+  const [credits, setCredits] = useState(0);
+
+  const [CreditCount, setCreditCount] = useContext(CreditCountContext);
 
   const serverURL = process.env.REACT_APP_SERVER_URL;
   // const serverURL = "http://localhost:6060";
@@ -100,7 +103,10 @@ export default function Topnav() {
       const uid = loggedInUser.uid;
       onSnapshot(doc(db, "users", `${uid}`), (doc) => {
         // console.log("Current data: ", doc.data());
-        setCreditCount(doc.data().credits);
+        let credits = doc.data().credits;
+        setCredits(credits);
+        setCreditCount(credits);
+        console.log("top nav credit info", credits);
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -297,8 +303,8 @@ export default function Topnav() {
           </button>
 
           <div className="credits">
-            <h1>{creditCount}</h1>
-            {creditCount !== null ? <p>credits</p> : ""}
+            <h1>{credits}</h1>
+            {credits !== null ? <p>credits</p> : ""}
           </div>
 
           <div className="profile-pic">

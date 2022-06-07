@@ -2,6 +2,8 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "./index.less";
 import { UserIdContextProvider } from "./Context/UserIdContext";
+import { CreditCountContextProvider } from "./Context/CreditCountContext";
+
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter } from "react-router-dom";
@@ -10,7 +12,9 @@ ReactDOM.render(
   <React.StrictMode>
     <BrowserRouter>
       <UserIdContextProvider>
-        <App />
+        <CreditCountContextProvider>
+          <App />
+        </CreditCountContextProvider>
       </UserIdContextProvider>
     </BrowserRouter>
   </React.StrictMode>,
