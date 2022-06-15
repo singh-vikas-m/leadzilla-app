@@ -108,8 +108,8 @@ export default function CompanySearch({ credits }) {
   const [searchParams, setSearchParams] = useSearchParams();
 
   var selectedCompanyList = "";
-  const serverURL = "http://localhost:6060";
-  // const serverURL = "https://leadzilla.herokuapp.com";
+  // const serverURL = "http://localhost:6060";
+  const serverURL = "https://leadzilla.herokuapp.com";
 
   var credits = CreditCount;
 
@@ -776,12 +776,14 @@ export default function CompanySearch({ credits }) {
             setCursorMark(response.data.cursorMark);
             setTotalContactsAvailable(response.data.hits);
 
-            //update credits
-            if (
-              searchResultData.length > 0 &&
-              (selectedSimilarTo.length > 0 || selectedSimilarTo.length > 0)
-            ) {
-              decrementCredits();
+            //update credits for adavance filter usage
+            if (searchResultData.length > 0) {
+              if (selectedSimilarTo.length > 0) {
+                decrementCredits();
+              }
+              if (selectedTechnology.length > 0) {
+                decrementCredits();
+              }
             }
           })
           .catch((error) => {
@@ -1201,7 +1203,7 @@ export default function CompanySearch({ credits }) {
           </span>
 
           <Divider />
-          <h1 className="filter-heading">Advanced filters</h1>
+          <h1 className="filter-heading">Advanced filters (1 Credit)</h1>
           <span
             className="search-filter-container"
             style={{ background: "#e8eef4" }}

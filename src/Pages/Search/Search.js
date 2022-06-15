@@ -137,10 +137,10 @@ export default function Search() {
         </Tabs>
       </div>
       <div className="content">
-        {search_type === "people" ? (
-          <PeopleSearch credits={currentCredit} />
-        ) : (
+        {search_type === "company" ? (
           <CompanySearch credits={currentCredit} />
+        ) : (
+          <PeopleSearch credits={currentCredit} />
         )}
       </div>
     </div>

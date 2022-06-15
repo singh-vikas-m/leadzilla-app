@@ -113,8 +113,8 @@ export default function PeopleSearch({ credits }) {
   const [searchParams, setSearchParams] = useSearchParams();
 
   var selectedCompanyList = "";
-  const serverURL = "http://localhost:6060";
-  // const serverURL = "https://leadzilla.herokuapp.com";
+  // const serverURL = "http://localhost:6060";
+  const serverURL = "https://leadzilla.herokuapp.com";
 
   var credits = CreditCount;
 
