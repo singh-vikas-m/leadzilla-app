@@ -70,6 +70,7 @@ export const createUserInFirestore = async (
       await setDoc(doc(db, "users", `${firebaseUserUUID}`), {
         credits: 20,
         base_credits: 0,
+        account: "business",
         email: `${firebaseUserEmail}`,
         firebase_auth_uuid: `${firebaseUserUUID}`,
         subscription_id: "none",

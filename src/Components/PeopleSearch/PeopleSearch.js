@@ -844,10 +844,10 @@ export default function PeopleSearch({ credits }) {
               if (UserId && CreditCount > 0) {
                 const userDataRef = doc(db, "users", `${UserId}`);
                 updateDoc(userDataRef, {
-                  credits: `${credits - 1}`,
+                  credits: `${credits - 2}`,
                 });
               }
-              credits = `${credits - 1}`;
+              credits = `${credits - 2}`;
               //console.log("current credit: ", credits);
             }
 
