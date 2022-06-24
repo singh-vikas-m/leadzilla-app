@@ -67,7 +67,9 @@ export default function Company() {
   const fetchAllData = async (companyWebsite) => {
     setLoading(true);
     await fetchCompanyDetails(companyWebsite);
-    await fetchCompanyLinkedInProfile(companyWebsite);
+
+    //disabling this to save nubela credits
+    //await fetchCompanyLinkedInProfile(companyWebsite);
     setLoading(false);
   };
 
