@@ -4,6 +4,7 @@ import "./App.less";
 import Search from "./Pages/Search/Search.js";
 import Track from "./Pages/Track/Track.js";
 import Company from "./Pages/Company/Company.js";
+import Integration from "./Pages/Integration/Integration.js";
 
 import Sequence from "./Pages/Sequence/Sequence.js";
 import Login from "./Pages/Login/Login.js";
@@ -30,6 +31,7 @@ function App() {
         </Route>
 
         <Route path="/company" element={<Company />} />
+        <Route path="/integration" element={<Integration />} />
 
         <Route path="/Login" element={<Login />} />
         {/* Using path="*"" means "match anything", so this route

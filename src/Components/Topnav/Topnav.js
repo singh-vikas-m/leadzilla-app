@@ -5,12 +5,12 @@ import { signOut } from "firebase/auth";
 import { db, auth } from "../../firebase-config";
 import { useNavigate, useLocation } from "react-router-dom";
 import { doc, onSnapshot, updateDoc } from "firebase/firestore";
-import { Avatar } from "antd";
+import { Avatar, Divider } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import axios from "axios";
 import { Popover, Button } from "antd";
 import { Link } from "react-router-dom";
-import { CurrencyDollarIcon } from "@heroicons/react/solid";
+import { CurrencyDollarIcon, LinkIcon } from "@heroicons/react/solid";
 import { CreditCountContext } from "../../Context/CreditCountContext";
 
 export default function Topnav() {
@@ -36,9 +36,19 @@ export default function Topnav() {
     background: "transparent",
   };
   const accountPopupContent = (
-    <div>
-      <p>{userName}</p>
-      <p>{userEmail}</p>
+    <div className="popover-container">
+      <h3>{userName}</h3>
+      <h3>{userEmail}</h3>
+      <Divider />
+
+      <Link to="/integration">
+        <div className="popover-link-containers">
+          {/* <LinkIcon className="link-icons" color={"#000"} /> */}
+          <h3>Integrations</h3>
+        </div>
+      </Link>
+
+      <Divider />
       <Button
         danger
         ghost
@@ -311,7 +321,7 @@ export default function Topnav() {
             <Popover
               placement="bottomRight"
               content={accountPopupContent}
-              title="Account"
+              title={false}
               trigger="hover"
             >
               {userPhoto ? (

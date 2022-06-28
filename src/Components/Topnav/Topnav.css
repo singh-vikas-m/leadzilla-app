@@ -119,3 +119,15 @@
   color: #fff;
   font-weight: 500;
 }
+
+.Topnav .popover-container {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  background-color: #8d6dff;
+}
+
+.Topnav .popover-container .popover-link-containers .link-icons {
+  height: 18px;
+  margin: 0px 0px 0px 15px;
+}
