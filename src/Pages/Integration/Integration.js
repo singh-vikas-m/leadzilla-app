@@ -30,6 +30,7 @@ export default function Integration() {
   let navigate = useNavigate();
 
   var salesforceSetupUrl = "";
+
   onAuthStateChanged(auth, async (user) => {
     if (user) {
       //console.log("user logged in");
@@ -45,7 +46,7 @@ export default function Integration() {
       setFirebaseAuthUUID(user.uid);
       setUserId(user.uid);
 
-      salesforceSetupUrl = `https://leadzilla-dev-ed.my.salesforce.com/services/oauth2/authorize?client_id=3MVG95mg0lk4batiqacSAs_HER2CCOTyocoK5omFHsmm56xdJNCvTUDPAyHNKogAJHyzudoZaog2.3VXPKJbl&redirect_uri=http://localhost/salesforce-leadzilla-redirect&response_type=code&state=${user.uid}`;
+      salesforceSetupUrl = `https://leadzilla-dev-ed.my.salesforce.com/services/oauth2/authorize?client_id=3MVG95mg0lk4batiqacSAs_HER2CCOTyocoK5omFHsmm56xdJNCvTUDPAyHNKogAJHyzudoZaog2.3VXPKJbl&redirect_uri=http://localhost:6060/salesforce-leadzilla-redirect&response_type=code&state=${firebaseAuthUUID}`;
 
       console.log(salesforceSetupUrl);
 
@@ -80,7 +81,7 @@ export default function Integration() {
             integrationDescription={
               "Instantly save the right lead data to Salesforce."
             }
-            integrationUrl={salesforceSetupUrl}
+            integrationUrl={`https://leadzilla-dev-ed.my.salesforce.com/services/oauth2/authorize?client_id=3MVG95mg0lk4batiqacSAs_HER2CCOTyocoK5omFHsmm56xdJNCvTUDPAyHNKogAJHyzudoZaog2.3VXPKJbl&redirect_uri=http://localhost:6060/salesforce-leadzilla-redirect&response_type=code&state=${firebaseAuthUUID}`}
             integrationStatus={true}
           />
 
