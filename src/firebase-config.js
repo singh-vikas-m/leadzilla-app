@@ -13,6 +13,7 @@ import {
   query,
   collection,
   deleteDoc,
+  updateDoc,
 } from "firebase/firestore";
 
 import "firebase/firestore";
@@ -301,6 +302,49 @@ export const deleteSavedCompany = async (
       //console.log(record.data());
       await deleteDoc(doc(db, "companies", `${record.id}`));
     });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const UpdateUserProfileWithNewData = async (firebaseUserUUID) => {
+  let userList = [];
+  try {
+    /**
+     * Fetch All user data and save in list
+     * */
+    // check if this list already exists in db
+    const querySnapshot = await getDocs(query(collection(db, "users")));
+    //console.log(querySnapshot.docs);
+    querySnapshot.forEach((doc) => {
+      userList.push({
+        id: doc.id,
+        data: doc.data(),
+      });
+      //console.log(doc.data());
+      // console.log(doc.id, " => ", doc.data());
+    });
+
+    console.log(userList);
+
+    /**
+     * Update above fetched profiles with new data & fields
+     * */
+    userList.forEach(async (userData, index) => {
+      // do this for first 100 contacts
+      if (index <= 100) {
+        await updateDoc(doc(db, "users", `${userData.id}`), {
+          // account: "business",
+          salesforce: {
+            instance_url: "",
+            refresh_token: "",
+            enabled: false,
+          },
+        });
+        console.log(index, "->", userData.id);
+      }
+    });
+    console.log("doc update done");
   } catch (err) {
     console.log(err);
   }

@@ -82,7 +82,7 @@ export default function Integration() {
               "Instantly save the right lead data to Salesforce."
             }
             integrationUrl={`https://leadzilla-dev-ed.my.salesforce.com/services/oauth2/authorize?client_id=3MVG95mg0lk4batiqacSAs_HER2CCOTyocoK5omFHsmm56xdJNCvTUDPAyHNKogAJHyzudoZaog2.3VXPKJbl&redirect_uri=http://localhost:6060/salesforce-leadzilla-redirect&response_type=code&state=${firebaseAuthUUID}`}
-            integrationStatus={true}
+            integrationStatus={false}
           />
 
           <IntegrationCard

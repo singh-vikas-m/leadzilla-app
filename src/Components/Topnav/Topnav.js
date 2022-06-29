@@ -5,13 +5,13 @@ import { signOut } from "firebase/auth";
 import { db, auth } from "../../firebase-config";
 import { useNavigate, useLocation } from "react-router-dom";
 import { doc, onSnapshot, updateDoc } from "firebase/firestore";
-import { Avatar, Divider } from "antd";
+import { Avatar, Divider, Popover, Button } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import axios from "axios";
-import { Popover, Button } from "antd";
 import { Link } from "react-router-dom";
 import { CurrencyDollarIcon, LinkIcon } from "@heroicons/react/solid";
 import { CreditCountContext } from "../../Context/CreditCountContext";
+import { UpdateUserProfileWithNewData } from "../../firebase-config.js";
 
 export default function Topnav() {
   const [userName, setUserName] = useState("");
@@ -316,6 +316,10 @@ export default function Topnav() {
             <h1>{credits}</h1>
             {credits !== null ? <p>credits</p> : ""}
           </div>
+
+          {/* <Button onClick={UpdateUserProfileWithNewData}>
+            Update USER data (DEV)
+          </Button> */}
 
           <div className="profile-pic">
             <Popover
