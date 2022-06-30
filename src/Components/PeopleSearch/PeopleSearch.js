@@ -3,7 +3,13 @@
  */
 
 import React, { useEffect, useState, useContext } from "react";
-import { db, auth, fetchCompanyList, saveCompany } from "../../firebase-config";
+import {
+  db,
+  auth,
+  fetchCompanyList,
+  saveCompany,
+  getUserSavedIntegrationSettings,
+} from "../../firebase-config";
 import { arrayRemove, doc, onSnapshot, updateDoc } from "firebase/firestore";
 import {
   useNavigate,
@@ -42,6 +48,9 @@ import {
 } from "@heroicons/react/outline";
 import { CSVLink } from "react-csv";
 import LogRocket from "logrocket";
+
+import salesforceIcon from "../../Assets/integration-icons/salesforce-icon.svg";
+import hubspotIcon from "../../Assets/integration-icons/hubspot-icon.svg";
 
 import { industryCascaderOptions, country_list } from "../../Utils/list.js";
 import {
@@ -107,14 +116,15 @@ export default function PeopleSearch({ credits }) {
   const [CreditCount, setCreditCount] = useContext(CreditCountContext);
 
   // const [accessToken, setAccessToken] = useState("");
+  const [savedIntegrationSettings, setSavedIntegrationSettings] = useState({});
 
   const { Option } = Select;
   var { search_type } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
 
   var selectedCompanyList = "";
-  // const serverURL = "http://localhost:6060";
-  const serverURL = "https://leadzilla.herokuapp.com";
+  const serverURL = "http://localhost:6060";
+  //const serverURL = "https://leadzilla.herokuapp.com";
 
   var credits = CreditCount;
 
@@ -140,9 +150,22 @@ export default function PeopleSearch({ credits }) {
     }
   }, []);
 
+  // used when saving a company
   useEffect(() => {
     fetchSavedListNames();
   }, [UserId]);
+
+  //
+  // get users saved integrations setting on pageload
+  useEffect(() => {
+    getUserSavedIntegrationData();
+  }, [UserId]);
+
+  const getUserSavedIntegrationData = async () => {
+    let integrationSettings = await getUserSavedIntegrationSettings(UserId);
+    console.log("integration data", integrationSettings);
+    setSavedIntegrationSettings(integrationSettings);
+  };
 
   const fetchSavedListNames = async () => {
     try {
@@ -528,7 +551,7 @@ export default function PeopleSearch({ credits }) {
       render: (text, record, index) => (
         <>
           <button
-            style={{ margin: "2px 5px" }}
+            style={{ margin: "2px 5px 2px 0px" }}
             className="secondary-button-active"
             onClick={(e) => {
               purchaseContact(index, record.id);
@@ -537,9 +560,80 @@ export default function PeopleSearch({ credits }) {
             View
           </button>
 
+          {/** save contact to crms */}
+          <Popover
+            title={"Save contact to"}
+            placement="rightTop"
+            trigger="hover"
+            content={
+              <>
+                <span style={{ display: "flex", margin: "0px 0px 50px 0px" }}>
+                  <img
+                    src={salesforceIcon}
+                    alt=""
+                    style={{ height: "30px", marginRight: "10px" }}
+                  />
+                  <h3>Salesforce</h3>
+                </span>
+
+                <Button
+                  style={{ margin: "2px 5px" }}
+                  // className="secondary-button-active"
+                  onClick={async (e) => {
+                    // purchaseContact(index, record.id);
+
+                    let data = {
+                      FirstName: record.firstName || "",
+                      LastName: record.lastName || "",
+                      Title: record.title || "",
+                      Company: record.companyName || "",
+                      Email:
+                        record.emailAddress || "***@" + record.primaryDomain,
+                      Phone:
+                        `${record.phoneDirect}, ${record.phoneCompany}` || "",
+                      MobilePhone:
+                        `${record.phoneMobile},   ${record.phoneNumber}` || "",
+                      Industry: record.industry || "",
+                      LeadSource: "Leadzilla",
+                      Website: record.primaryDomain || "",
+                      City: record.city || "",
+                      State: record.state || "",
+                      Country: record.country || "",
+                      // NumberOfEmployees: -10 || "",
+                      // AnnualRevenue: 10000 || "",
+                    };
+
+                    await saveLeadsOnSalesforce(data);
+
+                    // await saveCompany(
+                    //   UserId,
+                    //   selectedCompanyList,
+                    //   record.primaryDomain,
+                    //   record.primaryDomain?.split(".")[0]
+                    // );
+                    setIsSaveCompanyPopoverVisible(false);
+                  }}
+                >
+                  Save
+                </Button>
+              </>
+            }
+          >
+            <button
+              style={{ margin: "2px 5px 2px 0px" }}
+              className="secondary-button-active"
+              onClick={(e) => {
+                //purchaseContact(index, record.id);
+                setIsSaveCompanyPopoverVisible(true);
+              }}
+            >
+              Save
+            </button>
+          </Popover>
+
           {/** save company to list */}
           <Popover
-            title={"Save to"}
+            title={"Save company to"}
             placement="rightTop"
             trigger="hover"
             content={
@@ -575,7 +669,7 @@ export default function PeopleSearch({ credits }) {
           >
             <button
               className="primary-button"
-              style={{ marginRight: "10px", padding: "0px 20px" }}
+              style={{ marginRight: "0px", padding: "0px 20px" }}
               onClick={() => {
                 setIsSaveCompanyPopoverVisible(true);
               }}
@@ -904,7 +998,41 @@ export default function PeopleSearch({ credits }) {
     }
   };
 
-  // respond to changes on filter values
+  /**
+   * Save leads to salesforce CRM
+   */
+
+  const saveLeadsOnSalesforce = async (leadData) => {
+    try {
+      let apiPayload = {
+        auth_uuid: `${UserId}`,
+        lead_data: leadData,
+      };
+      await axios
+        .post(
+          `${serverURL}/salesforce-save-leads`,
+          JSON.stringify(apiPayload),
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+              // Autherization: "Bearer " + accessToken,
+            },
+          }
+        )
+        .then((response) => {
+          let result = response.data;
+          console.log("saleforce save leads", result);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  //respond to changes on filter values
   useEffect(() => {
     let fetchNext = false;
     if (

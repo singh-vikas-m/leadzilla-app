@@ -5,7 +5,11 @@ import salesforceIcon from "../../Assets/integration-icons/salesforce-icon.svg";
 import hubspotIcon from "../../Assets/integration-icons/hubspot-icon.svg";
 
 import { onAuthStateChanged } from "firebase/auth";
-import { db, auth, fetchCompanyList, saveCompany } from "../../firebase-config";
+import {
+  db,
+  auth,
+  getUserSavedIntegrationSettings,
+} from "../../firebase-config";
 import { arrayRemove, doc, onSnapshot, updateDoc } from "firebase/firestore";
 
 import { useNavigate, Link } from "react-router-dom";
@@ -24,6 +28,7 @@ export default function Integration() {
   const [firebaseAuthUUID, setFirebaseAuthUUID] = useState("");
   const [UserId, setUserId] = useContext(UserIdContext);
   const [CreditCount, setCreditCount] = useContext(CreditCountContext);
+  const [savedIntegrationSettings, setSavedIntegrationSettings] = useState("");
 
   // const [accessToken, setAccessToken] = useState("");
 
@@ -54,13 +59,19 @@ export default function Integration() {
         //console.log("Current data: ", doc.data());
         currentCredit = doc.data().credits;
         setCreditCount(currentCredit);
-        console.log("test", currentCredit);
+        //console.log("credit Count", currentCredit);
       });
     } else {
       console.log("user not logged in");
       navigate("/login");
     }
   });
+
+  // get users saved integrations setting
+  useEffect(() => {
+    let integrationSettings = getUserSavedIntegrationSettings(firebaseAuthUUID);
+    setSavedIntegrationSettings(integrationSettings);
+  }, [firebaseAuthUUID]);
 
   return loggedInUser ? (
     <div className="Integration">

@@ -349,3 +349,28 @@ export const UpdateUserProfileWithNewData = async (firebaseUserUUID) => {
     console.log(err);
   }
 };
+
+/**
+ * Get saved integartions config for loggedIn user
+ */
+export const getUserSavedIntegrationSettings = async (firebaseUserUUID) => {
+  var userData = {};
+  try {
+    // Get users data
+    const docSnap = await getDoc(doc(db, "users", `${firebaseUserUUID}`));
+    if (docSnap.exists()) {
+      // if user exists update credit info
+      console.log("user document exists in db");
+      //console.log(docSnap.data());
+      let rawData = docSnap.data();
+      userData["salesforce"] = rawData?.salesforce || "";
+      userData["hubspot"] = rawData?.hubspot || "";
+    } else {
+      // doc.data() will be undefined in this case
+      console.log("No user data!");
+    }
+  } catch (error) {
+    console.error("Error adding document: ", error);
+  }
+  return userData;
+};
