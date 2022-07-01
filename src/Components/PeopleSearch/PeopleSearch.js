@@ -30,6 +30,7 @@ import {
   Tabs,
   Popover,
   Cascader,
+  notification,
 } from "antd";
 
 import axios from "axios";
@@ -52,7 +53,11 @@ import LogRocket from "logrocket";
 import salesforceIcon from "../../Assets/integration-icons/salesforce-icon.svg";
 import hubspotIcon from "../../Assets/integration-icons/hubspot-icon.svg";
 
-import { industryCascaderOptions, country_list } from "../../Utils/list.js";
+import {
+  industryCascaderOptions,
+  country_list,
+  isValid,
+} from "../../Utils/list.js";
 import {
   FacebookFilled,
   LinkedinFilled,
@@ -160,6 +165,14 @@ export default function PeopleSearch({ credits }) {
   useEffect(() => {
     getUserSavedIntegrationData();
   }, [UserId]);
+
+  //notification component
+  const openNotificationWithIcon = (type, message, description) => {
+    notification[type]({
+      message: message,
+      description: description,
+    });
+  };
 
   const getUserSavedIntegrationData = async () => {
     let integrationSettings = await getUserSavedIntegrationSettings(UserId);
@@ -582,26 +595,112 @@ export default function PeopleSearch({ credits }) {
                   onClick={async (e) => {
                     // purchaseContact(index, record.id);
 
-                    let data = {
-                      FirstName: record.firstName || "",
-                      LastName: record.lastName || "",
-                      Title: record.title || "",
-                      Company: record.companyName || "",
-                      Email:
-                        record.emailAddress || "***@" + record.primaryDomain,
-                      Phone:
-                        `${record.phoneDirect}, ${record.phoneCompany}` || "",
-                      MobilePhone:
-                        `${record.phoneMobile},   ${record.phoneNumber}` || "",
-                      Industry: record.industry || "",
-                      LeadSource: "Leadzilla",
-                      Website: record.primaryDomain || "",
-                      City: record.city || "",
-                      State: record.state || "",
-                      Country: record.country || "",
-                      // NumberOfEmployees: -10 || "",
-                      // AnnualRevenue: 10000 || "",
-                    };
+                    // let data = {
+                    //   FirstName: isValid(record.firstName)
+                    //     ? record.firstName
+                    //     : " ",
+                    //   LastName: isValid(record.lastName)
+                    //     ? record.lastName
+                    //     : " ",
+                    //   Title: isValid(record.title) ? record.title : " ",
+                    //   Company: isValid(record.companyName)
+                    //     ? record.companyName
+                    //     : " ",
+                    //   Email: isValid(record.emailAddress)
+                    //     ? record.emailAddress
+                    //     : "***@" + record.primaryDomain,
+                    //   Phone: `${
+                    //     isValid(record.phoneDirect) ? record.phoneDirect : " "
+                    //   } ${
+                    //     isValid(record.phoneCompany) ? record.phoneCompany : " "
+                    //   }`,
+                    //   MobilePhone: `${
+                    //     isValid(record.phoneMobile) ? record.phoneMobile : " "
+                    //   } ${
+                    //     isValid(record.phoneNumber) ? record.phoneNumber : " "
+                    //   }`,
+                    //   Industry: isValid(record.industry)
+                    //     ? record.industry
+                    //     : " ",
+                    //   LeadSource: "Leadzilla",
+                    //   Website: isValid(record.primaryDomain)
+                    //     ? record.primaryDomain
+                    //     : " ",
+                    //   City: isValid(record.city) ? record.city : " ",
+                    //   State: isValid(record.state) ? record.state : " ",
+                    //   Country: isValid(record.country) ? record.country : " ",
+                    //   // NumberOfEmployees: -10 || "",
+                    //   // AnnualRevenue: 10000 || "",
+                    // };
+
+                    let data = {};
+
+                    if (isValid(record.firstName)) {
+                      data["FirstName"] = record.firstName;
+                    }
+                    if (isValid(record.lastName)) {
+                      data["LastName"] = record.lastName;
+                    } else {
+                      data["LastName"] = "none";
+                    }
+                    if (isValid(record.companyName)) {
+                      data["Company"] = record.companyName;
+                    } else if (isValid(record.primaryDomain)) {
+                      data["Company"] = record.primaryDomain;
+                    }
+                    if (isValid(record.title)) {
+                      data["Title"] = record.title;
+                    }
+                    if (isValid(record.title)) {
+                      data["Title"] = record.title;
+                    }
+                    if (isValid(record.emailAddress)) {
+                      data["Email"] = record.emailAddress;
+                    } else if (isValid(record.primaryDomain)) {
+                      data["Email"] = "***@" + record.primaryDomain;
+                    }
+                    if (
+                      isValid(record.phoneCompany) &&
+                      isValid(record.phoneNumber)
+                    ) {
+                      data[
+                        "Phone"
+                      ] = `${record.phoneCompany} ${record.phoneNumber}`;
+                    } else if (isValid(record.phoneCompany)) {
+                      data["Phone"] = `${record.phoneCompany} `;
+                    } else if (isValid(record.phoneNumber)) {
+                      data["Phone"] = `${record.phoneNumber} `;
+                    }
+
+                    if (
+                      isValid(record.phoneDirect) &&
+                      isValid(record.phoneMobile)
+                    ) {
+                      data[
+                        "MobilePhone"
+                      ] = `${record.phoneDirect} ${record.phoneMobile}`;
+                    } else if (isValid(record.phoneDirect)) {
+                      data["MobilePhone"] = `${record.phoneDirect} `;
+                    } else if (isValid(record.phoneMobile)) {
+                      data["MobilePhone"] = `${record.phoneMobile} `;
+                    }
+                    if (isValid(record.industry)) {
+                      data["Industry"] = record.industry;
+                    }
+                    if (isValid(record.primaryDomain)) {
+                      data["Website"] = record.primaryDomain;
+                    }
+                    data["LeadSource"] = "Leadzilla";
+
+                    if (isValid(record.city)) {
+                      data["City"] = record.city;
+                    }
+                    if (isValid(record.city)) {
+                      data["State"] = record.state;
+                    }
+                    if (isValid(record.city)) {
+                      data["Country"] = record.country;
+                    }
 
                     await saveLeadsOnSalesforce(data);
 
@@ -1023,6 +1122,25 @@ export default function PeopleSearch({ credits }) {
         .then((response) => {
           let result = response.data;
           console.log("saleforce save leads", result);
+          if (result[0] === "successful") {
+            openNotificationWithIcon(
+              "success",
+              "Saved",
+              "Test description this is"
+            );
+          } else if (result[0] === "duplicate") {
+            openNotificationWithIcon(
+              "info",
+              "Duplicate",
+              "Test description this is"
+            );
+          } else if (result[0] === "unsuccessful") {
+            openNotificationWithIcon(
+              "error",
+              "Error",
+              "Test description this is"
+            );
+          }
         })
         .catch((error) => {
           console.log(error);

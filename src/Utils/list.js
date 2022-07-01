@@ -1723,4 +1723,10 @@ const country_list = [
   },
 ];
 
-export { industryCascaderOptions, country_list };
+function isValid(string) {
+  if (string !== "" && string !== null && string !== undefined) {
+    return true;
+  } else return false;
+}
+
+export { industryCascaderOptions, country_list, isValid };
