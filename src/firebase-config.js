@@ -72,6 +72,11 @@ export const createUserInFirestore = async (
         credits: 20,
         base_credits: 0,
         account: "business",
+        salesforce: {
+          instance_url: "",
+          refresh_token: "",
+          enabled: false,
+        },
         email: `${firebaseUserEmail}`,
         firebase_auth_uuid: `${firebaseUserUUID}`,
         subscription_id: "none",

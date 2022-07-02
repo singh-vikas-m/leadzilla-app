@@ -1126,19 +1126,19 @@ export default function PeopleSearch({ credits }) {
             openNotificationWithIcon(
               "success",
               "Saved",
-              "Test description this is"
+              "Contact saved successfully"
             );
           } else if (result[0] === "duplicate") {
             openNotificationWithIcon(
               "info",
               "Duplicate",
-              "Test description this is"
+              "Contact is already saved"
             );
           } else if (result[0] === "unsuccessful") {
             openNotificationWithIcon(
               "error",
-              "Error",
-              "Test description this is"
+              "Not saved",
+              "Could not save this contact check if you have configured integration"
             );
           }
         })
