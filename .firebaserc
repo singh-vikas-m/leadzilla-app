@@ -1,5 +1,14 @@
 {
   "projects": {
     "default": "leadzilla-4c8c9"
+  },
+  "targets": {
+    "leadzilla-4c8c9": {
+      "hosting": {
+        "leadzilla-search-console": [
+          "leadzilla-4c8c9"
+        ]
+      }
+    }
   }
 }
