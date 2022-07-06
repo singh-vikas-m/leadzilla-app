@@ -695,10 +695,10 @@ export default function PeopleSearch({ credits }) {
                     if (isValid(record.city)) {
                       data["City"] = record.city;
                     }
-                    if (isValid(record.city)) {
+                    if (isValid(record.state)) {
                       data["State"] = record.state;
                     }
-                    if (isValid(record.city)) {
+                    if (isValid(record.country)) {
                       data["Country"] = record.country;
                     }
 

@@ -1203,7 +1203,9 @@ export default function CompanySearch({ credits }) {
           </span>
 
           <Divider />
-          <h1 className="filter-heading">Advanced filters (1 Credit)</h1>
+          <h1 className="filter-heading">
+            Advanced filters (1 Credit/Company)
+          </h1>
           <span
             className="search-filter-container"
             style={{ background: "#e8eef4" }}
