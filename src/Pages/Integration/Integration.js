@@ -92,9 +92,11 @@ export default function Integration() {
             integrationDescription={
               "Instantly save the right lead data to Salesforce."
             }
+            // for dev this oauth url
             //integrationUrl={`https://leadzilla-dev-ed.my.salesforce.com/services/oauth2/authorize?client_id=3MVG95mg0lk4batiqacSAs_HER2CCOTyocoK5omFHsmm56xdJNCvTUDPAyHNKogAJHyzudoZaog2.3VXPKJbl&redirect_uri=http://localhost:6060/salesforce-leadzilla-redirect&response_type=code&state=${firebaseAuthUUID}`}
-            //integrationUrl={`https://leadzilla-dev-ed.my.salesforce.com/services/oauth2/authorize?client_id=3MVG95mg0lk4batiqacSAs_HER2CCOTyocoK5omFHsmm56xdJNCvTUDPAyHNKogAJHyzudoZaog2.3VXPKJbl&redirect_uri=https://leadzilla.herokuapp.com/salesforce-leadzilla-redirect&response_type=code&state=${firebaseAuthUUID}`}
 
+            // for prod this oauth url
+            integrationUrl={`https://leadzilla-dev-ed.my.salesforce.com/services/oauth2/authorize?client_id=3MVG95mg0lk4batiqacSAs_HER2CCOTyocoK5omFHsmm56xdJNCvTUDPAyHNKogAJHyzudoZaog2.3VXPKJbl&redirect_uri=https://leadzilla.herokuapp.com/salesforce-leadzilla-redirect&response_type=code&state=${firebaseAuthUUID}`}
             integrationStatus={false}
           />
 
