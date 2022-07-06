@@ -128,8 +128,8 @@ export default function PeopleSearch({ credits }) {
   const [searchParams, setSearchParams] = useSearchParams();
 
   var selectedCompanyList = "";
-  const serverURL = "http://localhost:6060";
-  //const serverURL = "https://leadzilla.herokuapp.com";
+  //const serverURL = "http://localhost:6060";
+  const serverURL = "https://leadzilla.herokuapp.com";
 
   var credits = CreditCount;
 
@@ -1552,7 +1552,7 @@ export default function PeopleSearch({ credits }) {
 
           <span className="search-filter-container">
             <span className="filter-label-container">
-              <UserGroupIcon className="filter-icons" color={"#6f4cef"} />
+              <UserGroupIcon style={{ fontSize: "10px" }} color={"#6f4cef"} />
               <h1 className="filter-type">Headcount</h1>
             </span>
             <Select

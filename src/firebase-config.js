@@ -101,7 +101,9 @@ export const getCreditsInfo = async (firebaseUserUUID) => {
 export const createCompanyList = async (
   firebaseUserUUID,
   listName,
-  listDescription
+  listDescription,
+  jobKeywordsList,
+  titleKeywordsList
 ) => {
   try {
     // check if this list already exists in db
@@ -127,6 +129,8 @@ export const createCompanyList = async (
           listName: `${listName}`,
           listDescription: `${listDescription}`,
           firebase_auth_uuid: `${firebaseUserUUID}`,
+          jobKeywords: [...jobKeywordsList],
+          titleKeywords: [...titleKeywordsList],
         });
         // console.log("Document written with ID: ", docRef.id);
       }
@@ -248,7 +252,18 @@ export const saveCompany = async (
           domain: `${domain}` || "",
           firebase_auth_uuid: `${firebaseUserUUID}`,
           company: `${company}`,
+          /** Set lastSyncTime to prev year so that backend-cron job fetches
+           * alerts for the first time
+           */
           lastSyncTime: moment().subtract(1, "years").toDate(),
+          signals: {
+            domain: `${domain}` || "",
+            promotions: [],
+            newhires: [],
+            jobsposted: [],
+            fundings: [],
+            newsmentions: [],
+          },
         });
         // console.log("Document written with ID: ", docRef.id);
       }

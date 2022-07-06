@@ -16,8 +16,9 @@ import {
   useSearchParams,
   useParams,
 } from "react-router-dom";
+import { FireIcon } from "@heroicons/react/solid";
 import { MoreOutlined } from "@ant-design/icons";
-import { Spin, Table, Tabs, Modal, Popover, Button } from "antd";
+import { Spin, Table, Tabs, Modal, Popover, Button, Select, Tag } from "antd";
 import { UserIdContext } from "../../Context/UserIdContext";
 
 export default function Track() {
@@ -28,6 +29,9 @@ export default function Track() {
   const [firebaseAuthUUID, setFirebaseAuthUUID] = useState("");
   const [visible, setVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
+
+  const [jobKeywordsList, setJobKeywordsList] = useState([]);
+  const [titleKeywordsList, setTitleKeywordsList] = useState([]);
 
   const [UserId, setUserId] = useContext(UserIdContext);
   let [searchParams, setSearchParams] = useSearchParams();
@@ -82,6 +86,37 @@ export default function Track() {
     //   listDescription: "tester hsjahjsh",
     // },
   ]);
+
+  function customSelectTagUI(props) {
+    const { label, closable, onClose } = props;
+    const onPreventMouseDown = (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+    };
+    return (
+      <Tag
+        color={"green"}
+        onMouseDown={onPreventMouseDown}
+        closable={closable}
+        onClose={onClose}
+        style={{
+          fontWeight: "500",
+          color: "green",
+          margin: "3px 3px 3px 0px",
+        }}
+      >
+        {label}
+      </Tag>
+    );
+  }
+
+  function handleJobKeywordsInput(value) {
+    setJobKeywordsList(value);
+  }
+
+  function handleTitleKeywordsInput(value) {
+    setTitleKeywordsList(value);
+  }
 
   const companyListTableColumn = [
     {
@@ -182,10 +217,18 @@ export default function Track() {
   }
 
   const saveCompanyList = async () => {
-    await createCompanyList(UserId, companyListName, companyListDescription);
+    await createCompanyList(
+      UserId,
+      companyListName,
+      companyListDescription,
+      jobKeywordsList,
+      titleKeywordsList
+    );
     setConfirmLoading(false);
     setcompanyListName("");
     setcompanyListDescription("");
+    setJobKeywordsList([]);
+    setTitleKeywordsList([]);
   };
 
   const showModal = () => {
@@ -238,13 +281,48 @@ export default function Track() {
         >
           <input
             type="text"
-            placeholder="Eg: Q4 Companies"
+            placeholder="List name"
             onChange={handleCompanyListNameInputChange}
+            style={{ width: "350px" }}
           />
           <input
             type="text"
-            placeholder="Companies to track for Q4"
+            placeholder="Description"
             onChange={handleCompanyListDescriptionInputChange}
+            style={{ width: "350px" }}
+          />
+          <span
+            style={{
+              margin: "20px 0px 0px 0px",
+              width: "350px",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "flex-start",
+            }}
+          >
+            <h3>Alert setting (Optional) </h3>
+          </span>
+          <Select
+            bordered={false}
+            mode="tags"
+            tagRender={customSelectTagUI}
+            allowClear
+            placeholder="Job keyword Eg: sales development, sales enablement"
+            onChange={handleJobKeywordsInput}
+            className="modal-select"
+            style={{ width: "350px" }}
+          />
+
+          <Select
+            bordered={false}
+            mode="tags"
+            tagRender={customSelectTagUI}
+            allowClear
+            placeholder="Title keyword Eg: SDR Manager, Head of Sales"
+            onChange={handleTitleKeywordsInput}
+            className="modal-select"
+            style={{ width: "350px" }}
           />
         </div>
       </Modal>
@@ -385,8 +463,23 @@ function SavedCompanies(props) {
       dataIndex: "signals",
       key: "signals",
       render: (text, record, index) => (
-        <div style={{ display: "flex", flexDirection: "column" }}>
-          {/* <h4>{record.domain}</h4> */}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+          }}
+        >
+          <FireIcon
+            style={{ height: "20px", margin: "0px 5px 0px 0px" }}
+            color={"#6f4cef"}
+          />
+          <h4>
+            {record.signals.fundings.length +
+              record.signals.jobsposted.length +
+              record.signals.newhires.length +
+              record.signals.newsmentions.length +
+              record.signals.promotions.length}
+          </h4>
         </div>
       ),
     },
