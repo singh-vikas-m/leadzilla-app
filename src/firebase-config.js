@@ -15,6 +15,7 @@ import {
   deleteDoc,
   updateDoc,
 } from "firebase/firestore";
+import moment from "moment";
 
 import "firebase/firestore";
 // TODO: Add SDKs for Firebase products that you want to use
@@ -241,11 +242,13 @@ export const saveCompany = async (
       //check if content are not empty
       if ((firebaseUserUUID.length > 0, listName.length > 0)) {
         // Save list
+
         const docRef = await addDoc(collection(db, "companies"), {
           listName: `${listName}`,
           domain: `${domain}` || "",
           firebase_auth_uuid: `${firebaseUserUUID}`,
           company: `${company}`,
+          lastSyncTime: moment().subtract(1, "years").toDate(),
         });
         // console.log("Document written with ID: ", docRef.id);
       }
