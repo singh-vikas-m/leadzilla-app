@@ -15,7 +15,7 @@ module.exports = {
         lessLoaderOptions: {
           lessOptions: {
             modifyVars: {
-              "@primary-color": "#6f4cef",
+              "@primary-color": "#4659ff",
               "@border-radius-base": "4px",
               "@btn-text-shadow": "0 -1px 0 rgba(0, 0, 0, 0)",
               "@btn-primary-shadow": "0 2px 0 rgba(0, 0, 0, 0)",

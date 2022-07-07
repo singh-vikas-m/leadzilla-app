@@ -373,7 +373,7 @@ export default function CompanySearch({ credits }) {
                 rel="noopener noreferrer"
                 target="_blank"
               >
-                <LinkedinFilled className="social-icons" color={"#6f4cef"} />
+                <LinkedinFilled className="social-icons" color={"#4659ff"} />
               </a>
             ) : (
               ""
@@ -384,7 +384,7 @@ export default function CompanySearch({ credits }) {
                 rel="noopener noreferrer"
                 target="_blank"
               >
-                <FacebookFilled className="social-icons" color={"#6f4cef"} />
+                <FacebookFilled className="social-icons" color={"#4659ff"} />
               </a>
             ) : (
               ""
@@ -397,7 +397,7 @@ export default function CompanySearch({ credits }) {
               >
                 <TwitterSquareFilled
                   className="social-icons"
-                  color={"#6f4cef"}
+                  color={"#4659ff"}
                 />
               </a>
             ) : (
@@ -1074,7 +1074,7 @@ export default function CompanySearch({ credits }) {
 
           <span className="search-filter-container">
             <span className="filter-label-container">
-              <OfficeBuildingIcon className="filter-icons" color={"#6f4cef"} />
+              <OfficeBuildingIcon className="filter-icons" color={"#4659ff"} />
               <h1 className="filter-type">Company name</h1>
             </span>
             <Select
@@ -1090,7 +1090,7 @@ export default function CompanySearch({ credits }) {
 
           <span className="search-filter-container">
             <span className="filter-label-container">
-              <LinkIcon className="filter-icons" color={"#6f4cef"} />
+              <LinkIcon className="filter-icons" color={"#4659ff"} />
               <h1 className="filter-type">Company website</h1>
             </span>
             <Select
@@ -1107,7 +1107,7 @@ export default function CompanySearch({ credits }) {
 
           {/* <span className="search-filter-container">
             <span className="filter-label-container">
-              <LibraryIcon className="filter-icons" color={"#6f4cef"} />
+              <LibraryIcon className="filter-icons" color={"#4659ff"} />
               <h1 className="filter-type">Industry</h1>
             </span>
             <Select
@@ -1125,7 +1125,7 @@ export default function CompanySearch({ credits }) {
 
           <span className="search-filter-container">
             <span className="filter-label-container">
-              <LibraryIcon className="filter-icons" color={"#6f4cef"} />
+              <LibraryIcon className="filter-icons" color={"#4659ff"} />
               <h1 className="filter-type">Industry</h1>
             </span>
             <Cascader
@@ -1150,7 +1150,7 @@ export default function CompanySearch({ credits }) {
 
           <span className="search-filter-container">
             <span className="filter-label-container">
-              <UserGroupIcon className="filter-icons" color={"#6f4cef"} />
+              <UserGroupIcon className="filter-icons" color={"#4659ff"} />
               <h1 className="filter-type">Headcount</h1>
             </span>
             <Select
@@ -1168,7 +1168,7 @@ export default function CompanySearch({ credits }) {
 
           <span className="search-filter-container">
             <span className="filter-label-container">
-              <TrendingUpIcon className="filter-icons" color={"#6f4cef"} />
+              <TrendingUpIcon className="filter-icons" color={"#4659ff"} />
               <h1 className="filter-type">Revenue</h1>
             </span>
             <Select
@@ -1186,7 +1186,7 @@ export default function CompanySearch({ credits }) {
 
           <span className="search-filter-container">
             <span className="filter-label-container">
-              <LocationMarkerIcon className="filter-icons" color={"#6f4cef"} />
+              <LocationMarkerIcon className="filter-icons" color={"#4659ff"} />
               <h1 className="filter-type">Country</h1>
             </span>
             <Select
@@ -1211,7 +1211,7 @@ export default function CompanySearch({ credits }) {
             style={{ background: "#e8eef4" }}
           >
             <span className="filter-label-container">
-              <UsersIcon className="filter-icons" color={"#6f4cef"} />
+              <UsersIcon className="filter-icons" color={"#4659ff"} />
               <h1 className="filter-type">Similar companies</h1>
             </span>
             <Select
@@ -1229,7 +1229,7 @@ export default function CompanySearch({ credits }) {
             style={{ background: "#e8eef4" }}
           >
             <span className="filter-label-container">
-              <ServerIcon className="filter-icons" color={"#6f4cef"} />
+              <ServerIcon className="filter-icons" color={"#4659ff"} />
               <h1 className="filter-type">Technology</h1>
             </span>
             <Select

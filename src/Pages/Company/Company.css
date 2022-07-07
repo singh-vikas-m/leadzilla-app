@@ -78,7 +78,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  border: 1px solid #6f4cef;
+  border: 1px solid #4659ff;
   border: 1px solid #e2e2e2;
   border-radius: 8px;
   min-height: 100px;
@@ -161,7 +161,7 @@
   font-size: 16px;
   font-weight: 600;
   text-align: left;
-  color: #6f4cef;
+  color: #4659ff;
 }
 
 .Company .company-cards-container .company-filter-card .link:hover {

@@ -28,7 +28,7 @@
   height: 50px;
   width: 280px;
   padding: 1rem;
-  border: 2px solid #6f4cef;
+  border: 2px solid #4659ff;
   font-weight: 500;
   margin-top: 0.2rem;
   margin-bottom: 0.5rem;
@@ -36,6 +36,10 @@
   -webkit-transition: 0.3s;
   -moz-transition: 0.3s;
   border-radius: 0.3rem;
+}
+
+.Login input:focus {
+  border: 2px solid #192de1;
 }
 
 .Login .auth-error-message {
@@ -54,7 +58,7 @@
   width: 280px;
   color: #fff;
   font-weight: 600;
-  background-color: #6f4cef;
+  background-color: #4659ff;
   border: none;
   cursor: pointer;
   transition: 0.3s;
@@ -64,7 +68,7 @@
 }
 
 .Login .card .login-button:hover {
-  background-color: #8366ed;
+  background-color: #192de1;
 }
 
 .Login .card .button-link {
@@ -75,7 +79,7 @@
   font-weight: 500;
 }
 .Login .card .button-link:hover {
-  color: #389fff;
+  color: #0285ff;
 }
 
 .Login .card .google-auth-button {
@@ -95,5 +99,5 @@
 }
 
 .Login .card .google-auth-button:hover {
-  background-color: #389fff;
+  background-color: #0285ff;
 }

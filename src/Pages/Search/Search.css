@@ -110,7 +110,7 @@
   .search-filter-card
   .search-filter-container:hover
   .filter-type {
-  color: #6f4cef;
+  color: #4659ff;
 }
 
 .Search
@@ -267,7 +267,7 @@
   color: #fff;
   font-size: 13.5px;
   font-weight: 700;
-  background-color: #6f4cef;
+  background-color: #4659ff;
   border: 1px solid #5537c2;
   cursor: pointer;
   transition: 0.3s;
@@ -277,7 +277,7 @@
 }
 
 .Search .primary-button:hover {
-  background-color: #8366ed;
+  background-color: #192de1;
 }
 
 .Search .secondary-button-inactive {
@@ -319,10 +319,9 @@
 }
 
 .Search .secondary-button-active:hover {
-  border: 1px solid #6f4cef;
-  background-color: #c7b7ff;
-  color: #6f4cef;
-  cursor: pointer;
+  border: 1px solid #4659ff;
+  background-color: #e2e8ff;
+  color: #4659ff;
 }
 
 .Search .export-csv-button {
@@ -346,8 +345,8 @@
 }
 
 .Search .export-csv-button:hover {
-  border: 1px solid #6f4cef;
-  background-color: #c7b7ff;
-  color: #6f4cef;
+  border: 1px solid #4659ff;
+  background-color: #e2e8ff;
+  color: #4659ff;
   cursor: pointer;
 }

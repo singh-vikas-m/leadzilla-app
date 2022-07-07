@@ -18,7 +18,17 @@ import {
 } from "react-router-dom";
 import { FireIcon } from "@heroicons/react/solid";
 import { MoreOutlined } from "@ant-design/icons";
-import { Spin, Table, Tabs, Modal, Popover, Button, Select, Tag } from "antd";
+import {
+  Spin,
+  Table,
+  Tabs,
+  Drawer,
+  Modal,
+  Popover,
+  Button,
+  Select,
+  Tag,
+} from "antd";
 import { UserIdContext } from "../../Context/UserIdContext";
 
 export default function Track() {
@@ -32,6 +42,7 @@ export default function Track() {
 
   const [jobKeywordsList, setJobKeywordsList] = useState([]);
   const [titleKeywordsList, setTitleKeywordsList] = useState([]);
+  const [signalsDrawerVisible, setSignalsDrawerVisible] = useState(false);
 
   const [UserId, setUserId] = useContext(UserIdContext);
   let [searchParams, setSearchParams] = useSearchParams();
@@ -301,7 +312,7 @@ export default function Track() {
               alignItems: "flex-start",
             }}
           >
-            <h3>Alert setting (Optional) </h3>
+            <h3>Alert setting</h3>
           </span>
           <Select
             bordered={false}
@@ -364,6 +375,19 @@ export default function Track() {
             ) : (
               <PeopleList />
             )}
+
+            <Drawer
+              title="Signals"
+              placement="right"
+              onClose={() => {
+                setSignalsDrawerVisible(false);
+              }}
+              visible={signalsDrawerVisible}
+            >
+              <p>Some contents...</p>
+              <p>Some contents...</p>
+              <p>Some contents...</p>
+            </Drawer>
           </div>
         </div>
       </div>
@@ -471,7 +495,7 @@ function SavedCompanies(props) {
         >
           <FireIcon
             style={{ height: "20px", margin: "0px 5px 0px 0px" }}
-            color={"#6f4cef"}
+            color={"#4659ff"}
           />
           <h4>
             {record.signals.fundings.length +

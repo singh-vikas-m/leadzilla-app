@@ -11,7 +11,7 @@ import {
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
 } from "firebase/auth";
-import LeadzillaLogo from "../../Assets/leadzilla-full-logo.png";
+import LeadzillaLogo from "../../Assets/leadzilla-full-logo.svg";
 import { Divider, message, Modal } from "antd";
 import { UserIdContext } from "../../Context/UserIdContext";
 
@@ -106,7 +106,11 @@ function Login() {
 
   return (
     <div className="Login">
-      <img src={LeadzillaLogo} alt="" style={{ margin: "0 0 20px 0" }} />
+      <img
+        src={LeadzillaLogo}
+        alt=""
+        style={{ height: "60px", margin: "0 0 20px 0" }}
+      />
 
       <div className="card">
         <input

@@ -402,7 +402,7 @@ export default function PeopleSearch({ credits }) {
                 rel="noopener noreferrer"
                 target="_blank"
               >
-                <LinkedinFilled className="social-icons" color={"#6f4cef"} />
+                <LinkedinFilled className="social-icons" color={"#4659ff"} />
               </a>
             ) : (
               ""
@@ -413,7 +413,7 @@ export default function PeopleSearch({ credits }) {
                 rel="noopener noreferrer"
                 target="_blank"
               >
-                <FacebookFilled className="social-icons" color={"#6f4cef"} />
+                <FacebookFilled className="social-icons" color={"#4659ff"} />
               </a>
             ) : (
               ""
@@ -426,7 +426,7 @@ export default function PeopleSearch({ credits }) {
               >
                 <TwitterSquareFilled
                   className="social-icons"
-                  color={"#6f4cef"}
+                  color={"#4659ff"}
                 />
               </a>
             ) : (
@@ -1476,7 +1476,7 @@ export default function PeopleSearch({ credits }) {
 
           <span className="search-filter-container">
             <span className="filter-label-container">
-              <OfficeBuildingIcon className="filter-icons" color={"#6f4cef"} />
+              <OfficeBuildingIcon className="filter-icons" color={"#4659ff"} />
               <h1 className="filter-type">Company name</h1>
             </span>
             <Select
@@ -1492,7 +1492,7 @@ export default function PeopleSearch({ credits }) {
 
           <span className="search-filter-container">
             <span className="filter-label-container">
-              <LinkIcon className="filter-icons" color={"#6f4cef"} />
+              <LinkIcon className="filter-icons" color={"#4659ff"} />
               <h1 className="filter-type">Company website</h1>
             </span>
             <Select
@@ -1509,7 +1509,7 @@ export default function PeopleSearch({ credits }) {
 
           {/* <span className="search-filter-container">
               <span className="filter-label-container">
-                <LibraryIcon className="filter-icons" color={"#6f4cef"} />
+                <LibraryIcon className="filter-icons" color={"#4659ff"} />
                 <h1 className="filter-type">Industry</h1>
               </span>
               <Select
@@ -1527,7 +1527,7 @@ export default function PeopleSearch({ credits }) {
 
           <span className="search-filter-container">
             <span className="filter-label-container">
-              <LibraryIcon className="filter-icons" color={"#6f4cef"} />
+              <LibraryIcon className="filter-icons" color={"#4659ff"} />
               <h1 className="filter-type">Industry</h1>
             </span>
             <Cascader
@@ -1552,9 +1552,10 @@ export default function PeopleSearch({ credits }) {
 
           <span className="search-filter-container">
             <span className="filter-label-container">
-              <UserGroupIcon style={{ fontSize: "10px" }} color={"#6f4cef"} />
+              <UserGroupIcon className="filter-icons" color={"#4659ff"} />
               <h1 className="filter-type">Headcount</h1>
             </span>
+
             <Select
               bordered={false}
               mode="multiple"
@@ -1570,7 +1571,7 @@ export default function PeopleSearch({ credits }) {
 
           <span className="search-filter-container">
             <span className="filter-label-container">
-              <TrendingUpIcon className="filter-icons" color={"#6f4cef"} />
+              <TrendingUpIcon className="filter-icons" color={"#4659ff"} />
               <h1 className="filter-type">Revenue</h1>
             </span>
             <Select
@@ -1588,7 +1589,7 @@ export default function PeopleSearch({ credits }) {
 
           <span className="search-filter-container">
             <span className="filter-label-container">
-              <LocationMarkerIcon className="filter-icons" color={"#6f4cef"} />
+              <LocationMarkerIcon className="filter-icons" color={"#4659ff"} />
               <h1 className="filter-type">Country</h1>
             </span>
             <Select
@@ -1610,7 +1611,7 @@ export default function PeopleSearch({ credits }) {
 
           <span className="search-filter-container">
             <span className="filter-label-container">
-              <BriefcaseIcon className="filter-icons" color={"#6f4cef"} />
+              <BriefcaseIcon className="filter-icons" color={"#4659ff"} />
               <h1 className="filter-type">Title</h1>
             </span>
             <Select
@@ -1626,7 +1627,7 @@ export default function PeopleSearch({ credits }) {
 
           <span className="search-filter-container">
             <span className="filter-label-container">
-              <StarIcon className="filter-icons" color={"#6f4cef"} />
+              <StarIcon className="filter-icons" color={"#4659ff"} />
               <h1 className="filter-type">Seniority</h1>
             </span>
             <Select
@@ -1645,7 +1646,7 @@ export default function PeopleSearch({ credits }) {
 
           <span className="search-filter-container">
             <span className="filter-label-container">
-              <UsersIcon className="filter-icons" color={"#6f4cef"} />
+              <UsersIcon className="filter-icons" color={"#4659ff"} />
               <h1 className="filter-type">Department</h1>
             </span>
 
@@ -1664,7 +1665,7 @@ export default function PeopleSearch({ credits }) {
 
           <span className="search-filter-container">
             <span className="filter-label-container">
-              <UserIcon className="filter-icons" color={"#6f4cef"} />
+              <UserIcon className="filter-icons" color={"#4659ff"} />
               <h1 className="filter-type">Full name</h1>
             </span>
             <Select
@@ -1680,7 +1681,7 @@ export default function PeopleSearch({ credits }) {
 
           <span className="search-filter-container">
             <span className="filter-label-container">
-              <UserIcon className="filter-icons" color={"#6f4cef"} />
+              <UserIcon className="filter-icons" color={"#4659ff"} />
               <h1 className="filter-type">First name</h1>
             </span>
             <Select
@@ -1696,7 +1697,7 @@ export default function PeopleSearch({ credits }) {
 
           <span className="search-filter-container">
             <span className="filter-label-container">
-              <UserIcon className="filter-icons" color={"#6f4cef"} />
+              <UserIcon className="filter-icons" color={"#4659ff"} />
               <h1 className="filter-type">Last name</h1>
             </span>
             <Select
