@@ -28,6 +28,8 @@ import {
   Button,
   Select,
   Tag,
+  List,
+  Avatar,
 } from "antd";
 import { UserIdContext } from "../../Context/UserIdContext";
 
@@ -43,6 +45,8 @@ export default function Track() {
   const [jobKeywordsList, setJobKeywordsList] = useState([]);
   const [titleKeywordsList, setTitleKeywordsList] = useState([]);
   const [signalsDrawerVisible, setSignalsDrawerVisible] = useState(false);
+
+  const [signalDataForDrawer, setSignalDataForDrawer] = useState("");
 
   const [UserId, setUserId] = useContext(UserIdContext);
   let [searchParams, setSearchParams] = useSearchParams();
@@ -258,6 +262,51 @@ export default function Track() {
     setVisible(false);
   };
 
+  const handleSignalsDrawerOpen = async (companySignalData) => {
+    setSignalsDrawerVisible(true);
+    console.log("signals data:", companySignalData);
+
+    //morph raw signals data for List component
+    let formattedSignals = [];
+    companySignalData.signals.promotions.forEach((promotion) => {
+      formattedSignals.push({ type: "Promotion", data: promotion });
+    });
+
+    companySignalData.signals.newhires.forEach((newHire) => {
+      formattedSignals.push({ type: "New Hire", data: newHire });
+    });
+
+    console.log("signals for list->", formattedSignals);
+    setSignalDataForDrawer(formattedSignals);
+  };
+
+  const signalListData = [
+    {
+      title: "Ant Design Title 1",
+    },
+    {
+      title: "Ant Design Title 2",
+    },
+    {
+      title: "Ant Design Title 3",
+    },
+    {
+      title: "Ant Design Title 4",
+    },
+    {
+      title: "Ant Design Title 1",
+    },
+    {
+      title: "Ant Design Title 2",
+    },
+    {
+      title: "Ant Design Title 3",
+    },
+    {
+      title: "Ant Design Title 4",
+    },
+  ];
+
   return user ? (
     <div className="Track">
       <Modal
@@ -371,22 +420,44 @@ export default function Track() {
                 loading={loading}
                 companyList={companyList}
                 listName={list_name}
+                setSignalsDrawerVisible={setSignalsDrawerVisible}
+                handleSignalsDrawerOpen={handleSignalsDrawerOpen}
               />
             ) : (
               <PeopleList />
             )}
 
             <Drawer
-              title="Signals"
+              title={signalDataForDrawer.domain || "Signals"}
               placement="right"
               onClose={() => {
                 setSignalsDrawerVisible(false);
               }}
               visible={signalsDrawerVisible}
             >
-              <p>Some contents...</p>
-              <p>Some contents...</p>
-              <p>Some contents...</p>
+              <List
+                itemLayout="horizontal"
+                dataSource={signalDataForDrawer}
+                renderItem={(item) => (
+                  <List.Item>
+                    <List.Item.Meta
+                      avatar={
+                        <Avatar src="https://joeschmoe.io/api/v1/random" />
+                      }
+                      title={<a href="https://ant.design">{item.type}</a>}
+                      description={
+                        <a
+                          href={item.data.linkedinUrl}
+                          rel="noopener noreferrer"
+                          target="_blank"
+                        >
+                          {item.data.linkedinUrl}
+                        </a>
+                      }
+                    />
+                  </List.Item>
+                )}
+              />
             </Drawer>
           </div>
         </div>
@@ -414,7 +485,11 @@ function CompanyList(props) {
     <>
       {list_name ? (
         <>
-          <SavedCompanies listName={list_name} />
+          <SavedCompanies
+            listName={list_name}
+            setSignalsDrawerVisible={props.setSignalsDrawerVisible}
+            handleSignalsDrawerOpen={props.handleSignalsDrawerOpen}
+          />
         </>
       ) : (
         <Table
@@ -491,6 +566,11 @@ function SavedCompanies(props) {
           style={{
             display: "flex",
             flexDirection: "row",
+            cursor: "pointer",
+          }}
+          onClick={() => {
+            props.handleSignalsDrawerOpen(record);
+            props.setSignalsDrawerVisible(true);
           }}
         >
           <FireIcon
