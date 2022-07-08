@@ -21,8 +21,12 @@
   border-bottom: 1px solid #e2e2e2;
 }
 
-.add-list-button {
+.Track .cta-container {
   margin: 6px 5.5vw 0px auto;
+}
+
+.add-list-button {
+  margin: 0px 0px 0px 8px;
 }
 
 .Track .content {

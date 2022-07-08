@@ -17,7 +17,7 @@ import {
   useParams,
 } from "react-router-dom";
 import { FireIcon } from "@heroicons/react/solid";
-import { MoreOutlined } from "@ant-design/icons";
+import { MoreOutlined, InboxOutlined } from "@ant-design/icons";
 import moment from "moment";
 import {
   Spin,
@@ -33,6 +33,8 @@ import {
   Avatar,
   Form,
   Input,
+  Upload,
+  message,
 } from "antd";
 import { UserIdContext } from "../../Context/UserIdContext";
 
@@ -43,6 +45,7 @@ export default function Track() {
   const [companyListDescription, setcompanyListDescription] = useState("");
   const [firebaseAuthUUID, setFirebaseAuthUUID] = useState("");
   const [visible, setVisible] = useState(false);
+  const [dataUploadModalVisible, setDataUploadModalVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
 
   const [jobKeywordsList, setJobKeywordsList] = useState([]);
@@ -55,6 +58,8 @@ export default function Track() {
   let [searchParams, setSearchParams] = useSearchParams();
   let navigate = useNavigate();
   const { TabPane } = Tabs;
+  const { Dragger } = Upload;
+
   var { list_type, list_name } = useParams();
 
   useEffect(() => {
@@ -286,19 +291,19 @@ export default function Track() {
 
     //morph raw signals data & put all signals in one array for List component
     let formattedSignals = [];
-    companySignalData.signals.promotions.forEach((promotion) => {
+    companySignalData?.signals?.promotions?.forEach((promotion) => {
       formattedSignals.push({ type: "Promotion", data: promotion });
     });
 
-    companySignalData.signals.newhires.forEach((newHire) => {
+    companySignalData?.signals?.newhires?.forEach((newHire) => {
       formattedSignals.push({ type: "New Hire", data: newHire });
     });
 
-    companySignalData.signals.jobsposted.forEach((jobPosted) => {
+    companySignalData?.signals?.jobsposted?.forEach((jobPosted) => {
       formattedSignals.push({ type: "Job Posted", data: jobPosted });
     });
 
-    companySignalData.signals.fundings.forEach((funding) => {
+    companySignalData?.signals?.fundings?.forEach((funding) => {
       formattedSignals.push({ type: "Funding", data: funding });
     });
 
@@ -308,8 +313,33 @@ export default function Track() {
     setSignalDataForDrawer(formattedSignals);
   };
 
+  const fileUploaderProps = {
+    name: "file",
+    multiple: true,
+    action: "https://www.mocky.io/v2/5cc8019d300000980a055e76",
+
+    onChange(info) {
+      const { status } = info.file;
+
+      if (status !== "uploading") {
+        console.log(info.file, info.fileList);
+      }
+
+      if (status === "done") {
+        message.success(`${info.file.name} file uploaded successfully.`);
+      } else if (status === "error") {
+        message.error(`${info.file.name} file upload failed.`);
+      }
+    },
+
+    onDrop(e) {
+      console.log("Dropped files", e.dataTransfer.files);
+    },
+  };
+
   return user ? (
     <div className="Track">
+      {/** Create company list modal */}
       <Modal
         title=""
         visible={visible}
@@ -435,6 +465,37 @@ export default function Track() {
         </Form>
       </Modal>
 
+      {/** Company data upload modal */}
+
+      <Modal
+        title=""
+        bodyStyle={{ minHeight: "500px" }}
+        width={"800px"}
+        visible={dataUploadModalVisible}
+        onOk={() => {
+          setDataUploadModalVisible(false);
+        }}
+        confirmLoading={confirmLoading}
+        onCancel={() => {
+          setDataUploadModalVisible(false);
+        }}
+        footer={null}
+      >
+        <h1>Test Upload</h1>
+        <Dragger {...fileUploaderProps}>
+          <p className="ant-upload-drag-icon">
+            <InboxOutlined />
+          </p>
+          <p className="ant-upload-text">
+            Click or drag file to this area to upload
+          </p>
+          <p className="ant-upload-hint">
+            Support for a single or bulk upload. Strictly prohibit from
+            uploading company data or other band files
+          </p>
+        </Dragger>
+      </Modal>
+
       <Topnav />
       <div className="bottom-nav">
         <Tabs
@@ -447,15 +508,27 @@ export default function Track() {
           <TabPane tab="People" key="people" />
         </Tabs>
 
-        <button
-          onClick={() => {
-            console.log("add list");
-            showModal();
-          }}
-          className="secondary-button-inactive add-list-button"
-        >
-          Create list
-        </button>
+        <span className="cta-container">
+          <button
+            onClick={() => {
+              console.log("upload data");
+              setDataUploadModalVisible(true);
+            }}
+            className="secondary-button-inactive add-list-button"
+            style={{ marginLeft: "auto" }}
+          >
+            Upload company
+          </button>
+          <button
+            onClick={() => {
+              console.log("add list");
+              showModal();
+            }}
+            className="secondary-button-inactive add-list-button"
+          >
+            Create list
+          </button>
+        </span>
       </div>
       <div className="content">
         <div className="track-cards-container">
@@ -662,11 +735,11 @@ function SavedCompanies(props) {
             color={"#4659ff"}
           />
           <h4>
-            {record.signals.fundings.length +
-              record.signals.jobsposted.length +
-              record.signals.newhires.length +
-              record.signals.newsmentions.length +
-              record.signals.promotions.length}
+            {record?.signals?.fundings?.length +
+              record?.signals?.jobsposted?.length +
+              record?.signals?.newhires?.length +
+              record?.signals?.newsmentions?.length +
+              record?.signals?.promotions?.length}
           </h4>
         </div>
       ),
