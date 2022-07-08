@@ -31,6 +31,8 @@ import {
   Tag,
   List,
   Avatar,
+  Form,
+  Input,
 } from "antd";
 import { UserIdContext } from "../../Context/UserIdContext";
 
@@ -232,7 +234,12 @@ export default function Track() {
     }
   }
 
-  const saveCompanyList = async () => {
+  const saveCompanyList = async (
+    companyListName,
+    companyListDescription,
+    jobKeywordsList,
+    titleKeywordsList
+  ) => {
     await createCompanyList(
       UserId,
       companyListName,
@@ -251,9 +258,19 @@ export default function Track() {
     setVisible(true);
   };
 
-  const handleOk = async () => {
+  const handleOk = async (
+    companyListName,
+    companyListDescription,
+    jobKeywordsList,
+    titleKeywordsList
+  ) => {
     setConfirmLoading(true);
-    await saveCompanyList();
+    await saveCompanyList(
+      companyListName,
+      companyListDescription,
+      jobKeywordsList,
+      titleKeywordsList
+    );
     setVisible(false);
     getCompanyList();
   };
@@ -294,81 +311,128 @@ export default function Track() {
   return user ? (
     <div className="Track">
       <Modal
-        title="Create Company List"
+        title=""
         visible={visible}
         onOk={handleOk}
         confirmLoading={confirmLoading}
         onCancel={handleCancel}
-        footer={[
-          <Button key="back" onClick={handleCancel}>
-            Cancel
-          </Button>,
-          <Button
-            key="submit"
-            type="primary"
-            disabled={false}
-            loading={confirmLoading}
-            onClick={handleOk}
-          >
-            Save
-          </Button>,
-        ]}
+        footer={null}
       >
-        <div
+        <Form
           style={{
-            margin: "20px 0px 20px 0px",
+            margin: "30px 0px 10px 50px",
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
-            alignItems: "center",
           }}
+          name="basic"
+          layout="vertical"
+          labelCol={{
+            span: 20,
+          }}
+          wrapperCol={{
+            span: 20,
+          }}
+          initialValues={{
+            remember: true,
+          }}
+          onFinish={(values) => {
+            console.log("Success:", values);
+            let companyListName = values["list-name"],
+              companyListDescription = values["list-description"],
+              jobKeywordsList = values["job-keywords"],
+              titleKeywordsList = values["title-keywords"];
+            handleOk(
+              companyListName,
+              companyListDescription,
+              jobKeywordsList,
+              titleKeywordsList
+            );
+          }}
+          onFinishFailed={(errorInfo) => {
+            console.log("Failed:", errorInfo);
+          }}
+          autoComplete="off"
         >
-          <input
-            type="text"
-            placeholder="List name"
-            onChange={handleCompanyListNameInputChange}
-            style={{ width: "350px" }}
-          />
-          <input
-            type="text"
-            placeholder="Description"
-            onChange={handleCompanyListDescriptionInputChange}
-            style={{ width: "350px" }}
-          />
-          <span
-            style={{
-              margin: "20px 0px 0px 0px",
-              width: "350px",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "flex-start",
+          <Form.Item
+            name="list-name"
+            label="List name"
+            tooltip="Company list name"
+            rules={[
+              {
+                required: true,
+                message: "Please enter a list name!",
+              },
+            ]}
+          >
+            <Input placeholder="Enterprise accounts" />
+          </Form.Item>
+
+          <Form.Item
+            name="list-description"
+            label="List description"
+            tooltip="Company list description"
+            rules={[
+              {
+                required: true,
+                message: "Please enter a list description!",
+              },
+            ]}
+          >
+            <Input placeholder="Account list of enterprise segment" />
+          </Form.Item>
+
+          <Form.Item
+            name="job-keywords"
+            label="Job keywords to track"
+            tooltip="Leadzilla will send you job posting alerts for these keywords in job description"
+            rules={[
+              {
+                required: true,
+                message: "Please enter multiple job keywords!",
+                type: "array",
+              },
+            ]}
+          >
+            <Select
+              allowClear
+              placeholder="sales development, sales enablement"
+              mode="tags"
+              tagRender={customSelectTagUI}
+            ></Select>
+          </Form.Item>
+
+          <Form.Item
+            name="title-keywords"
+            label="Title keywords to track"
+            tooltip="Leadzilla will send you promotion & new hire alerts for these keywords"
+            rules={[
+              {
+                required: true,
+                message: "Please enter multiple title keywords!",
+                type: "array",
+              },
+            ]}
+          >
+            <Select
+              allowClear
+              placeholder="SDR Manager, Head of Sales"
+              mode="tags"
+              tagRender={customSelectTagUI}
+            ></Select>
+          </Form.Item>
+
+          <Form.Item
+            wrapperCol={{
+              offset: 8,
+              span: 20,
             }}
           >
-            <h3>Alert setting</h3>
-          </span>
-          <Select
-            bordered={false}
-            mode="tags"
-            tagRender={customSelectTagUI}
-            allowClear
-            placeholder="Job keyword Eg: sales development, sales enablement"
-            onChange={handleJobKeywordsInput}
-            className="modal-select"
-            style={{ width: "350px" }}
-          />
-
-          <Select
-            bordered={false}
-            mode="tags"
-            tagRender={customSelectTagUI}
-            allowClear
-            placeholder="Title keyword Eg: SDR Manager, Head of Sales"
-            onChange={handleTitleKeywordsInput}
-            className="modal-select"
-            style={{ width: "350px" }}
-          />
-        </div>
+            <Button type="primary" htmlType="submit" loading={confirmLoading}>
+              Save list
+            </Button>
+          </Form.Item>
+        </Form>
       </Modal>
 
       <Topnav />
