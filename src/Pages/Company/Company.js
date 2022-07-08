@@ -460,10 +460,10 @@ export default function Company() {
                       ""
                     )}
                   </span>
-
+                  {/** 
                   <span className="side-container">
                     <div className="funding-detail-container">
-                      {/** funding type */}
+                      // funding type 
                       {linkedInPageDetails.fundingData?.length > 0 ? (
                         <>
                           <h1 className="text-1">Funding</h1>
@@ -479,7 +479,7 @@ export default function Company() {
                       ) : (
                         ""
                       )}
-                      {/** funding amount */}
+                      // funding amount
                       {linkedInPageDetails.fundingData?.length > 0 ? (
                         <h1 className="text-2">
                           {linkedInPageDetails.fundingData[
@@ -489,7 +489,7 @@ export default function Company() {
                       ) : (
                         ""
                       )}
-                      {/** funding data */}
+                      //funding data 
                       {linkedInPageDetails.fundingData?.length > 0 ? (
                         <h1 className="text-2">
                           {linkedInPageDetails.fundingData[
@@ -526,7 +526,7 @@ export default function Company() {
                         View Hiring, Promotion & Job change alerts
                       </button>
                     </div>
-                  </span>
+                  </span> */}
                 </div>
 
                 {/** company tagline */}

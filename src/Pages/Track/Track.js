@@ -18,6 +18,7 @@ import {
 } from "react-router-dom";
 import { FireIcon } from "@heroicons/react/solid";
 import { MoreOutlined } from "@ant-design/icons";
+import moment from "moment";
 import {
   Spin,
   Table,
@@ -266,7 +267,7 @@ export default function Track() {
     setSignalsDrawerVisible(true);
     console.log("signals data:", companySignalData);
 
-    //morph raw signals data for List component
+    //morph raw signals data & put all signals in one array for List component
     let formattedSignals = [];
     companySignalData.signals.promotions.forEach((promotion) => {
       formattedSignals.push({ type: "Promotion", data: promotion });
@@ -276,36 +277,19 @@ export default function Track() {
       formattedSignals.push({ type: "New Hire", data: newHire });
     });
 
+    companySignalData.signals.jobsposted.forEach((jobPosted) => {
+      formattedSignals.push({ type: "Job Posted", data: jobPosted });
+    });
+
+    companySignalData.signals.fundings.forEach((funding) => {
+      formattedSignals.push({ type: "Funding", data: funding });
+    });
+
+    //TODO: Also add news alerts to morphed signal list data
+
     console.log("signals for list->", formattedSignals);
     setSignalDataForDrawer(formattedSignals);
   };
-
-  const signalListData = [
-    {
-      title: "Ant Design Title 1",
-    },
-    {
-      title: "Ant Design Title 2",
-    },
-    {
-      title: "Ant Design Title 3",
-    },
-    {
-      title: "Ant Design Title 4",
-    },
-    {
-      title: "Ant Design Title 1",
-    },
-    {
-      title: "Ant Design Title 2",
-    },
-    {
-      title: "Ant Design Title 3",
-    },
-    {
-      title: "Ant Design Title 4",
-    },
-  ];
 
   return user ? (
     <div className="Track">
@@ -446,13 +430,49 @@ export default function Track() {
                       }
                       title={<a href="https://ant.design">{item.type}</a>}
                       description={
-                        <a
-                          href={item.data.linkedinUrl}
-                          rel="noopener noreferrer"
-                          target="_blank"
-                        >
-                          {item.data.linkedinUrl}
-                        </a>
+                        <span>
+                          {item.type === "Funding" ? (
+                            <>
+                              <h4>
+                                Raised {item.data.currency}
+                                {item.data.amount} {item.data.type}
+                              </h4>
+                              <p>
+                                on{" "}
+                                {moment
+                                  .utc(item.data.date)
+                                  .local()
+                                  .format("MMM Do YYYY")}
+                              </p>
+                              <p>from {item.data.investors}</p>
+                              {item.data.news_url ? (
+                                <a
+                                  href={item.data.news_url}
+                                  rel="noopener noreferrer"
+                                  target="_blank"
+                                >
+                                  check news
+                                </a>
+                              ) : (
+                                ""
+                              )}
+                            </>
+                          ) : (
+                            <a
+                              href={
+                                item.type === "Job Posted"
+                                  ? item.data.jobUrl
+                                  : item.data.linkedinUrl
+                              }
+                              rel="noopener noreferrer"
+                              target="_blank"
+                            >
+                              {item.type === "Job Posted"
+                                ? item.data.jobUrl
+                                : item.data.linkedinUrl}
+                            </a>
+                          )}
+                        </span>
                       }
                     />
                   </List.Item>
