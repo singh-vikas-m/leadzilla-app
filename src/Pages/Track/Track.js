@@ -9,6 +9,7 @@ import {
   fetchSavedCompanies,
   deleteCompanyList,
   deleteSavedCompany,
+  saveCompany,
 } from "../../firebase-config";
 import {
   useNavigate,
@@ -16,6 +17,7 @@ import {
   useSearchParams,
   useParams,
 } from "react-router-dom";
+import Papa from "papaparse";
 import { FireIcon } from "@heroicons/react/solid";
 import { MoreOutlined, InboxOutlined } from "@ant-design/icons";
 import moment from "moment";
@@ -51,14 +53,16 @@ export default function Track() {
   const [jobKeywordsList, setJobKeywordsList] = useState([]);
   const [titleKeywordsList, setTitleKeywordsList] = useState([]);
   const [signalsDrawerVisible, setSignalsDrawerVisible] = useState(false);
-
+  const [rawCSVFileObjectList, setRawCSVFileObjectList] = useState([]);
   const [signalDataForDrawer, setSignalDataForDrawer] = useState("");
-
   const [UserId, setUserId] = useContext(UserIdContext);
+  const [companyList, setcompanyList] = useState([]);
+
   let [searchParams, setSearchParams] = useSearchParams();
   let navigate = useNavigate();
   const { TabPane } = Tabs;
   const { Dragger } = Upload;
+  const { Option } = Select;
 
   var { list_type, list_name } = useParams();
 
@@ -91,24 +95,17 @@ export default function Track() {
     setLoading(false);
   };
 
+  // saved company list options for selector
+  const companyListOptions = [];
+  companyList.forEach((companyList) => {
+    companyListOptions.push(
+      <Option key={companyList.listName}>{companyList.listName}</Option>
+    );
+  });
+
   useEffect(() => {
     //console.log(list_type, list_name);
   }, [list_type]);
-
-  const [companyList, setcompanyList] = useState([
-    // {
-    //   key: "1",
-    //   listName: "TestList",
-    //   accountCount: 32,
-    //   listDescription: "testing 12nsijis",
-    // },
-    // {
-    //   key: "2",
-    //   listName: "Vikas Outreach",
-    //   accountCount: 42,
-    //   listDescription: "tester hsjahjsh",
-    // },
-  ]);
 
   function customSelectTagUI(props) {
     const { label, closable, onClose } = props;
@@ -263,6 +260,9 @@ export default function Track() {
     setVisible(true);
   };
 
+  /**
+   * Handles input data for create company list modal, saves new company list in firebase
+   */
   const handleOk = async (
     companyListName,
     companyListDescription,
@@ -278,6 +278,84 @@ export default function Track() {
     );
     setVisible(false);
     getCompanyList();
+  };
+
+  /**
+   * handle save company from csv logic, parses csv and saves companies
+   */
+
+  const handleParseCSV = async (
+    companyList,
+    websiteColumnHeaderList,
+    companyNameColumnHeaderList
+  ) => {
+    //parsing logic
+
+    rawCSVFileObjectList.forEach((rawFile) => {
+      Papa.parse(rawFile.originFileObj, {
+        complete: (results) => {
+          console.log("papa parse result:", results.data);
+          var parsedCSVData = results.data;
+          var parsedCSVHeaders = results.data[0];
+
+          var combinedCSVData = [];
+
+          //get index of headers
+          const domainNameHeaderIndex = parsedCSVHeaders.indexOf(
+            websiteColumnHeaderList
+          );
+          const companyNameHeaderIndex = parsedCSVHeaders.indexOf(
+            companyNameColumnHeaderList
+          );
+
+          console.log(domainNameHeaderIndex);
+          console.log(companyNameHeaderIndex);
+
+          parsedCSVData.forEach((csvRow, index) => {
+            if (index !== 0) {
+              //console.log(csvRow);
+              let payload = {
+                domain: csvRow[domainNameHeaderIndex] || "",
+                company:
+                  csvRow[companyNameHeaderIndex] ||
+                  csvRow[domainNameHeaderIndex]?.split(".")[
+                    csvRow[domainNameHeaderIndex]?.split(".")?.length - 2
+                  ] ||
+                  "",
+              };
+              combinedCSVData.push(payload);
+            }
+          });
+
+          // use these data to save
+          handleSaveCompaniesFromCSV(combinedCSVData, companyList);
+        },
+      });
+    });
+  };
+
+  const handleSaveCompaniesFromCSV = async (combinedCSVData, companyList) => {
+    console.log(console.log("final CSV data to save ->", combinedCSVData));
+    combinedCSVData.forEach(async (row) => {
+      await saveCompany(UserId, companyList, row.domain, row.company);
+    });
+
+    // for (let i = 0; i < combinedCSVData.length; i++) {
+    //   console.log("api call->", i);
+    //   saveCompany(
+    //     UserId,
+    //     companyList,
+    //     combinedCSVData[i].domainName,
+    //     combinedCSVData[i].companyName ||
+    //       combinedCSVData[i].domainName?.split(".")[
+    //         combinedCSVData[i].domainName?.split(".").length - 2
+    //       ]
+    //   );
+    // }
+
+    setConfirmLoading(false);
+    setRawCSVFileObjectList([]);
+    setDataUploadModalVisible(false);
   };
 
   const handleCancel = () => {
@@ -314,26 +392,22 @@ export default function Track() {
   };
 
   const fileUploaderProps = {
-    name: "file",
-    multiple: true,
-    action: "https://www.mocky.io/v2/5cc8019d300000980a055e76",
+    multiple: false,
 
     onChange(info) {
-      const { status } = info.file;
-
-      if (status !== "uploading") {
-        console.log(info.file, info.fileList);
-      }
-
-      if (status === "done") {
-        message.success(`${info.file.name} file uploaded successfully.`);
-      } else if (status === "error") {
-        message.error(`${info.file.name} file upload failed.`);
+      if (info.file.status !== "uploading") {
+        console.log("file list", info.fileList);
+        setRawCSVFileObjectList(info.fileList);
       }
     },
-
     onDrop(e) {
       console.log("Dropped files", e.dataTransfer.files);
+      // Parse local CSV file
+      // Papa.parse(e.dataTransfer.files[0], {
+      //   complete: function (results) {
+      //     console.log("papa parse result:", results.data);
+      //   },
+      // });
     },
   };
 
@@ -481,19 +555,111 @@ export default function Track() {
         }}
         footer={null}
       >
-        <h1>Test Upload</h1>
-        <Dragger {...fileUploaderProps}>
+        <Dragger {...fileUploaderProps} style={{ margin: "40px 0px 10px 0px" }}>
           <p className="ant-upload-drag-icon">
             <InboxOutlined />
           </p>
           <p className="ant-upload-text">
-            Click or drag file to this area to upload
+            Click or drag CSVfile to this area to upload
           </p>
           <p className="ant-upload-hint">
-            Support for a single or bulk upload. Strictly prohibit from
-            uploading company data or other band files
+            Support for a single or bulk upload. CSV file should contain list of
+            domain names of companies
           </p>
         </Dragger>
+        <Form
+          style={{
+            margin: "30px 0px 10px 50px",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+          }}
+          name="basic"
+          layout="vertical"
+          labelCol={{
+            span: 20,
+          }}
+          wrapperCol={{
+            span: 20,
+          }}
+          initialValues={{
+            remember: true,
+          }}
+          onFinish={async (values) => {
+            console.log("Success:", values);
+            let companyList = values["destination-company-list"],
+              websiteColumnHeaderList = values["website-header-names"],
+              companyNameColumnHeaderList = values["company-header-names"];
+
+            setConfirmLoading(true);
+            //loop that parses csv in saves all companies by calling saveCompany api
+
+            await handleParseCSV(
+              companyList,
+              websiteColumnHeaderList,
+              companyNameColumnHeaderList
+            );
+          }}
+          onFinishFailed={(errorInfo) => {
+            console.log("Failed:", errorInfo);
+          }}
+          autoComplete="off"
+        >
+          <Form.Item
+            name="destination-company-list"
+            label="Destination company list"
+            tooltip="This is where new companies from CSV are going to be saved"
+            rules={[
+              {
+                required: true,
+                message: "Please select a company list",
+              },
+            ]}
+          >
+            <Select placeholder="Select company list">
+              {companyListOptions}
+            </Select>
+          </Form.Item>
+
+          <Form.Item
+            name="website-header-names"
+            label="Website column header in CSVs"
+            tooltip="Leadzilla will send you job posting alerts for these keywords in job description"
+            rules={[
+              {
+                required: true,
+                message: "Please enter multiple job keywords!",
+              },
+            ]}
+          >
+            <Input placeholder="eg: domainName" />
+          </Form.Item>
+
+          <Form.Item
+            name="company-header-names"
+            label="Company column header in CSVs"
+            tooltip="Leadzilla will send you promotion & new hire alerts for these keywords"
+            rules={[
+              {
+                required: false,
+                message: "Please enter multiple title keywords!",
+              },
+            ]}
+          >
+            <Input placeholder="eg: companyName" />
+          </Form.Item>
+
+          <Form.Item
+            wrapperCol={{
+              offset: 8,
+              span: 20,
+            }}
+          >
+            <Button type="primary" htmlType="submit" loading={confirmLoading}>
+              Add companies
+            </Button>
+          </Form.Item>
+        </Form>
       </Modal>
 
       <Topnav />
@@ -517,7 +683,7 @@ export default function Track() {
             className="secondary-button-inactive add-list-button"
             style={{ marginLeft: "auto" }}
           >
-            Upload company
+            Upload companies
           </button>
           <button
             onClick={() => {
