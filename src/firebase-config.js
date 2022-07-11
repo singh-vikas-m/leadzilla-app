@@ -14,10 +14,10 @@ import {
   collection,
   deleteDoc,
   updateDoc,
+  writeBatch,
 } from "firebase/firestore";
 import moment from "moment";
 
-import "firebase/firestore";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -164,6 +164,11 @@ export const fetchCompanyList = async (firebaseUserUUID) => {
   return list;
 };
 
+/**
+ * Deletes an entrie company list
+ * first deletes all the saved companies inside that list one by one(inefficeint than bulk delete)
+ * then deletes the company list itself
+ */
 export const deleteCompanyList = async (
   firebaseUserUUID,
   listName,
@@ -219,7 +224,68 @@ export const deleteCompanyList = async (
 };
 
 /**
- * All firebase helper queries regarding individual saved companies
+ * Deletes an entrie company list
+ * first deletes all the saved companies inside that list in bulk(efficent)
+ * then deletes the company list itself
+ */
+export const deleteCompanyListBulk = async (
+  firebaseUserUUID,
+  listName,
+  listDescription
+) => {
+  try {
+    const batch = writeBatch(db);
+
+    console.log("deleting ->", listName, listDescription);
+    //console.log(firebaseUserUUID, listName, listDescription);
+    //check if content are not empty
+    if (
+      (firebaseUserUUID.length > 0,
+      listName.length > 0,
+      listDescription.length > 0)
+    ) {
+      //first delete all the saved companies inside that list
+
+      // check if this list already exists in db get their ids
+      const querySnapshot = await getDocs(
+        query(
+          collection(db, "companies"),
+          where("firebase_auth_uuid", "==", firebaseUserUUID),
+          where("listName", "==", listName)
+        )
+      );
+
+      // prepare batch delete with theri ids
+      querySnapshot.forEach(async (record) => {
+        //console.log(record.data());
+        //console.log(record.id);
+        let companyRef = doc(db, "companies", `${record.id}`);
+        batch.delete(companyRef);
+      });
+
+      //commit all delete of companies in one go
+      await batch.commit();
+
+      //Now delete the actual list(eg: name description )
+      const listQuery = query(
+        collection(db, "company_list"),
+        where("firebase_auth_uuid", "==", firebaseUserUUID),
+        where("listName", "==", listName),
+        where("listDescription", "==", listDescription)
+      );
+      const listQuerySnapshot = await getDocs(listQuery);
+      listQuerySnapshot.forEach(async (record) => {
+        //console.log(record.data());
+        await deleteDoc(doc(db, "company_list", `${record.id}`));
+      });
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+/**
+ * Save a single company(domain) inside a given company list for tracking
  */
 
 export const saveCompany = async (
@@ -268,6 +334,58 @@ export const saveCompany = async (
         // console.log("Document written with ID: ", docRef.id);
       }
     }
+    return true;
+  } catch (err) {
+    console.log(err);
+    return false;
+  }
+};
+
+/**
+ * Saves multiple companies in a singal batch firestore
+ */
+
+export const saveCompanyInBulk = async (
+  firebaseUserUUID,
+  listName,
+  companies
+) => {
+  try {
+    const batch = writeBatch(db);
+    companies.forEach(async (company) => {
+      console.log("bulk: saving this company to list");
+
+      console.log(firebaseUserUUID, listName, company.domain, company.company);
+
+      //check if content are not empty
+      if ((firebaseUserUUID.length > 0, listName.length > 0)) {
+        // Save list
+
+        const companyRef = doc(collection(db, "companies"));
+        console.log("companyRef---->", companyRef);
+
+        batch.set(companyRef, {
+          listName: `${listName}`,
+          domain: `${company.domain}` || "",
+          firebase_auth_uuid: `${firebaseUserUUID}`,
+          company: `${company.company}`,
+          /** Set lastSyncTime to prev year so that backend-cron job fetches
+           * alerts for the first time
+           */
+          lastSyncTime: moment().subtract(1, "years").toDate(),
+          signals: {
+            domain: `${company.domain}` || "",
+            promotions: [],
+            newhires: [],
+            jobsposted: [],
+            fundings: [],
+            newsmentions: [],
+          },
+        });
+        // console.log("Document written with ID: ", docRef.id);
+      }
+    });
+    await batch.commit();
   } catch (err) {
     console.log(err);
   }

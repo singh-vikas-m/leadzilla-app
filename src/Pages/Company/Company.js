@@ -15,6 +15,7 @@ import {
   Divider,
   Drawer,
   Table,
+  notification,
 } from "antd";
 import { ExportOutlined, PoweroffOutlined } from "@ant-design/icons";
 import { UserIdContext } from "../../Context/UserIdContext";
@@ -120,6 +121,14 @@ export default function Company() {
       <Option key={country.listName}>{country.listName}</Option>
     );
   });
+
+  //notification component
+  const openNotificationWithIcon = (type, message, description) => {
+    notification[type]({
+      message: message,
+      description: description,
+    });
+  };
 
   function handleSaveCompanySelectChange(value) {
     console.log(value);
@@ -564,12 +573,27 @@ export default function Company() {
                         className="secondary-button-active"
                         onClick={async (e) => {
                           // purchaseContact(index, record.id);
-                          await saveCompany(
+                          const isCompanySaved = await saveCompany(
                             UserId,
                             selectedCompanyList,
                             companyDetails.domain,
                             companyDetails.domain?.split(".")[0]
                           );
+
+                          if (isCompanySaved === true) {
+                            openNotificationWithIcon(
+                              "success",
+                              "Saved",
+                              "Company saved for tracking"
+                            );
+                          } else {
+                            openNotificationWithIcon(
+                              "error",
+                              "Not saved",
+                              "Could not save this company for tracking, contact support"
+                            );
+                          }
+
                           setIsSaveCompanyPopoverVisible(false);
                         }}
                       >

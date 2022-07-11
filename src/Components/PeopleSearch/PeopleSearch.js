@@ -752,12 +752,27 @@ export default function PeopleSearch({ credits }) {
                   // className="secondary-button-active"
                   onClick={async (e) => {
                     // purchaseContact(index, record.id);
-                    await saveCompany(
+                    const isCompanySaved = await saveCompany(
                       UserId,
                       selectedCompanyList,
                       record.primaryDomain,
                       record.primaryDomain?.split(".")[0]
                     );
+
+                    if (isCompanySaved === true) {
+                      openNotificationWithIcon(
+                        "success",
+                        "Saved",
+                        "Company saved for tracking"
+                      );
+                    } else {
+                      openNotificationWithIcon(
+                        "error",
+                        "Not saved",
+                        "Could not save this company for tracking, contact support"
+                      );
+                    }
+
                     setIsSaveCompanyPopoverVisible(false);
                   }}
                 >

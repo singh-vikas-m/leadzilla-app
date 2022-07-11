@@ -10,7 +10,12 @@ import {
   deleteCompanyList,
   deleteSavedCompany,
   saveCompany,
+  saveCompanyInBulk,
+  deleteCompanyListBulk,
 } from "../../firebase-config";
+
+import { isValid } from "../../Utils/list.js";
+
 import {
   useNavigate,
   Link,
@@ -185,16 +190,19 @@ export default function Track() {
                 className="secondary-button-active"
                 onClick={async (e) => {
                   // purchaseContact(index, record.id);
-                  await deleteCompanyList(
+                  // await deleteCompanyList(
+                  //   UserId,
+                  //   record.listName,
+                  //   record.listDescription
+                  // );
+
+                  await deleteCompanyListBulk(
                     UserId,
                     record.listName,
                     record.listDescription
                   );
-                  console.log(
-                    "deleting",
-                    record.listName,
-                    record.listDescription
-                  );
+
+                  // for reloading new updated list on UI
                   await getCompanyList();
                 }}
               >
@@ -312,15 +320,36 @@ export default function Track() {
           console.log(companyNameHeaderIndex);
 
           parsedCSVData.forEach((csvRow, index) => {
-            if (index !== 0) {
+            /**ignore the first row as its header & check if
+             * row is not undefined/null etc(happens due to
+             * malformation of csv)
+             */
+            if (index !== 0 && isValid(csvRow[domainNameHeaderIndex])) {
               //console.log(csvRow);
+
+              let splittedDomain = csvRow[domainNameHeaderIndex]?.split(".");
+
+              console.log(index, csvRow[domainNameHeaderIndex]);
+              // remove things like https:// or www. & traling /
+              let cleanedCompanyDomain = `${
+                splittedDomain[splittedDomain?.length - 2]
+              }.${splittedDomain[splittedDomain?.length - 1]}`;
+
+              //remove trailing slash(/)
+              cleanedCompanyDomain = cleanedCompanyDomain
+                ?.replaceAll("https://", "")
+                ?.replaceAll("http://", "")
+                ?.replaceAll("/", "");
+
+              // if company name provided in csv get it from csv
+              var extractedCompanyNameFromDomain =
+                splittedDomain[splittedDomain?.length - 2];
+
               let payload = {
-                domain: csvRow[domainNameHeaderIndex] || "",
+                domain: cleanedCompanyDomain || "",
                 company:
                   csvRow[companyNameHeaderIndex] ||
-                  csvRow[domainNameHeaderIndex]?.split(".")[
-                    csvRow[domainNameHeaderIndex]?.split(".")?.length - 2
-                  ] ||
+                  extractedCompanyNameFromDomain ||
                   "",
               };
               combinedCSVData.push(payload);
@@ -336,22 +365,11 @@ export default function Track() {
 
   const handleSaveCompaniesFromCSV = async (combinedCSVData, companyList) => {
     console.log(console.log("final CSV data to save ->", combinedCSVData));
-    combinedCSVData.forEach(async (row) => {
-      await saveCompany(UserId, companyList, row.domain, row.company);
-    });
+    // combinedCSVData.forEach(async (row) => {
+    //   await saveCompany(UserId, companyList, row.domain, row.company);
+    // });
 
-    // for (let i = 0; i < combinedCSVData.length; i++) {
-    //   console.log("api call->", i);
-    //   saveCompany(
-    //     UserId,
-    //     companyList,
-    //     combinedCSVData[i].domainName,
-    //     combinedCSVData[i].companyName ||
-    //       combinedCSVData[i].domainName?.split(".")[
-    //         combinedCSVData[i].domainName?.split(".").length - 2
-    //       ]
-    //   );
-    // }
+    await saveCompanyInBulk(UserId, companyList, combinedCSVData);
 
     setConfirmLoading(false);
     setRawCSVFileObjectList([]);
@@ -493,7 +511,7 @@ export default function Track() {
             rules={[
               {
                 required: true,
-                message: "Please enter multiple job keywords!",
+                message: "Please enter atleast one job keyword!",
                 type: "array",
               },
             ]}
@@ -513,7 +531,7 @@ export default function Track() {
             rules={[
               {
                 required: true,
-                message: "Please enter multiple title keywords!",
+                message: "Please enter atleast one title keyword!",
                 type: "array",
               },
             ]}
@@ -544,7 +562,7 @@ export default function Track() {
       <Modal
         title=""
         bodyStyle={{ minHeight: "500px" }}
-        width={"800px"}
+        width={"650px"}
         visible={dataUploadModalVisible}
         onOk={() => {
           setDataUploadModalVisible(false);
@@ -560,10 +578,10 @@ export default function Track() {
             <InboxOutlined />
           </p>
           <p className="ant-upload-text">
-            Click or drag CSVfile to this area to upload
+            Click or drag CSV file to this area to upload
           </p>
           <p className="ant-upload-hint">
-            Support for a single or bulk upload. CSV file should contain list of
+            Support for a single CSV upload. File should atleast contain list of
             domain names of companies
           </p>
         </Dragger>
@@ -623,7 +641,7 @@ export default function Track() {
 
           <Form.Item
             name="website-header-names"
-            label="Website column header in CSVs"
+            label="Website column header in CSV"
             tooltip="Leadzilla will send you job posting alerts for these keywords in job description"
             rules={[
               {
@@ -632,12 +650,12 @@ export default function Track() {
               },
             ]}
           >
-            <Input placeholder="eg: domainName" />
+            <Input placeholder="eg: Website" />
           </Form.Item>
 
           <Form.Item
             name="company-header-names"
-            label="Company column header in CSVs"
+            label="Company column header in CSV"
             tooltip="Leadzilla will send you promotion & new hire alerts for these keywords"
             rules={[
               {
@@ -646,7 +664,7 @@ export default function Track() {
               },
             ]}
           >
-            <Input placeholder="eg: companyName" />
+            <Input placeholder="eg: Company" />
           </Form.Item>
 
           <Form.Item

@@ -25,6 +25,7 @@ import {
   Tabs,
   Popover,
   Cascader,
+  notification,
 } from "antd";
 
 import axios from "axios";
@@ -153,6 +154,14 @@ export default function CompanySearch({ credits }) {
       <Option key={country.listName}>{country.listName}</Option>
     );
   });
+
+  //notification component
+  const openNotificationWithIcon = (type, message, description) => {
+    notification[type]({
+      message: message,
+      description: description,
+    });
+  };
 
   function handleSaveCompanySelectChange(value) {
     console.log(value);
@@ -535,7 +544,7 @@ export default function CompanySearch({ credits }) {
                   // className="secondary-button-active"
                   onClick={async (e) => {
                     // purchaseContact(index, record.id);
-                    await saveCompany(
+                    const isCompanySaved = await saveCompany(
                       UserId,
                       selectedCompanyList,
                       record.companyWebsite?.split(".")[1] +
@@ -552,6 +561,20 @@ export default function CompanySearch({ credits }) {
                         record.companyWebsite?.split(".")[2],
                       record.companyWebsite?.split(".")[1]
                     );
+
+                    if (isCompanySaved === true) {
+                      openNotificationWithIcon(
+                        "success",
+                        "Saved",
+                        "Company saved for tracking"
+                      );
+                    } else {
+                      openNotificationWithIcon(
+                        "error",
+                        "Not saved",
+                        "Could not save this company for tracking, contact support"
+                      );
+                    }
                   }}
                 >
                   Save
