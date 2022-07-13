@@ -3,6 +3,7 @@ import "./Integration.css";
 import Topnav from "../../Components/Topnav/Topnav";
 import salesforceIcon from "../../Assets/integration-icons/salesforce-icon.svg";
 import hubspotIcon from "../../Assets/integration-icons/hubspot-icon.svg";
+import pipedriveIcon from "../../Assets/integration-icons/pipedrive-icon.svg";
 
 import { onAuthStateChanged } from "firebase/auth";
 import {
@@ -106,6 +107,23 @@ export default function Integration() {
             integrationDescription={
               "Easily push leads from leadzilla to hubspot contacts"
             }
+            // for dev this oauth url
+            integrationUrl={`https://app.hubspot.com/oauth/authorize?client_id=4c2fc1a6-5362-44f1-bbb2-e03475330544&redirect_uri=http://localhost:6060/hubspot-leadzilla-redirect&response_type=code&scope=crm.objects.contacts.write&state=${firebaseAuthUUID}`}
+            // for prod this oauth url
+            //integrationUrl={`https://app.hubspot.com/oauth/authorize?client_id=4c2fc1a6-5362-44f1-bbb2-e03475330544&redirect_uri=https://leadzilla.herokuapp.com/hubspot-leadzilla-redirect&response_type=code&scope=crm.objects.contacts.write&state=${firebaseAuthUUID}`}
+            integrationStatus={false}
+          />
+
+          <IntegrationCard
+            integrationImg={pipedriveIcon}
+            integrationName={"Pipedrive"}
+            integrationDescription={
+              "Bulk save prospect lists to your database & book meetings"
+            }
+            // for dev this oauth url
+            //integrationUrl={`https://leadzilla-dev-ed.my.salesforce.com/services/oauth2/authorize?client_id=3MVG95mg0lk4batiqacSAs_HER2CCOTyocoK5omFHsmm56xdJNCvTUDPAyHNKogAJHyzudoZaog2.3VXPKJbl&redirect_uri=http://localhost:6060/salesforce-leadzilla-redirect&response_type=code&state=${firebaseAuthUUID}`}
+
+            // for prod this oauth url
             integrationUrl={"https://leadzilla.ai"}
             integrationStatus={"Coming soon"}
           />
