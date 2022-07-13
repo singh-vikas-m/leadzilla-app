@@ -1,3 +1,19 @@
+function isValid(string) {
+  if (string !== "" && string !== null && string !== undefined) {
+    return true;
+  } else return false;
+}
+
+const removeParamsFromUrl = (rawUrl) => {
+  let cleanedUrl = "";
+  if (rawUrl !== null && rawUrl !== undefined) {
+    cleanedUrl = rawUrl?.split("?")[0];
+  } else {
+    cleanedUrl = "";
+  }
+  return cleanedUrl;
+};
+
 const industryCascaderOptions = [
   {
     label: "Agriculture & Mining",
@@ -1723,10 +1739,4 @@ const country_list = [
   },
 ];
 
-function isValid(string) {
-  if (string !== "" && string !== null && string !== undefined) {
-    return true;
-  } else return false;
-}
-
-export { industryCascaderOptions, country_list, isValid };
+export { industryCascaderOptions, country_list, isValid, removeParamsFromUrl };

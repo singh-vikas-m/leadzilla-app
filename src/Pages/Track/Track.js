@@ -14,7 +14,7 @@ import {
   deleteCompanyListBulk,
 } from "../../firebase-config";
 
-import { isValid } from "../../Utils/list.js";
+import { isValid, removeParamsFromUrl } from "../../Utils/list.js";
 
 import {
   useNavigate,
@@ -148,6 +148,7 @@ export default function Track() {
       title: "Name",
       dataIndex: "listName",
       key: "listName",
+      sorter: (a, b) => a.listName.localeCompare(b.listName),
       render: (record, index) => (
         <div style={{ display: "flex", flexDirection: "column" }}>
           <Link to={`/track/company/${record}`}>{record}</Link>
@@ -165,6 +166,55 @@ export default function Track() {
         </div>
       ),
     },
+
+    {
+      title: "Job Keywords",
+      dataIndex: "jobKeywords",
+      key: "jobKeywords",
+      render: (record, index) => (
+        <>
+          {record.map((tag) => {
+            return (
+              <Tag
+                color={"green"}
+                style={{
+                  fontWeight: "500",
+                  color: "green",
+                  margin: "3px 3px 3px 0px",
+                }}
+              >
+                {tag}
+              </Tag>
+            );
+          })}
+        </>
+      ),
+    },
+
+    {
+      title: "Title Keywords",
+      dataIndex: "titleKeywords",
+      key: "titleKeywords",
+      render: (record, index) => (
+        <>
+          {record.map((tag) => {
+            return (
+              <Tag
+                color={"green"}
+                style={{
+                  fontWeight: "500",
+                  color: "green",
+                  margin: "3px 3px 3px 0px",
+                }}
+              >
+                {tag}
+              </Tag>
+            );
+          })}
+        </>
+      ),
+    },
+
     // {
     //   title: "Accounts",
     //   dataIndex: "accountCount",
@@ -327,19 +377,23 @@ export default function Track() {
             if (index !== 0 && isValid(csvRow[domainNameHeaderIndex])) {
               //console.log(csvRow);
 
-              let splittedDomain = csvRow[domainNameHeaderIndex]?.split(".");
-
               console.log(index, csvRow[domainNameHeaderIndex]);
+
+              //remove trailing slash(/), https, http
+              let trimmedDomainName = csvRow[domainNameHeaderIndex]
+                ?.replaceAll("https://", "")
+                ?.replaceAll("http://", "")
+                ?.replaceAll("/", "");
+
+              // remove url parma eg: ?param1=a&param2=test
+              trimmedDomainName = removeParamsFromUrl(trimmedDomainName);
+
+              let splittedDomain = trimmedDomainName?.split(".");
+
               // remove things like https:// or www. & traling /
               let cleanedCompanyDomain = `${
                 splittedDomain[splittedDomain?.length - 2]
               }.${splittedDomain[splittedDomain?.length - 1]}`;
-
-              //remove trailing slash(/)
-              cleanedCompanyDomain = cleanedCompanyDomain
-                ?.replaceAll("https://", "")
-                ?.replaceAll("http://", "")
-                ?.replaceAll("/", "");
 
               // if company name provided in csv get it from csv
               var extractedCompanyNameFromDomain =
@@ -862,6 +916,7 @@ function SavedCompanies(props) {
       title: "Company",
       dataIndex: "company",
       key: "company",
+      sorter: (a, b) => a.company.localeCompare(b.company),
       render: (text, record, index) => (
         <div
           style={{
@@ -902,6 +957,18 @@ function SavedCompanies(props) {
       title: "Signals",
       dataIndex: "signals",
       key: "signals",
+      defaultSortOrder: "descend",
+      sorter: (a, b) =>
+        a?.signals?.fundings?.length +
+        a?.signals?.jobsposted?.length +
+        a?.signals?.newhires?.length +
+        a?.signals?.newsmentions?.length +
+        a?.signals?.promotions?.length -
+        (b?.signals?.fundings?.length +
+          b?.signals?.jobsposted?.length +
+          b?.signals?.newhires?.length +
+          b?.signals?.newsmentions?.length +
+          b?.signals?.promotions?.length),
       render: (text, record, index) => (
         <div
           style={{
