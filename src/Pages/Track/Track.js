@@ -948,7 +948,13 @@ function SavedCompanies(props) {
       key: "domain",
       render: (text, record, index) => (
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <h4>{record.domain}</h4>
+          <a
+            href={`https://${record.domain}`}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            {record.domain}
+          </a>
         </div>
       ),
     },
