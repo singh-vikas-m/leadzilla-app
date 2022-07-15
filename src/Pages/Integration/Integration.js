@@ -108,9 +108,10 @@ export default function Integration() {
               "Easily push leads from leadzilla to hubspot contacts"
             }
             // for dev this oauth url
-            integrationUrl={`https://app.hubspot.com/oauth/authorize?client_id=4c2fc1a6-5362-44f1-bbb2-e03475330544&redirect_uri=http://localhost:6060/hubspot-leadzilla-redirect&response_type=code&scope=crm.objects.contacts.write&state=${firebaseAuthUUID}`}
+            //integrationUrl={`https://app.hubspot.com/oauth/authorize?client_id=4c2fc1a6-5362-44f1-bbb2-e03475330544&redirect_uri=http://localhost:6060/hubspot-leadzilla-redirect&response_type=code&scope=crm.objects.contacts.write&state=${firebaseAuthUUID}`}
+
             // for prod this oauth url
-            //integrationUrl={`https://app.hubspot.com/oauth/authorize?client_id=4c2fc1a6-5362-44f1-bbb2-e03475330544&redirect_uri=https://leadzilla.herokuapp.com/hubspot-leadzilla-redirect&response_type=code&scope=crm.objects.contacts.write&state=${firebaseAuthUUID}`}
+            integrationUrl={`https://app.hubspot.com/oauth/authorize?client_id=4c2fc1a6-5362-44f1-bbb2-e03475330544&redirect_uri=https://leadzilla.herokuapp.com/hubspot-leadzilla-redirect&response_type=code&scope=crm.objects.contacts.write&state=${firebaseAuthUUID}`}
             integrationStatus={false}
           />
 

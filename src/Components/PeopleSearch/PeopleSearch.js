@@ -122,6 +122,8 @@ export default function PeopleSearch({ credits }) {
 
   // const [accessToken, setAccessToken] = useState("");
   const [savedIntegrationSettings, setSavedIntegrationSettings] = useState({});
+  const [selectedSaveContactDestination, setSelectedSaveContactDestination] =
+    useState("salesforce");
 
   const { Option } = Select;
   var { search_type } = useParams();
@@ -580,136 +582,54 @@ export default function PeopleSearch({ credits }) {
             trigger="hover"
             content={
               <>
-                <span style={{ display: "flex", margin: "0px 0px 50px 0px" }}>
-                  <img
-                    src={salesforceIcon}
-                    alt=""
-                    style={{ height: "30px", marginRight: "10px" }}
-                  />
-                  <h3>Salesforce</h3>
-                </span>
+                <Select
+                  bordered={true}
+                  allowClear
+                  defaultValue={"salesforce"}
+                  value={selectedSaveContactDestination}
+                  placeholder="Select a destination"
+                  onChange={(selectedOption) => {
+                    //console.log(selectedOption);
+                    setSelectedSaveContactDestination(selectedOption);
+                  }}
+                  style={{ width: "100%", margin: "5px 10px 10px 5px" }}
+                >
+                  <Option key="salesforce" value="salesforce">
+                    {
+                      <span
+                        style={{ display: "flex", margin: "0px 0px 0px 0px" }}
+                      >
+                        <img
+                          src={salesforceIcon}
+                          alt=""
+                          style={{ height: "30px", marginRight: "10px" }}
+                        />
+                        <h3>Salesforce</h3>
+                      </span>
+                    }
+                  </Option>
+                  <Option key="hubspot" value="hubspot">
+                    {
+                      <span
+                        style={{ display: "flex", margin: "0px 0px 0px 0px" }}
+                      >
+                        <img
+                          src={hubspotIcon}
+                          alt=""
+                          style={{ height: "30px", marginRight: "10px" }}
+                        />
+                        <h3>Hubspot</h3>
+                      </span>
+                    }
+                  </Option>
+                </Select>
 
                 <Button
-                  style={{ margin: "2px 5px" }}
+                  style={{ margin: "10px 2px 5px 5px" }}
                   // className="secondary-button-active"
                   onClick={async (e) => {
                     // purchaseContact(index, record.id);
-
-                    // let data = {
-                    //   FirstName: isValid(record.firstName)
-                    //     ? record.firstName
-                    //     : " ",
-                    //   LastName: isValid(record.lastName)
-                    //     ? record.lastName
-                    //     : " ",
-                    //   Title: isValid(record.title) ? record.title : " ",
-                    //   Company: isValid(record.companyName)
-                    //     ? record.companyName
-                    //     : " ",
-                    //   Email: isValid(record.emailAddress)
-                    //     ? record.emailAddress
-                    //     : "***@" + record.primaryDomain,
-                    //   Phone: `${
-                    //     isValid(record.phoneDirect) ? record.phoneDirect : " "
-                    //   } ${
-                    //     isValid(record.phoneCompany) ? record.phoneCompany : " "
-                    //   }`,
-                    //   MobilePhone: `${
-                    //     isValid(record.phoneMobile) ? record.phoneMobile : " "
-                    //   } ${
-                    //     isValid(record.phoneNumber) ? record.phoneNumber : " "
-                    //   }`,
-                    //   Industry: isValid(record.industry)
-                    //     ? record.industry
-                    //     : " ",
-                    //   LeadSource: "Leadzilla",
-                    //   Website: isValid(record.primaryDomain)
-                    //     ? record.primaryDomain
-                    //     : " ",
-                    //   City: isValid(record.city) ? record.city : " ",
-                    //   State: isValid(record.state) ? record.state : " ",
-                    //   Country: isValid(record.country) ? record.country : " ",
-                    //   // NumberOfEmployees: -10 || "",
-                    //   // AnnualRevenue: 10000 || "",
-                    // };
-
-                    let data = {};
-
-                    if (isValid(record.firstName)) {
-                      data["FirstName"] = record.firstName;
-                    }
-                    if (isValid(record.lastName)) {
-                      data["LastName"] = record.lastName;
-                    } else {
-                      data["LastName"] = "none";
-                    }
-                    if (isValid(record.companyName)) {
-                      data["Company"] = record.companyName;
-                    } else if (isValid(record.primaryDomain)) {
-                      data["Company"] = record.primaryDomain;
-                    }
-                    if (isValid(record.title)) {
-                      data["Title"] = record.title;
-                    }
-                    if (isValid(record.title)) {
-                      data["Title"] = record.title;
-                    }
-                    if (isValid(record.emailAddress)) {
-                      data["Email"] = record.emailAddress;
-                    } else if (isValid(record.primaryDomain)) {
-                      data["Email"] = "***@" + record.primaryDomain;
-                    }
-                    if (
-                      isValid(record.phoneCompany) &&
-                      isValid(record.phoneNumber)
-                    ) {
-                      data[
-                        "Phone"
-                      ] = `${record.phoneCompany} ${record.phoneNumber}`;
-                    } else if (isValid(record.phoneCompany)) {
-                      data["Phone"] = `${record.phoneCompany} `;
-                    } else if (isValid(record.phoneNumber)) {
-                      data["Phone"] = `${record.phoneNumber} `;
-                    }
-
-                    if (
-                      isValid(record.phoneDirect) &&
-                      isValid(record.phoneMobile)
-                    ) {
-                      data[
-                        "MobilePhone"
-                      ] = `${record.phoneDirect} ${record.phoneMobile}`;
-                    } else if (isValid(record.phoneDirect)) {
-                      data["MobilePhone"] = `${record.phoneDirect} `;
-                    } else if (isValid(record.phoneMobile)) {
-                      data["MobilePhone"] = `${record.phoneMobile} `;
-                    }
-                    if (isValid(record.industry)) {
-                      data["Industry"] = record.industry;
-                    }
-                    if (isValid(record.primaryDomain)) {
-                      data["Website"] = record.primaryDomain;
-                    }
-                    data["LeadSource"] = "Leadzilla";
-
-                    if (isValid(record.city)) {
-                      data["City"] = record.city;
-                    }
-                    if (isValid(record.state)) {
-                      data["State"] = record.state;
-                    }
-                    if (isValid(record.country)) {
-                      data["Country"] = record.country;
-                    }
-
-                    await saveLeadsOnSalesforce(data);
-
-                    // await saveCompany(
-                    //   UserId,
-                    //   selectedCompanyList,
-                    //   record.primaryDomain,
-                    //   record.primaryDomain?.split(".")[0]
-                    // );
+                    await saveContactToThirdPartyApps(record);
                     setIsSaveCompanyPopoverVisible(false);
                   }}
                 >
@@ -1113,9 +1033,201 @@ export default function PeopleSearch({ credits }) {
   };
 
   /**
-   * Save leads to salesforce CRM
+   * Handle contact saving to third party apps
    */
 
+  const saveContactToThirdPartyApps = async (record) => {
+    console.log("selected desitination", selectedSaveContactDestination);
+
+    if (selectedSaveContactDestination === "salesforce") {
+      console.log("saving to salesforce....");
+
+      let data = {};
+
+      if (isValid(record.firstName)) {
+        data["FirstName"] = record.firstName;
+      }
+      if (isValid(record.lastName)) {
+        data["LastName"] = record.lastName;
+      } else {
+        data["LastName"] = "none";
+      }
+      if (isValid(record.companyName)) {
+        data["Company"] = record.companyName;
+      } else if (isValid(record.primaryDomain)) {
+        data["Company"] = record.primaryDomain;
+      }
+      if (isValid(record.title)) {
+        data["Title"] = record.title;
+      }
+      if (isValid(record.title)) {
+        data["Title"] = record.title;
+      }
+      if (isValid(record.emailAddress)) {
+        data["Email"] = record.emailAddress;
+      } else if (isValid(record.primaryDomain)) {
+        data["Email"] = "***@" + record.primaryDomain;
+      }
+      if (isValid(record.phoneCompany) && isValid(record.phoneNumber)) {
+        data["Phone"] = `${record.phoneCompany} ${record.phoneNumber}`;
+      } else if (isValid(record.phoneCompany)) {
+        data["Phone"] = `${record.phoneCompany} `;
+      } else if (isValid(record.phoneNumber)) {
+        data["Phone"] = `${record.phoneNumber} `;
+      }
+
+      if (isValid(record.phoneDirect) && isValid(record.phoneMobile)) {
+        data["MobilePhone"] = `${record.phoneDirect} ${record.phoneMobile}`;
+      } else if (isValid(record.phoneDirect)) {
+        data["MobilePhone"] = `${record.phoneDirect} `;
+      } else if (isValid(record.phoneMobile)) {
+        data["MobilePhone"] = `${record.phoneMobile} `;
+      }
+
+      //other contact only exists for chrome extention
+
+      if (isValid(record.industry)) {
+        data["Industry"] = record.industry;
+      }
+      if (isValid(record.primaryDomain)) {
+        data["Website"] = record.primaryDomain;
+      }
+      data["LeadSource"] = "Leadzilla";
+
+      if (isValid(record.city)) {
+        data["City"] = record.city;
+      }
+      if (isValid(record.state)) {
+        data["State"] = record.state;
+      }
+      if (isValid(record.country)) {
+        data["Country"] = record.country;
+      }
+
+      await saveLeadsOnSalesforce(data);
+    } else if (selectedSaveContactDestination === "hubspot") {
+      console.log("saving to hubspot....");
+      let data = { properties: [] };
+
+      //first name
+      if (isValid(record.firstName)) {
+        data.properties.push({
+          property: "firstname",
+          value: record.firstName,
+        });
+      }
+      //last name
+      if (isValid(record.lastName)) {
+        data.properties.push({
+          property: "lastname",
+          value: record.lastName,
+        });
+      } else {
+        data.properties.push({
+          property: "lastname",
+          value: "",
+        });
+      }
+
+      //email
+      if (isValid(record.emailAddress)) {
+        data.properties.push({
+          property: "email",
+          value: record.emailAddress,
+        });
+      } else if (isValid(record.primaryDomain)) {
+        data.properties.push({
+          property: "email",
+          value: "***@" + record.primaryDomain,
+        });
+      }
+
+      // conatct
+      let combinedPhoneString = "";
+
+      if (isValid(record.phoneCompany)) {
+        combinedPhoneString = combinedPhoneString + record.phoneCompany + " ";
+      }
+      if (isValid(record.phoneNumber)) {
+        combinedPhoneString = combinedPhoneString + record.phoneNumber + " ";
+      }
+      if (isValid(record.phoneDirect)) {
+        combinedPhoneString = combinedPhoneString + record.phoneDirect + " ";
+      }
+      if (isValid(record.phoneMobile)) {
+        combinedPhoneString = combinedPhoneString + record.phoneMobile + " ";
+      }
+
+      //other contact only exists for chrome extention
+      data.properties.push({
+        property: "phone",
+        value: combinedPhoneString,
+      });
+      //title
+      if (isValid(record.title)) {
+        data.properties.push({
+          property: "jobtitle",
+          value: record.title,
+        });
+      }
+      //company name
+      if (isValid(record.companyName)) {
+        data.properties.push({
+          property: "company",
+          value: record.companyName,
+        });
+      } else if (isValid(record.primaryDomain)) {
+        data.properties.push({
+          property: "company",
+          value: record.primaryDomain,
+        });
+      }
+      //industry
+      if (isValid(record.industry)) {
+        data.properties.push({
+          property: "industry",
+          value: record.industry,
+        });
+      }
+
+      //website
+      if (isValid(record.primaryDomain)) {
+        data.properties.push({
+          property: "website",
+          value: record.primaryDomain,
+        });
+      }
+
+      //city
+      if (isValid(record.city)) {
+        data.properties.push({
+          property: "city",
+          value: record.city,
+        });
+      }
+      //state
+      if (isValid(record.state)) {
+        data.properties.push({
+          property: "state",
+          value: record.state,
+        });
+      }
+      //company
+      if (isValid(record.country)) {
+        data.properties.push({
+          property: "country",
+          value: record.country,
+        });
+      }
+
+      console.log("saving to hubspot", data);
+      await saveContactOnHubspot(data);
+    }
+  };
+
+  /**
+   * Save leads to salesforce CRM
+   */
   const saveLeadsOnSalesforce = async (leadData) => {
     try {
       let apiPayload = {
@@ -1137,6 +1249,56 @@ export default function PeopleSearch({ credits }) {
         .then((response) => {
           let result = response.data;
           console.log("saleforce save leads", result);
+          if (result[0] === "successful") {
+            openNotificationWithIcon(
+              "success",
+              "Saved",
+              "Contact saved successfully"
+            );
+          } else if (result[0] === "duplicate") {
+            openNotificationWithIcon(
+              "info",
+              "Duplicate",
+              "Contact is already saved"
+            );
+          } else if (result[0] === "unsuccessful") {
+            openNotificationWithIcon(
+              "error",
+              "Not saved",
+              "Could not save this contact check if you have configured integration"
+            );
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  /**
+   * Save contact to hubspot CRM
+   */
+  const saveContactOnHubspot = async (leadData) => {
+    try {
+      let apiPayload = {
+        auth_uuid: `${UserId}`,
+        lead_data: leadData,
+      };
+
+      //serverURL
+      await axios
+        .post(`${serverURL}/hubspot-save-leads`, JSON.stringify(apiPayload), {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            // Autherization: "Bearer " + accessToken,
+          },
+        })
+        .then((response) => {
+          let result = response.data;
+          console.log("hubspot contact saved", result);
           if (result[0] === "successful") {
             openNotificationWithIcon(
               "success",
