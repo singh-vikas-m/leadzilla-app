@@ -50,6 +50,7 @@ import {
   FacebookFilled,
   LinkedinFilled,
   TwitterSquareFilled,
+  LoadingOutlined,
 } from "@ant-design/icons";
 import { UserIdContext } from "../../Context/UserIdContext";
 import { CreditCountContext } from "../../Context/CreditCountContext";
@@ -154,7 +155,17 @@ export default function Search() {
         alignItems: "center",
       }}
     >
-      <Spin size="large" />
+      <Spin
+        indicator={
+          <LoadingOutlined
+            style={{
+              fontSize: 60,
+              fontWeight: 600,
+            }}
+            spin
+          />
+        }
+      />
     </div>
   );
 }

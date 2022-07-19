@@ -62,6 +62,7 @@ import {
   FacebookFilled,
   LinkedinFilled,
   TwitterSquareFilled,
+  LoadingOutlined,
 } from "@ant-design/icons";
 import { UserIdContext } from "../../Context/UserIdContext";
 import { CreditCountContext } from "../../Context/CreditCountContext";
@@ -1956,7 +1957,17 @@ export default function PeopleSearch({ credits }) {
             style={{ padding: "0px 30px" }}
             size="large"
             columns={columns}
-            loading={loading}
+            loading={{
+              indicator: (
+                <LoadingOutlined
+                  style={{
+                    fontSize: 40,
+                    fontWeight: 600,
+                  }}
+                />
+              ),
+              spinning: loading,
+            }}
             rowKey="id"
             rowSelection={{ ...rowSelection }}
             dataSource={[...searchResult]}

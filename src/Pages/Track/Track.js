@@ -24,7 +24,11 @@ import {
 } from "react-router-dom";
 import Papa from "papaparse";
 import { FireIcon } from "@heroicons/react/solid";
-import { MoreOutlined, InboxOutlined } from "@ant-design/icons";
+import {
+  MoreOutlined,
+  InboxOutlined,
+  LoadingOutlined,
+} from "@ant-design/icons";
 import moment from "moment";
 import {
   Spin,
@@ -868,7 +872,17 @@ export default function Track() {
         alignItems: "center",
       }}
     >
-      <Spin size="large" />
+      <Spin
+        indicator={
+          <LoadingOutlined
+            style={{
+              fontSize: 60,
+              fontWeight: 600,
+            }}
+            spin
+          />
+        }
+      />
     </div>
   );
 }
@@ -892,7 +906,17 @@ function CompanyList(props) {
           style={{ padding: "0px 30px" }}
           size="large"
           columns={props.companyListTableColumn}
-          loading={props.loading}
+          loading={{
+            indicator: (
+              <LoadingOutlined
+                style={{
+                  fontSize: 40,
+                  fontWeight: 600,
+                }}
+              />
+            ),
+            spinning: props.loading,
+          }}
           rowKey="index"
           // rowSelection={{ ...rowSelection }}
           dataSource={[...props.companyList]}
@@ -1065,7 +1089,17 @@ function SavedCompanies(props) {
       <Table
         headers={false}
         style={{ padding: "0px 30px" }}
-        loading={loading}
+        loading={{
+          indicator: (
+            <LoadingOutlined
+              style={{
+                fontSize: 40,
+                fontWeight: 600,
+              }}
+            />
+          ),
+          spinning: loading,
+        }}
         size="large"
         columns={savedCompaniesListColumn}
         rowKey="index"

@@ -6,6 +6,8 @@ import { db, auth } from "../../firebase-config";
 import { doc, onSnapshot } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { Spin, List, Divider, notification } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
+
 import axios from "axios";
 
 export default function Sequence() {
@@ -238,7 +240,17 @@ export default function Sequence() {
 
             {copyLoading ? (
               <span>
-                <Spin />
+                <Spin
+                  indicator={
+                    <LoadingOutlined
+                      style={{
+                        fontSize: 40,
+                        fontWeight: 600,
+                      }}
+                      spin
+                    />
+                  }
+                />{" "}
                 <p>
                   AI can take around 20 seconds to generate emails completely :)
                 </p>

@@ -17,7 +17,11 @@ import {
   Table,
   notification,
 } from "antd";
-import { ExportOutlined, PoweroffOutlined } from "@ant-design/icons";
+import {
+  ExportOutlined,
+  PoweroffOutlined,
+  LoadingOutlined,
+} from "@ant-design/icons";
 import { UserIdContext } from "../../Context/UserIdContext";
 
 export default function Company() {
@@ -347,7 +351,17 @@ export default function Company() {
                         style={{ padding: "0px 0px" }}
                         size="large"
                         columns={alertTableColumns}
-                        loading={loading}
+                        loading={{
+                          indicator: (
+                            <LoadingOutlined
+                              style={{
+                                fontSize: 40,
+                                fontWeight: 600,
+                              }}
+                            />
+                          ),
+                          spinning: loading,
+                        }}
                         rowKey="id"
                         dataSource={[...alerts]}
                         // pagination={{ pageSize: 100 }}
