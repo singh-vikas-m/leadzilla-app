@@ -807,7 +807,7 @@ export default function Track() {
                       avatar={
                         <Avatar src="https://joeschmoe.io/api/v1/random" />
                       }
-                      title={<a href="https://ant.design">{item.type}</a>}
+                      title={item.type}
                       description={
                         <span>
                           {item.type === "Funding" ? (

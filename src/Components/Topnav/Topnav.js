@@ -6,7 +6,7 @@ import { db, auth } from "../../firebase-config";
 import { useNavigate, useLocation } from "react-router-dom";
 import { doc, onSnapshot, updateDoc } from "firebase/firestore";
 import { Avatar, Divider, Popover, Button } from "antd";
-import { UserOutlined } from "@ant-design/icons";
+import { RocketOutlined, UserOutlined } from "@ant-design/icons";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { CurrencyDollarIcon, LinkIcon } from "@heroicons/react/solid";
@@ -45,12 +45,34 @@ export default function Topnav() {
       <Link to="/integration">
         <div className="popover-link-containers">
           <LinkIcon
-            style={{ height: "20px", margin: "0px 5px 0px 0px" }}
+            style={{
+              fontSize: "20px",
+              height: "20px",
+              margin: "0px 5px 0px 0px",
+            }}
             color={"#4659ff"}
           />
           <h3 className="popover-text">Integrations</h3>
         </div>
       </Link>
+
+      <a
+        href="https://chrome.google.com/webstore/detail/leadzilla/mlknnmdepgmefemphhdombdflfgceejg"
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        <div className="popover-link-containers">
+          <RocketOutlined
+            style={{
+              fontSize: "20px",
+              height: "20px",
+              margin: "0px 5px 0px 0px",
+            }}
+            color={"#4659ff"}
+          />
+          <h3 className="popover-text">Install Extension</h3>
+        </div>
+      </a>
 
       <Divider />
       <Button

@@ -120,9 +120,19 @@
 }
 
 .popover-link-containers {
+  padding: 5px 10px;
   display: flex;
   align-items: center;
   justify-content: flex-start;
+  margin: 5px 0px;
+  border-radius: 5px;
+  transition: 0.3s;
+  -webkit-transition: 0.3s;
+  -moz-transition: 0.3s;
+  border-radius: 0.3rem;
+}
+.popover-link-containers:hover {
+  background-color: #f6f6f6;
 }
 
 .popover-text {
