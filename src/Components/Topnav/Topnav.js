@@ -234,7 +234,7 @@ export default function Topnav() {
                 // <Avatar size={45} icon={<UserOutlined />} />
                 <Avatar
                   size={45}
-                  style={{ background: "#fff", color: "#6f4cef" }}
+                  style={{ background: "#4659ff", color: "#fff" }}
                   icon={<UserOutlined />}
                 />
               )}
